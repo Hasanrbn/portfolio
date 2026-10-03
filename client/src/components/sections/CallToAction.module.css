@@ -1,0 +1,14 @@
+.card {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+}
+
+.heading {
+  font-size: var(--text-2xl);
+}
+
+.text {
+  max-width: 36rem;
+  color: var(--color-text-muted);
+}

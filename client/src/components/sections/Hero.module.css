@@ -1,0 +1,72 @@
+.hero {
+  display: grid;
+  gap: var(--space-8);
+  align-items: center;
+}
+
+.content {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+}
+
+.name {
+  /* Long names wrap instead of pushing the page sideways on narrow phones. */
+  overflow-wrap: anywhere;
+}
+
+.role {
+  color: var(--color-accent-text);
+  font-size: var(--text-xl);
+  font-weight: 600;
+}
+
+.intro {
+  max-width: 40rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-lg);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-block: var(--space-2);
+}
+
+/* On phones the picture sits above the text and stays small so the buttons remain in view. */
+.avatar {
+  --avatar-size: 7rem;
+  order: -1;
+}
+
+@media (min-width: 48rem) {
+  .hero {
+    grid-template-columns: 1fr auto;
+    gap: var(--space-12);
+  }
+
+  .avatar {
+    --avatar-size: 14rem;
+    order: 0;
+  }
+}
+
+/* A short fade-in on load. Only users who have not asked for reduced motion see it. */
+@media (prefers-reduced-motion: no-preference) {
+  .content,
+  .avatar {
+    animation: hero-in 500ms var(--ease) both;
+  }
+
+  .avatar {
+    animation-delay: 100ms;
+  }
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}

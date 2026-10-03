@@ -2,7 +2,7 @@
 
 Personal portfolio built as a full-stack web application: React frontend, Express REST API, PostgreSQL database.
 
-> **Status:** Phase 3 of 22 (layout and navigation). The site has its frame (header, menu, footer) and a placeholder home page; pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phase 4 of 22 (home page). The site has its frame (header, menu, footer) and a finished home page; other pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
@@ -18,6 +18,7 @@ Built so far:
 - Colour contrast checked against WCAG AA by automated tests
 - Page frame: skip link, sticky header with a menu for small screens, footer, active page marked in the navigation, focus moved to the new page's heading after each navigation, and a branded 404 page
 - Profile links (GitHub, LinkedIn, email) in the footer appear only once `shared/siteConfig.json` holds real `https` URLs and a real email, so placeholders never show up as broken links
+- Home page: hero with name, role, introduction, picture (or initials), "View My Projects", "Contact Me" and "Download CV" buttons, profile links, optional availability badge, core technologies and a closing call to action. Anything that is empty or still a placeholder (CV, picture, availability, profile links) is left out instead of shown broken
 - CI: format check, lint, tests and build on every push and pull request
 
 ## Tech Stack
@@ -116,7 +117,17 @@ docs/      Project plan and, later, architecture and deployment notes
 .github/   CI workflow
 ```
 
-Personal details (name, role, email, social links, CV) live in `shared/siteConfig.json`. Values such as `GITHUB_URL` and `CV_URL` are placeholders to replace with real ones.
+Personal details live in `shared/siteConfig.json`. Values such as `GITHUB_URL` and `CV_URL` are placeholders to replace with real ones; until then the matching elements stay hidden.
+
+| Field               | What it does                                                                                          |
+| ------------------- | ----------------------------------------------------------------------------------------------------- |
+| `name`, `role`      | Hero heading, browser title, footer                                                                   |
+| `intro`             | Short introduction in the hero                                                                        |
+| `availability`      | Optional status badge, e.g. `Open to internships`. Leave empty to hide it                             |
+| `avatar`            | Picture: a file in `client/public` such as `/avatar.jpg`, or an `https` address. Empty shows initials |
+| `highlights`        | Technology names shown on the home page                                                               |
+| `resumeUrl`         | CV: a file in `client/public` such as `/cv.pdf` (downloads), or an `https` address (opens a new tab)  |
+| `email`, `social.*` | Profile links in the hero and footer; only real `https` URLs and a real email are shown               |
 
 ## Screenshots
 

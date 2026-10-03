@@ -3,6 +3,9 @@
   "role": "Full-Stack Web Developer",
   "location": "Indonesia",
   "intro": "Saya adalah developer yang tertarik pada pengembangan aplikasi web, software development, dan teknologi komputer.",
+  "availability": "",
+  "avatar": "",
+  "highlights": ["JavaScript", "React", "Node.js", "Express", "PostgreSQL"],
   "email": "email@example.com",
   "social": {
     "github": "GITHUB_URL",
