@@ -1,0 +1,27 @@
+{
+  "paragraphs": [],
+  "highlights": [
+    "Full-Stack Development",
+    "Web Development",
+    "Software Engineering",
+    "Problem Solving",
+    "Continuous Learning"
+  ],
+  "sections": [
+    {
+      "id": "interests",
+      "title": "Interests",
+      "paragraphs": [],
+      "items": ["Web application development", "Software development", "Computer technology"]
+    },
+    {
+      "id": "focus",
+      "title": "Development focus",
+      "paragraphs": [],
+      "items": [
+        "Full-stack web development",
+        "Building with JavaScript, React, Node.js, Express and PostgreSQL"
+      ]
+    }
+  ]
+}

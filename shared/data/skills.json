@@ -1,0 +1,154 @@
+{
+  "categories": [
+    {
+      "id": "frontend",
+      "label": "Frontend",
+      "skills": [
+        {
+          "id": "html",
+          "name": "HTML",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "css",
+          "name": "CSS",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "javascript",
+          "name": "JavaScript",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "react",
+          "name": "React",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "responsive-design",
+          "name": "Responsive Design",
+          "level": null,
+          "description": ""
+        }
+      ]
+    },
+    {
+      "id": "backend",
+      "label": "Backend",
+      "skills": [
+        {
+          "id": "node-js",
+          "name": "Node.js",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "express",
+          "name": "Express",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "rest-api",
+          "name": "REST API",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "authentication",
+          "name": "Authentication",
+          "level": null,
+          "description": ""
+        }
+      ]
+    },
+    {
+      "id": "database",
+      "label": "Database",
+      "skills": [
+        {
+          "id": "mysql",
+          "name": "MySQL",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "postgresql",
+          "name": "PostgreSQL",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "database-design",
+          "name": "Database Design",
+          "level": null,
+          "description": ""
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "label": "Tools",
+      "skills": [
+        {
+          "id": "git",
+          "name": "Git",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "github",
+          "name": "GitHub",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "vs-code",
+          "name": "VS Code",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "docker",
+          "name": "Docker",
+          "level": null,
+          "description": ""
+        }
+      ]
+    },
+    {
+      "id": "other",
+      "label": "Other",
+      "skills": [
+        {
+          "id": "networking",
+          "name": "Networking",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "api",
+          "name": "API",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "linux",
+          "name": "Linux",
+          "level": null,
+          "description": ""
+        },
+        {
+          "id": "deployment",
+          "name": "Deployment",
+          "level": null,
+          "description": ""
+        }
+      ]
+    }
+  ]
+}

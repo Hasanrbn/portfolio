@@ -2,7 +2,7 @@
 
 Personal portfolio built as a full-stack web application: React frontend, Express REST API, PostgreSQL database.
 
-> **Status:** Phase 4 of 22 (home page). The site has its frame (header, menu, footer) and a finished home page; other pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phase 5 of 22 (about and skills). The site has its frame (header, menu, footer), a home page, an About page and a Skills page; other pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
@@ -19,6 +19,8 @@ Built so far:
 - Page frame: skip link, sticky header with a menu for small screens, footer, active page marked in the navigation, focus moved to the new page's heading after each navigation, and a branded 404 page
 - Profile links (GitHub, LinkedIn, email) in the footer appear only once `shared/siteConfig.json` holds real `https` URLs and a real email, so placeholders never show up as broken links
 - Home page: hero with name, role, introduction, picture (or initials), "View My Projects", "Contact Me" and "Download CV" buttons, profile links, optional availability badge, core technologies and a closing call to action. Anything that is empty or still a placeholder (CV, picture, availability, profile links) is left out instead of shown broken
+- About page: introduction, picture (or initials), personal highlights and written sections; a section with no content is not shown
+- Skills page: skills grouped by area (Frontend, Backend, Database, Tools, Other) with an optional Familiar / Intermediate / Advanced label and short description per skill, and loading, empty and error states. No percentages
 - CI: format check, lint, tests and build on every push and pull request
 
 ## Tech Stack
@@ -128,6 +130,15 @@ Personal details live in `shared/siteConfig.json`. Values such as `GITHUB_URL` a
 | `highlights`        | Technology names shown on the home page                                                               |
 | `resumeUrl`         | CV: a file in `client/public` such as `/cv.pdf` (downloads), or an `https` address (opens a new tab)  |
 | `email`, `social.*` | Profile links in the hero and footer; only real `https` URLs and a real email are shown               |
+
+### Editing About and Skills content
+
+Both pages read JSON files in `shared/data/`. Edit the file and the page updates; nothing in the React code needs to change.
+
+- `about.json`: `paragraphs` (extra biography paragraphs under the introduction), `highlights` (short labels) and `sections`. Each section is `{ "id", "title", "paragraphs": [], "items": [] }`; add sections such as Background, Career goals or Approach. Sections with no text are not shown.
+- `skills.json`: categories with skills. Each skill has `id`, `name`, `level` (`"familiar"`, `"intermediate"`, `"advanced"` or `null`) and `description`. A skill without a level or description simply shows its name. The "What the levels mean" guide appears as soon as one skill has a level. Only set a level you can stand behind in an interview.
+
+The data shape matches what `GET /api/skills` will return, so Phase 15 replaces the file with the API without changing the page.
 
 ## Screenshots
 

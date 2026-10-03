@@ -5,6 +5,8 @@
   "type": "module",
   "description": "Data and schemas shared by client and server",
   "exports": {
-    "./siteConfig.json": "./siteConfig.json"
+    "./siteConfig.json": "./siteConfig.json",
+    "./data/skills.json": "./data/skills.json",
+    "./data/about.json": "./data/about.json"
   }
 }
