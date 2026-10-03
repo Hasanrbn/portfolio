@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 const API_TARGET = 'http://localhost:3000';
@@ -13,5 +13,11 @@ export default defineConfig({
       '/api': API_TARGET,
       '/healthz': API_TARGET,
     },
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./tests/setup.js'],
+    // CSS Modules return class-name proxies; real CSS is not needed to test behaviour.
+    css: false,
   },
 });

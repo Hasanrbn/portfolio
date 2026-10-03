@@ -2,24 +2,27 @@
 
 Personal portfolio built as a full-stack web application: React frontend, Express REST API, PostgreSQL database.
 
-> **Status:** Phase 1 of 22 (project setup). The site currently shows a placeholder home page. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phase 2 of 22 (design system). The site shows a placeholder home page; the design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
-Planned, in roadmap order: home, about, skills, projects with detail pages, experience, education, certificates, blog, contact form, resume download, dark mode, admin dashboard.
+Planned, in roadmap order: home, about, skills, projects with detail pages, experience, education, certificates, blog, contact form, resume download, admin dashboard.
 
 Built so far:
 
 - Monorepo with client, server and shared packages
 - `GET /healthz` health endpoint
 - Environment validation, security headers, and a central JSON error handler
+- Design system: colour, type and spacing tokens, self-hosted Inter and JetBrains Mono, UI components (Button, LinkButton, Card, Badge, Tag, Spinner, Skeleton, EmptyState, ErrorState, form fields)
+- Light, dark and system themes, remembered in `localStorage`, applied before first paint so there is no flash
+- Colour contrast checked against WCAG AA by automated tests
 - CI: format check, lint, tests and build on every push and pull request
 
 ## Tech Stack
 
 | Layer    | Technology                               |
 | -------- | ---------------------------------------- |
-| Frontend | React, Vite, React Router, plain CSS     |
+| Frontend | React, Vite, React Router, CSS Modules   |
 | Backend  | Node.js, Express, zod, helmet            |
 | Database | PostgreSQL (local container via Docker)  |
 | Quality  | ESLint (with jsx-a11y), Prettier, Vitest |
@@ -61,6 +64,7 @@ npm run dev
 ```
 
 - Client: http://localhost:5173
+- Design system review page (development only, not part of production builds): http://localhost:5173/design
 - API health check: http://localhost:3000/healthz
 
 Other commands:
@@ -94,7 +98,7 @@ Responses use a consistent envelope: `{ "success": true, "data": {} }` on succes
 npm test
 ```
 
-Server tests use Vitest and Supertest. Client tests are added together with the first interactive components.
+Server tests use Vitest and Supertest. Client tests use Vitest and Testing Library: theme switching, form and UI component behaviour, heading order on the design page, and an automated WCAG AA contrast check of every colour pair in `client/src/styles/tokens.css`. Change colours there and run `npm test` to confirm they still pass.
 
 ## Deployment
 

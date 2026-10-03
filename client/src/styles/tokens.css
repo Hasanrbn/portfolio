@@ -1,0 +1,120 @@
+/*
+ * Design tokens. Every colour, size and duration used by components comes from here.
+ *
+ * Theming: the resolved theme ("light" or "dark") is set as data-theme on <html> by
+ * the inline script in index.html before first paint, and kept in sync by ThemeProvider.
+ * Light values live on :root; the dark block only overrides what changes.
+ *
+ * Contrast is enforced by tests/contrast.test.js. Edit colours there-checked, not by eye.
+ *
+ * Breakpoints cannot be custom properties in media queries, so they are used as literals:
+ * 480px, 768px, 1024px, 1280px (mobile first, min-width).
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces and text */
+  --color-bg: #fafaf9;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f5f5f4;
+  --color-border: #e7e5e4;
+  --color-input-border: #78716c;
+  --color-text: #1c1917;
+  --color-text-muted: #57534e;
+
+  /* Accent (single brand hue: teal) */
+  --color-accent: #0f766e;
+  --color-accent-hover: #115e59;
+  --color-on-accent: #ffffff;
+  --color-accent-subtle: #f0fdfa;
+  --color-accent-text: #0f766e;
+  --color-focus: #0f766e;
+
+  /* Status */
+  --color-success-text: #15803d;
+  --color-success-subtle: #f0fdf4;
+  --color-warning-text: #b45309;
+  --color-warning-subtle: #fffbeb;
+  --color-danger-text: #b91c1c;
+  --color-danger-subtle: #fef2f2;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgb(28 25 23 / 0.06), 0 1px 3px rgb(28 25 23 / 0.08);
+  --shadow-md: 0 4px 12px rgb(28 25 23 / 0.08), 0 2px 4px rgb(28 25 23 / 0.06);
+
+  /* Typography */
+  --font-sans:
+    'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-mono:
+    'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
+    monospace;
+
+  --text-xs: 0.8125rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: clamp(1.0625rem, 1.02rem + 0.2vw, 1.1875rem);
+  --text-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  --text-3xl: clamp(1.875rem, 1.5rem + 1.8vw, 2.75rem);
+  --text-4xl: clamp(2.25rem, 1.6rem + 3.2vw, 3.75rem);
+
+  --leading-tight: 1.2;
+  --leading-snug: 1.4;
+  --leading-normal: 1.6;
+
+  /* Spacing (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  /* Shape */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-full: 999px;
+
+  /* Layout */
+  --container-max: 70rem;
+  --gutter: clamp(1rem, 4vw, 2rem);
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-bg: #0c0a09;
+  --color-surface: #1c1917;
+  --color-surface-subtle: #292524;
+  --color-border: #44403c;
+  --color-input-border: #78716c;
+  --color-text: #fafaf9;
+  --color-text-muted: #a8a29e;
+
+  --color-accent: #2dd4bf;
+  --color-accent-hover: #5eead4;
+  --color-on-accent: #042f2e;
+  --color-accent-subtle: #134e4a;
+  --color-accent-text: #2dd4bf;
+  --color-focus: #5eead4;
+
+  --color-success-text: #4ade80;
+  --color-success-subtle: #052e16;
+  --color-warning-text: #fbbf24;
+  --color-warning-subtle: #451a03;
+  --color-danger-text: #f87171;
+  --color-danger-subtle: #450a0a;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.5);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.5), 0 2px 4px rgb(0 0 0 / 0.4);
+}

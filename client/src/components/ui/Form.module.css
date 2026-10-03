@@ -1,0 +1,55 @@
+.control {
+  display: block;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  line-height: var(--leading-snug);
+  transition: border-color var(--duration-fast) var(--ease);
+}
+
+.control::placeholder {
+  color: var(--color-text-muted);
+}
+
+.control[aria-invalid='true'] {
+  border-color: var(--color-danger-text);
+  border-width: 2px;
+}
+
+.textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.label {
+  font-weight: 600;
+}
+
+.required {
+  color: var(--color-danger-text);
+}
+
+.hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.error {
+  color: var(--color-danger-text);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.hint + .hint,
+.error + .error {
+  margin-top: 0;
+}

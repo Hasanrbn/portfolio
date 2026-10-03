@@ -1,0 +1,26 @@
+.state {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--space-12) var(--space-6);
+  border: 1px dashed var(--color-input-border);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.description {
+  max-width: 40ch;
+  color: var(--color-text-muted);
+}
+
+.action {
+  margin-top: var(--space-3);
+}
+
+.error .title {
+  color: var(--color-danger-text);
+}

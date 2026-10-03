@@ -3,11 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
     <title>Muhammad Hasan Rabbani | Full-Stack Web Developer</title>
     <meta
       name="description"
       content="Portfolio of Muhammad Hasan Rabbani, a full-stack web developer."
     />
+    <!--
+      Sets data-theme before first paint so there is no flash of the wrong theme.
+      Must stay in sync with client/src/utils/theme.js (tests/index-html.test.js checks the
+      storage key). Phase 20: allow this script in the Content-Security-Policy by hash.
+    -->
+    <script>
+      (function () {
+        var theme;
+        try {
+          var stored = localStorage.getItem('theme-preference');
+          if (stored === 'light' || stored === 'dark') theme = stored;
+        } catch (error) {
+          // Storage can be blocked (private mode); fall through to the system preference.
+        }
+        if (!theme) {
+          theme =
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+        }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
