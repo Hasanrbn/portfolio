@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ThemeToggle from '../../components/layout/ThemeToggle.jsx';
+import PageTitle from '../../components/layout/PageTitle.jsx';
 import Badge from '../../components/ui/Badge.jsx';
 import Button from '../../components/ui/Button.jsx';
 import Card from '../../components/ui/Card.jsx';
@@ -67,6 +68,7 @@ export default function DesignPage() {
 
   return (
     <>
+      <PageTitle title="Design system" />
       <header className={styles.header}>
         <h1>Design system</h1>
         <p className={styles.lead}>

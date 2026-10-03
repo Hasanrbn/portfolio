@@ -17,6 +17,8 @@ const hasDom = typeof window !== 'undefined';
 
 if (hasDom) {
   window.matchMedia = createMatchMedia(false);
+  // jsdom does not implement scrolling; navigation code calls it, so make it a no-op.
+  window.scrollTo = vi.fn();
 }
 
 afterEach(() => {

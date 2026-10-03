@@ -83,6 +83,7 @@
   /* Layout */
   --container-max: 70rem;
   --gutter: clamp(1rem, 4vw, 2rem);
+  --header-height: 4rem;
 
   /* Motion */
   --duration-fast: 150ms;

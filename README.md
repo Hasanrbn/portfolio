@@ -2,7 +2,7 @@
 
 Personal portfolio built as a full-stack web application: React frontend, Express REST API, PostgreSQL database.
 
-> **Status:** Phase 2 of 22 (design system). The site shows a placeholder home page; the design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phase 3 of 22 (layout and navigation). The site has its frame (header, menu, footer) and a placeholder home page; pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
@@ -16,6 +16,8 @@ Built so far:
 - Design system: colour, type and spacing tokens, self-hosted Inter and JetBrains Mono, UI components (Button, LinkButton, Card, Badge, Tag, Spinner, Skeleton, EmptyState, ErrorState, form fields)
 - Light, dark and system themes, remembered in `localStorage`, applied before first paint so there is no flash
 - Colour contrast checked against WCAG AA by automated tests
+- Page frame: skip link, sticky header with a menu for small screens, footer, active page marked in the navigation, focus moved to the new page's heading after each navigation, and a branded 404 page
+- Profile links (GitHub, LinkedIn, email) in the footer appear only once `shared/siteConfig.json` holds real `https` URLs and a real email, so placeholders never show up as broken links
 - CI: format check, lint, tests and build on every push and pull request
 
 ## Tech Stack

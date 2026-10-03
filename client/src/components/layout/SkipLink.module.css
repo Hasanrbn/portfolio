@@ -1,0 +1,17 @@
+.skipLink {
+  position: absolute;
+  top: -5rem;
+  left: var(--space-4);
+  z-index: 30;
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-accent);
+  border-radius: var(--radius-sm);
+  color: var(--color-on-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* No transition: the link should be there the instant it receives focus. */
+.skipLink:focus {
+  top: var(--space-4);
+}

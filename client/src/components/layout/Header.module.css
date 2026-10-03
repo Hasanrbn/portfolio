@@ -1,0 +1,139 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  transition: box-shadow var(--duration-base) var(--ease);
+}
+
+.scrolled {
+  box-shadow: var(--shadow-sm);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--header-height);
+}
+
+.brand {
+  min-width: 0;
+  padding-block: var(--space-2);
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menuButton {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  background: transparent;
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.menuButton:hover {
+  background: var(--color-surface-subtle);
+}
+
+/* Small screens: the panel drops down below the header bar and is closed by default. */
+.panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  display: none;
+  max-height: calc(100vh - var(--header-height));
+  /* dvh follows the visible area on phones whose browser bars show and hide. */
+  max-height: calc(100dvh - var(--header-height));
+  padding: var(--space-4) var(--gutter) var(--space-6);
+  overflow-y: auto;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+}
+
+.open {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-1);
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease);
+}
+
+.link:hover {
+  background: var(--color-surface-subtle);
+}
+
+.link[aria-current='page'] {
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-text);
+}
+
+.theme {
+  justify-self: start;
+}
+
+/*
+ * 80rem (1280px) is where nine links, the name and the theme switch fit on one row.
+ * Below it, the navigation lives in the menu panel instead of being squeezed.
+ */
+@media (min-width: 80rem) {
+  .menuButton {
+    display: none;
+  }
+
+  .panel,
+  .open {
+    position: static;
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    max-height: none;
+    padding: 0;
+    overflow: visible;
+    background: transparent;
+    border-bottom: 0;
+    box-shadow: none;
+  }
+
+  .list {
+    display: flex;
+    gap: var(--space-1);
+  }
+
+  .link {
+    min-height: 2.5rem;
+    padding-inline: var(--space-3);
+    font-size: var(--text-sm);
+  }
+}
