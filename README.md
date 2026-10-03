@@ -2,7 +2,7 @@
 
 Personal portfolio built as a full-stack web application: React frontend, Express REST API, PostgreSQL database.
 
-> **Status:** Phase 5 of 22 (about and skills). The site has its frame (header, menu, footer), a home page, an About page and a Skills page; other pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phase 6 of 22 (projects). The site has its frame (header, menu, footer), a home page, About, Skills and Projects pages (list, filters and detail pages); other pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
@@ -21,6 +21,7 @@ Built so far:
 - Home page: hero with name, role, introduction, picture (or initials), "View My Projects", "Contact Me" and "Download CV" buttons, profile links, optional availability badge, core technologies and a closing call to action. Anything that is empty or still a placeholder (CV, picture, availability, profile links) is left out instead of shown broken
 - About page: introduction, picture (or initials), personal highlights and written sections; a section with no content is not shown
 - Skills page: skills grouped by area (Frontend, Backend, Database, Tools, Other) with an optional Familiar / Intermediate / Advanced label and short description per skill, and loading, empty and error states. No percentages
+- Projects page: cards with status, category, year, technologies and GitHub / live demo links; search, category and technology filters (shown from two projects on, kept in the address so a filtered view can be shared); a detail page per project at `/projects/<slug>` with overview, problem, solution, features, technology stack, an architecture diagram, challenges, lessons learned and screenshots. Sections without content are not shown
 - CI: format check, lint, tests and build on every push and pull request
 
 ## Tech Stack
@@ -131,14 +132,16 @@ Personal details live in `shared/siteConfig.json`. Values such as `GITHUB_URL` a
 | `resumeUrl`         | CV: a file in `client/public` such as `/cv.pdf` (downloads), or an `https` address (opens a new tab)  |
 | `email`, `social.*` | Profile links in the hero and footer; only real `https` URLs and a real email are shown               |
 
-### Editing About and Skills content
+### Editing About, Skills and Projects content
 
-Both pages read JSON files in `shared/data/`. Edit the file and the page updates; nothing in the React code needs to change.
+These pages read JSON files in `shared/data/`. Edit the file and the page updates; nothing in the React code needs to change.
 
 - `about.json`: `paragraphs` (extra biography paragraphs under the introduction), `highlights` (short labels) and `sections`. Each section is `{ "id", "title", "paragraphs": [], "items": [] }`; add sections such as Background, Career goals or Approach. Sections with no text are not shown.
 - `skills.json`: categories with skills. Each skill has `id`, `name`, `level` (`"familiar"`, `"intermediate"`, `"advanced"` or `null`) and `description`. A skill without a level or description simply shows its name. The "What the levels mean" guide appears as soon as one skill has a level. Only set a level you can stand behind in an interview.
 
-The data shape matches what `GET /api/skills` will return, so Phase 15 replaces the file with the API without changing the page.
+- `projects.json`: a list of projects. Fields: `slug` (lowercase letters, digits and hyphens; it becomes the address `/projects/<slug>`), `title`, `summary`, `description`, `problem`, `solution`, `features` (list), `architecture` (`description` and `layers`, each `{ "name", "detail" }`, shown in order as Frontend, API, Backend, Database or whatever fits), `challenges`, `lessons`, `category`, `status` (`planned`, `in_progress`, `completed` or `archived`), `year`, `technologies` (list of names), `thumbnail` and `screenshots` (`{ "url", "alt", "caption" }`; put image files in `client/public` and use a path such as `/images/shop.png`), `repoUrl` and `demoUrl` (`https` only), `featured`, `published` (`false` hides the project) and `sortOrder`. Text fields are plain text, and a blank line starts a new paragraph. Anything empty is simply not shown, so only fill in what is true.
+
+The data shapes match what `GET /api/skills` and `GET /api/projects` will return, so Phase 15 replaces the files with the API without changing the pages.
 
 ## Screenshots
 

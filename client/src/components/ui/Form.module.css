@@ -53,3 +53,7 @@
 .error + .error {
   margin-top: 0;
 }
+
+.select {
+  cursor: pointer;
+}

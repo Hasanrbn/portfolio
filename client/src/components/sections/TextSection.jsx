@@ -1,8 +1,8 @@
 import { useId } from 'react';
-import styles from './AboutSection.module.css';
+import styles from './TextSection.module.css';
 
-/** A titled block of the About page: paragraphs, a bullet list, or both. Renders nothing when empty. */
-export default function AboutSection({ title, paragraphs = [], items = [] }) {
+/** A titled block of text: paragraphs, a bullet list, or both (used by the About and project pages). Renders nothing when empty. */
+export default function TextSection({ title, paragraphs = [], items = [] }) {
   const headingId = useId();
   const texts = paragraphs.filter((text) => typeof text === 'string' && text.trim() !== '');
   const points = items.filter((text) => typeof text === 'string' && text.trim() !== '');

@@ -1,7 +1,7 @@
 import siteConfig from '@portfolio/shared/siteConfig.json';
 import aboutData from '@portfolio/shared/data/about.json';
 import PageTitle from '../../components/layout/PageTitle.jsx';
-import AboutSection from '../../components/sections/AboutSection.jsx';
+import TextSection from '../../components/sections/TextSection.jsx';
 import Avatar from '../../components/sections/Avatar.jsx';
 import Tag from '../../components/ui/Tag.jsx';
 import { getAvatarSource } from '../../utils/profile.js';
@@ -48,7 +48,7 @@ export default function AboutPage() {
         )}
 
         {(aboutData.sections ?? []).map((section) => (
-          <AboutSection
+          <TextSection
             key={section.id}
             title={section.title}
             paragraphs={section.paragraphs}

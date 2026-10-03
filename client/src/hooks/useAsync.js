@@ -5,7 +5,8 @@ const LOADING = { status: 'loading', data: null, error: null };
 /**
  * Runs an async function when the component mounts and reports its progress as
  * { status: 'loading' | 'success' | 'error', data, error, retry }.
- * `load` must be a stable reference (a module-level function or one wrapped in useCallback).
+ * `load` must be a stable reference (a module-level function or one wrapped in useCallback);
+ * a new reference starts a new request.
  * A result that arrives after the component has left, or after a newer attempt started, is ignored.
  */
 export default function useAsync(load) {
@@ -14,6 +15,9 @@ export default function useAsync(load) {
 
   useEffect(() => {
     let ignore = false;
+    // Starting again (a retry, or a new `load` such as another project's page) must not keep
+    // showing the previous result. On the very first run the state is already LOADING.
+    setState(LOADING);
 
     load().then(
       (data) => {

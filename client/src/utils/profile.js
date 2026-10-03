@@ -20,9 +20,19 @@ function isUsableAddress(value) {
   return isSitePath(value) || (typeof value === 'string' && isHttpsUrl(value));
 }
 
+/** The value when it is an https address, otherwise null. Used for links to other sites. */
+export function getHttpsUrl(value) {
+  return typeof value === 'string' && isHttpsUrl(value) ? value : null;
+}
+
+/** Image address (a file on this site or an https address), or null when unusable. */
+export function getImageSource(value) {
+  return isUsableAddress(value) ? value : null;
+}
+
 /** Picture address from the config, or null when none is set. */
 export function getAvatarSource(value) {
-  return isUsableAddress(value) ? value : null;
+  return getImageSource(value);
 }
 
 /**

@@ -1,0 +1,61 @@
+{
+  "projects": [
+    {
+      "slug": "portfolio-website",
+      "title": "Portfolio Website",
+      "summary": "The website you are looking at: a full-stack portfolio with a React front end and an Express API, built step by step with automated tests, accessibility checks and CI.",
+      "description": "A personal portfolio built as a real full-stack application instead of a static page.\n\nThe front end is a React single-page app with its own design system, light and dark themes and an accessible page frame. The server is an Express application that validates its configuration on start and answers with one consistent JSON format.",
+      "problem": "A portfolio should show engineering ability, not only list it. A static page of links cannot show how its author handles structure, testing, accessibility or security.",
+      "solution": "Build the portfolio itself as the proof: a monorepo with a React client, an Express server and shared data, checked on every push by automated formatting, linting, tests and a production build.",
+      "features": [
+        "Light, dark and system themes, applied before the first paint so the page never flashes",
+        "Keyboard-friendly layout: skip link, a menu that works without a mouse, and focus moved to each new page's heading",
+        "Colour contrast of every design token checked against WCAG AA by automated tests",
+        "Skills and projects read through a service layer, ready to switch from seed files to the API",
+        "Continuous integration that runs the format check, lint, tests and build on every push"
+      ],
+      "architecture": {
+        "description": "The browser loads a React single-page app. The app reads its data through a service layer, which today reads seed files and will call the REST API. In production the Express server answers API requests and serves the built client.",
+        "layers": [
+          {
+            "name": "Frontend",
+            "detail": "React single-page app built with Vite"
+          },
+          {
+            "name": "API",
+            "detail": "REST endpoints returning JSON (health check today, content endpoints planned)"
+          },
+          {
+            "name": "Backend",
+            "detail": "Express server with validation and central error handling"
+          },
+          {
+            "name": "Database",
+            "detail": "PostgreSQL (planned)"
+          }
+        ]
+      },
+      "challenges": "",
+      "lessons": "",
+      "category": "Full-Stack",
+      "status": "in_progress",
+      "year": 2026,
+      "thumbnail": null,
+      "repoUrl": "",
+      "demoUrl": "",
+      "technologies": [
+        "JavaScript",
+        "React",
+        "React Router",
+        "Vite",
+        "Node.js",
+        "Express",
+        "Vitest"
+      ],
+      "screenshots": [],
+      "featured": true,
+      "published": true,
+      "sortOrder": 1
+    }
+  ]
+}

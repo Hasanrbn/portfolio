@@ -6,7 +6,9 @@ import Spinner from '../components/ui/Spinner.jsx';
 import ComingSoonPage from '../pages/public/ComingSoonPage.jsx';
 import AboutPage from '../pages/public/AboutPage.jsx';
 import HomePage from '../pages/public/HomePage.jsx';
+import ProjectDetailPage from '../pages/public/ProjectDetailPage.jsx';
 import NotFoundPage from '../pages/public/NotFoundPage.jsx';
+import ProjectsPage from '../pages/public/ProjectsPage.jsx';
 import SkillsPage from '../pages/public/SkillsPage.jsx';
 
 // The design review page is development-only. Because the condition is a build-time
@@ -18,6 +20,7 @@ const DesignPage = import.meta.env.DEV ? lazy(() => import('../pages/dev/DesignP
 const BUILT_PAGES = [
   { to: '/about', element: <AboutPage /> },
   { to: '/skills', element: <SkillsPage /> },
+  { to: '/projects', element: <ProjectsPage /> },
 ];
 const BUILT_PATHS = new Set(BUILT_PAGES.map((page) => page.to));
 const COMING_SOON_PAGES = [...NAV_ITEMS, RESUME_ITEM].filter(
@@ -32,6 +35,7 @@ export default function App() {
         {BUILT_PAGES.map((page) => (
           <Route key={page.to} path={page.to} element={page.element} />
         ))}
+        <Route path="projects/:slug" element={<ProjectDetailPage />} />
         {COMING_SOON_PAGES.map((page) => (
           <Route key={page.to} path={page.to} element={<ComingSoonPage title={page.label} />} />
         ))}

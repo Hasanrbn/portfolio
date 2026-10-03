@@ -5,7 +5,7 @@ import siteConfig from '@portfolio/shared/siteConfig.json';
 import aboutData from '@portfolio/shared/data/about.json';
 import App from '../src/app/App.jsx';
 import ThemeProvider from '../src/app/ThemeProvider.jsx';
-import AboutSection from '../src/components/sections/AboutSection.jsx';
+import TextSection from '../src/components/sections/TextSection.jsx';
 
 function renderAbout() {
   return render(
@@ -59,10 +59,10 @@ describe('about page', () => {
   });
 });
 
-describe('AboutSection', () => {
+describe('TextSection', () => {
   it('shows paragraphs and bullet points', () => {
     render(
-      <AboutSection title="Approach" paragraphs={['I write tests.']} items={['Small steps']} />,
+      <TextSection title="Approach" paragraphs={['I write tests.']} items={['Small steps']} />,
     );
 
     expect(screen.getByRole('heading', { name: 'Approach' })).toBeInTheDocument();
@@ -72,7 +72,7 @@ describe('AboutSection', () => {
 
   it('renders nothing when there is no content to show', () => {
     const { container } = render(
-      <AboutSection title="Career goals" paragraphs={['', '  ']} items={[]} />,
+      <TextSection title="Career goals" paragraphs={['', '  ']} items={[]} />,
     );
 
     expect(container).toBeEmptyDOMElement();
