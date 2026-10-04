@@ -2,7 +2,7 @@
 
 Personal portfolio built as a full-stack web application: React frontend, Express REST API, PostgreSQL database.
 
-> **Status:** Phase 9 of 22 (blog). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience and Education pages; other pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phase 10 of 22 (contact). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience, Education, Certificates, Blog and Contact pages; pages that are not built yet (Resume) show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
@@ -25,6 +25,7 @@ Built so far:
 - Experience page: a timeline (newest first) of roles, internships, academic or personal projects, with dates, type, description, responsibilities and technologies. Education page: institution, programme, years, relevant subjects and achievements. Both show an honest empty state until real entries are added, and nothing is invented
 - Certificates page: a gallery with the title, issuer, date, category, credential ID, a preview (image or PDF symbol), a link to the file and a link to the issuer's verification page. Filters by issuer, year and category (shown from two certificates on, kept in the address). Empty until real certificates are added; nothing is invented
 - Blog: articles written as markdown files, with a list (search, category and tag filters, six per page, kept in the address) and an article page with date, reading time, a table of contents for longer articles, related articles, share buttons and a safe markdown renderer (raw HTML is never rendered, unsafe links and pictures are dropped). Empty until you add an article
+- Contact: a form (name, email, subject, message) at `/contact`, checked in the browser for quick feedback and again on the server, which is the check that counts. Errors appear next to each field and keyboard focus moves to the first one; success ("Your message has been sent.") and failure ("Something went wrong.") are announced to screen readers; what the visitor typed is kept when sending fails. Spam protection: a hidden trap field, a limit of five messages per hour per visitor, length limits and no line breaks in single-line fields. Messages are saved on the server, and optionally emailed to you (see below). Profile links appear beside the form once real ones are set
 - CI: format check, lint, tests and build on every push and pull request
 
 ## Tech Stack
@@ -56,13 +57,17 @@ Edit `.env` and replace the placeholder database password.
 
 All variables are listed in `.env.example`. The server validates them on startup and refuses to start if one is invalid.
 
-| Variable                              | Required           | Description                                   |
-| ------------------------------------- | ------------------ | --------------------------------------------- |
-| `NODE_ENV`                            | No                 | `development` (default), `test`, `production` |
-| `PORT`                                | No                 | Server port, default `3000`                   |
-| `SITE_URL`                            | In production      | Public site URL, used for canonical links     |
-| `DATABASE_URL`                        | From Phase 12      | PostgreSQL connection string                  |
-| `POSTGRES_USER` / `_PASSWORD` / `_DB` | For local database | Read by `docker-compose.yml`                  |
+| Variable                                                                                                        | Required           | Description                                                                 |
+| --------------------------------------------------------------------------------------------------------------- | ------------------ | --------------------------------------------------------------------------- |
+| `NODE_ENV`                                                                                                      | No                 | `development` (default), `test`, `production`                               |
+| `PORT`                                                                                                          | No                 | Server port, default `3000`                                                 |
+| `SITE_URL`                                                                                                      | In production      | Public site URL, used for canonical links                                   |
+| `DATABASE_URL`                                                                                                  | From Phase 12      | PostgreSQL connection string                                                |
+| `POSTGRES_USER` / `_PASSWORD` / `_DB`                                                                           | For local database | Read by `docker-compose.yml`                                                |
+| `TRUST_PROXY_HOPS`                                                                                              | No                 | Reverse proxies in front of the server, default `0`                         |
+| `IP_HASH_SALT`                                                                                                  | No                 | 16+ random characters; stores a hash of the visitor's IP instead of nothing |
+| `CONTACT_STORE_PATH`                                                                                            | No                 | Where messages are saved until Phase 12                                     |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `CONTACT_NOTIFY_TO`, `CONTACT_MAIL_FROM` | No                 | Email notification for new messages; off while `SMTP_HOST` is empty         |
 
 Never commit `.env`. Only `.env.example` belongs in Git.
 
@@ -85,6 +90,14 @@ npm test               # tests in all workspaces
 npm run build          # production build of the client
 ```
 
+## Contact Messages
+
+Until the database arrives (Phase 12), each message is appended as one JSON line to `server/data/contact-messages.jsonl` (created when the first message arrives, readable by the server's user only, ignored by Git). Open it to read messages. The file stops accepting new messages at 5 MB instead of filling the disk. A hosting platform's disk is often temporary, so for the live site rely on email notification until messages move into PostgreSQL.
+
+To get an email for every new message, set the `SMTP_*` and `CONTACT_NOTIFY_TO` values in `.env`. With Gmail, turn on 2-step verification, create an App Password at https://myaccount.google.com/apppasswords, use `smtp.gmail.com`, port `587`, your address as `SMTP_USER` and the App Password as `SMTP_PASSWORD`. Never use your normal password, and never put these values in Git or in a file other than `.env`. A mail failure never loses a message or shows the visitor an error: the message is already saved, and the failure is logged with an error code only.
+
+Only the visitor's name, email, subject and message are stored. The visitor's IP address is never stored; with `IP_HASH_SALT` set, a salted one-way hash is kept so repeated spam from one source can be noticed. Decide how long you keep messages, and delete old ones.
+
 ## Database Setup
 
 ```bash
@@ -95,9 +108,12 @@ The container listens on `127.0.0.1:5432` only. Tables and migrations are added 
 
 ## API Documentation
 
-| Method | Path       | Description  |
-| ------ | ---------- | ------------ |
-| GET    | `/healthz` | Health check |
+| Method | Path           | Description            |
+| ------ | -------------- | ---------------------- |
+| GET    | `/healthz`     | Health check           |
+| POST   | `/api/contact` | Send a contact message |
+
+`POST /api/contact` takes JSON `{ "name", "email", "subject", "message" }` (plus the hidden `website` trap field, which must stay empty). It answers `201` with `{ "success": true, "data": { "message": "Your message has been sent." } }`; `422` with `{ "success": false, "message": "...", "errors": [{ "field", "message" }] }` for invalid fields; `429` after five messages per hour from one address; and a generic `500` otherwise. Limits: name 100, email 254, subject 150, message 10 to 2000 characters.
 
 Responses use a consistent envelope: `{ "success": true, "data": {} }` on success and `{ "success": false, "message": "..." }` on error. The full API is documented in Phase 15.
 

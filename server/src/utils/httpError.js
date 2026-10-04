@@ -11,3 +11,18 @@ export class HttpError extends Error {
     this.expose = true;
   }
 }
+
+/**
+ * 422 with one message per invalid field, e.g. `{ email: 'Enter a valid email address.' }`.
+ * The messages come from our own validators, so they are safe to return.
+ */
+export class ValidationError extends HttpError {
+  constructor(fieldErrors, message = 'Please check the highlighted fields.') {
+    super(422, message);
+    this.name = 'ValidationError';
+    this.errors = Object.entries(fieldErrors).map(([field, fieldMessage]) => ({
+      field,
+      message: fieldMessage,
+    }));
+  }
+}
