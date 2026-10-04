@@ -2,7 +2,7 @@
 
 Personal portfolio built as a full-stack web application: React frontend, Express REST API, PostgreSQL database.
 
-> **Status:** Phase 8 of 22 (certificates). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience and Education pages; other pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phase 9 of 22 (blog). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience and Education pages; other pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
@@ -24,6 +24,7 @@ Built so far:
 - Projects page: cards with status, category, year, technologies and GitHub / live demo links; search, category and technology filters (shown from two projects on, kept in the address so a filtered view can be shared); a detail page per project at `/projects/<slug>` with overview, problem, solution, features, technology stack, an architecture diagram, challenges, lessons learned and screenshots. Sections without content are not shown
 - Experience page: a timeline (newest first) of roles, internships, academic or personal projects, with dates, type, description, responsibilities and technologies. Education page: institution, programme, years, relevant subjects and achievements. Both show an honest empty state until real entries are added, and nothing is invented
 - Certificates page: a gallery with the title, issuer, date, category, credential ID, a preview (image or PDF symbol), a link to the file and a link to the issuer's verification page. Filters by issuer, year and category (shown from two certificates on, kept in the address). Empty until real certificates are added; nothing is invented
+- Blog: articles written as markdown files, with a list (search, category and tag filters, six per page, kept in the address) and an article page with date, reading time, a table of contents for longer articles, related articles, share buttons and a safe markdown renderer (raw HTML is never rendered, unsafe links and pictures are dropped). Empty until you add an article
 - CI: format check, lint, tests and build on every push and pull request
 
 ## Tech Stack
@@ -164,6 +165,34 @@ These pages read JSON files in `shared/data/`. Edit the file and the page update
 - `certificates.json`: `{ "certificates": [] }`. Each entry: `id` (unique), `title`, `issuer`, `issuedDate` (`"YYYY-MM"`), `category`, `credentialId` and `credentialUrl` (`https` only), `file` (`{ "url", "alt" }`), `visible` and `sortOrder`. Put the image or PDF in `client/public/certificates/` and use a path such as `/certificates/web-basics.pdf`; a `.pdf` file is shown as a PDF symbol and opens in a new tab, anything else is shown as a picture. Give each picture an `alt` that describes it (without one, a generic text naming the certificate and issuer is used). Add only certificates you actually earned, and keep personal details such as a home address out of the files, because they are public.
 
 The data shapes match what `GET /api/skills`, `GET /api/projects`, `GET /api/experiences`, `GET /api/education` and `GET /api/certificates` will return, so Phase 15 replaces the files with the API without changing the pages.
+
+### Writing blog articles
+
+Each article is one markdown file in `shared/data/posts/`. The file name is the address: `shared/data/posts/my-first-post.md` becomes `/blog/my-first-post` (lowercase letters, digits and hyphens). Start the file with a header between two `---` lines:
+
+```markdown
+---
+title: My first post
+excerpt: One or two sentences shown in the list.
+category: Web
+tags: React, Vite
+publishedAt: 2026-10-05
+updatedAt: 2026-10-12
+coverImage: /images/my-first-post.png
+coverAlt: Describe the picture for people who cannot see it
+---
+
+## A section
+
+Text with **bold**, `code`, lists and [links](https://example.org).
+```
+
+- Required: `title` and `publishedAt` (`YYYY-MM-DD`). Files without them, with a repeated address or with an empty text are skipped. `updatedAt`, `excerpt`, `category`, `tags` (separated by commas), `coverImage` (a path in `client/public` or an `https` address), `coverAlt` and `slug` (to override the file name) are optional.
+- The header supports plain `key: value` lines only. Put quotes around a value if you like.
+- In the text, `#` is shown as a second-level heading, because the article title is the page's only top-level heading. `##` and `###` headings make the table of contents, which appears from three headings on.
+- Reading time is worked out from the word count (200 words a minute).
+- Everything in `shared/data/posts/` is published when the site is built. Keep unfinished writing in another folder, for example `shared/data/drafts/`, which the site does not read.
+- Raw HTML in an article is ignored, `javascript:` links are removed, plain `http://` links are shown as text and `https://` links open in a new tab. Tables and strikethrough (GitHub-style markdown) are not supported.
 
 ## Screenshots
 

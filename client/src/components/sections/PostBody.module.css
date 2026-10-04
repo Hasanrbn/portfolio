@@ -1,0 +1,5 @@
+.body {
+  display: grid;
+  gap: var(--space-8);
+  max-width: 44rem;
+}

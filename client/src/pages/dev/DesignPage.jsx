@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import PostBody from '../../components/sections/PostBody.jsx';
+import PostCard from '../../components/sections/PostCard.jsx';
 import CertificateCard from '../../components/sections/CertificateCard.jsx';
 import EducationItem from '../../components/sections/EducationItem.jsx';
 import Timeline from '../../components/sections/Timeline.jsx';
@@ -102,6 +104,41 @@ const SAMPLE_CERTIFICATE = {
   credentialUrl: 'https://example.com/verify',
   file: { url: '/sample.pdf', alt: '', isPdf: true },
 };
+
+const SAMPLE_POST = {
+  slug: 'sample-article',
+  title: 'Sample article',
+  excerpt: 'An invented article, to review how blog cards look.',
+  category: 'Web',
+  tags: ['React', 'Vite'],
+  publishedAt: '2025-03-09',
+  updatedAt: null,
+  cover: null,
+  readingTime: 3,
+};
+
+const SAMPLE_MARKDOWN = `## First section
+
+A paragraph with \`inline code\`, **bold text** and a [link to another site](https://example.org).
+
+- A list item
+- Another list item
+
+> A quotation, to review how it looks.
+
+### A sub-section
+
+\`\`\`js
+const sample = 'A code block that is wide enough to need sideways scrolling on a small screen, to review that';
+\`\`\`
+
+## Second section
+
+More text.
+
+## Third section
+
+Even more text.`;
 
 const TEXT_SIZES = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl'];
 const SPACING_STEPS = [1, 2, 3, 4, 6, 8, 12, 16, 24];
@@ -277,6 +314,16 @@ export default function DesignPage() {
         <ul role="list" className={styles.stack}>
           <CertificateCard certificate={SAMPLE_CERTIFICATE} headingAs="h3" />
         </ul>
+      </section>
+
+      <section className={styles.section} aria-labelledby="article-heading">
+        <h2 id="article-heading">Blog card and article text (sample data)</h2>
+        <p>Invented samples, to review the layout. Nothing here is shown on the site.</p>
+        {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
+        <ul role="list" className={styles.stack}>
+          <PostCard post={SAMPLE_POST} headingAs="h3" />
+        </ul>
+        <PostBody content={SAMPLE_MARKDOWN} />
       </section>
 
       <section className={styles.section} aria-labelledby="states-heading">

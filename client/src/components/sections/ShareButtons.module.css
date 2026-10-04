@@ -1,0 +1,19 @@
+.heading {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-xl);
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.status {
+  min-height: 1.5em;
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}

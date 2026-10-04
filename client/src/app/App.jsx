@@ -5,6 +5,8 @@ import { NAV_ITEMS, RESUME_ITEM } from './siteNavigation.js';
 import Spinner from '../components/ui/Spinner.jsx';
 import ComingSoonPage from '../pages/public/ComingSoonPage.jsx';
 import AboutPage from '../pages/public/AboutPage.jsx';
+import BlogPage from '../pages/public/BlogPage.jsx';
+import BlogPostPage from '../pages/public/BlogPostPage.jsx';
 import CertificatesPage from '../pages/public/CertificatesPage.jsx';
 import EducationPage from '../pages/public/EducationPage.jsx';
 import ExperiencePage from '../pages/public/ExperiencePage.jsx';
@@ -27,6 +29,7 @@ const BUILT_PAGES = [
   { to: '/experience', element: <ExperiencePage /> },
   { to: '/education', element: <EducationPage /> },
   { to: '/certificates', element: <CertificatesPage /> },
+  { to: '/blog', element: <BlogPage /> },
 ];
 const BUILT_PATHS = new Set(BUILT_PAGES.map((page) => page.to));
 const COMING_SOON_PAGES = [...NAV_ITEMS, RESUME_ITEM].filter(
@@ -42,6 +45,7 @@ export default function App() {
           <Route key={page.to} path={page.to} element={page.element} />
         ))}
         <Route path="projects/:slug" element={<ProjectDetailPage />} />
+        <Route path="blog/:slug" element={<BlogPostPage />} />
         {COMING_SOON_PAGES.map((page) => (
           <Route key={page.to} path={page.to} element={<ComingSoonPage title={page.label} />} />
         ))}

@@ -1,0 +1,79 @@
+.content {
+  max-width: 44rem;
+  font-size: var(--text-lg);
+  overflow-wrap: break-word;
+}
+
+.content > * + * {
+  margin-top: var(--space-4);
+}
+
+.content h2 {
+  margin-top: var(--space-12);
+  font-size: var(--text-2xl);
+}
+
+.content h3 {
+  margin-top: var(--space-8);
+  font-size: var(--text-xl);
+}
+
+.content h4,
+.content h5,
+.content h6 {
+  margin-top: var(--space-6);
+  font-size: var(--text-lg);
+}
+
+.content ul,
+.content ol {
+  display: grid;
+  gap: var(--space-2);
+  padding-left: var(--space-6);
+}
+
+.content ul {
+  list-style: disc;
+}
+
+.content ol {
+  list-style: decimal;
+}
+
+.content li::marker {
+  color: var(--color-accent-text);
+}
+
+.content blockquote {
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--color-accent);
+  color: var(--color-text-muted);
+}
+
+.content pre {
+  padding: var(--space-4);
+  overflow-x: auto;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+/* Code inside a block needs no chip of its own. */
+.content pre code {
+  padding: 0;
+  background: none;
+}
+
+.content img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.content hr {
+  border: 0;
+  border-top: 1px solid var(--color-border);
+}
