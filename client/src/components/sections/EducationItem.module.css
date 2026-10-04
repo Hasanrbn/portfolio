@@ -1,0 +1,49 @@
+.card {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.years {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.program {
+  font-size: var(--text-xl);
+}
+
+.institution {
+  color: var(--color-accent-text);
+  font-weight: 600;
+}
+
+.group {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.achievements {
+  display: grid;
+  gap: var(--space-1);
+  padding-left: var(--space-6);
+  list-style: disc;
+}
+
+.achievements li::marker {
+  color: var(--color-accent-text);
+}

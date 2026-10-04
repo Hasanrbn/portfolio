@@ -1,12 +1,9 @@
 import projectsData from '@portfolio/shared/data/projects.json';
 import { getHttpsUrl, getImageSource } from '../utils/profile.js';
 import { isProjectStatus } from '../utils/projectStatus.js';
+import { isText, text, textList } from './normalize.js';
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-
-const isText = (value) => typeof value === 'string' && value.trim() !== '';
-const text = (value) => (isText(value) ? value.trim() : '');
-const textList = (value) => (Array.isArray(value) ? value.filter(isText).map((v) => v.trim()) : []);
 
 function normalizePicture(picture, title, fallbackAlt) {
   const url = getImageSource(picture?.url);

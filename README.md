@@ -2,7 +2,7 @@
 
 Personal portfolio built as a full-stack web application: React frontend, Express REST API, PostgreSQL database.
 
-> **Status:** Phase 6 of 22 (projects). The site has its frame (header, menu, footer), a home page, About, Skills and Projects pages (list, filters and detail pages); other pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phase 7 of 22 (experience and education). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience and Education pages; other pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
@@ -22,6 +22,7 @@ Built so far:
 - About page: introduction, picture (or initials), personal highlights and written sections; a section with no content is not shown
 - Skills page: skills grouped by area (Frontend, Backend, Database, Tools, Other) with an optional Familiar / Intermediate / Advanced label and short description per skill, and loading, empty and error states. No percentages
 - Projects page: cards with status, category, year, technologies and GitHub / live demo links; search, category and technology filters (shown from two projects on, kept in the address so a filtered view can be shared); a detail page per project at `/projects/<slug>` with overview, problem, solution, features, technology stack, an architecture diagram, challenges, lessons learned and screenshots. Sections without content are not shown
+- Experience page: a timeline (newest first) of roles, internships, academic or personal projects, with dates, type, description, responsibilities and technologies. Education page: institution, programme, years, relevant subjects and achievements. Both show an honest empty state until real entries are added, and nothing is invented
 - CI: format check, lint, tests and build on every push and pull request
 
 ## Tech Stack
@@ -132,7 +133,7 @@ Personal details live in `shared/siteConfig.json`. Values such as `GITHUB_URL` a
 | `resumeUrl`         | CV: a file in `client/public` such as `/cv.pdf` (downloads), or an `https` address (opens a new tab)  |
 | `email`, `social.*` | Profile links in the hero and footer; only real `https` URLs and a real email are shown               |
 
-### Editing About, Skills and Projects content
+### Editing site content
 
 These pages read JSON files in `shared/data/`. Edit the file and the page updates; nothing in the React code needs to change.
 
@@ -141,7 +142,25 @@ These pages read JSON files in `shared/data/`. Edit the file and the page update
 
 - `projects.json`: a list of projects. Fields: `slug` (lowercase letters, digits and hyphens; it becomes the address `/projects/<slug>`), `title`, `summary`, `description`, `problem`, `solution`, `features` (list), `architecture` (`description` and `layers`, each `{ "name", "detail" }`, shown in order as Frontend, API, Backend, Database or whatever fits), `challenges`, `lessons`, `category`, `status` (`planned`, `in_progress`, `completed` or `archived`), `year`, `technologies` (list of names), `thumbnail` and `screenshots` (`{ "url", "alt", "caption" }`; put image files in `client/public` and use a path such as `/images/shop.png`), `repoUrl` and `demoUrl` (`https` only), `featured`, `published` (`false` hides the project) and `sortOrder`. Text fields are plain text, and a blank line starts a new paragraph. Anything empty is simply not shown, so only fill in what is true.
 
-The data shapes match what `GET /api/skills` and `GET /api/projects` will return, so Phase 15 replaces the files with the API without changing the pages.
+- `experiences.json`: `{ "experiences": [] }`. Each entry: `id` (unique), `position`, `organization`, `type` (`employment`, `internship`, `freelance`, `academic`, `personal`, `organization` or `volunteer`), `startDate` and `endDate` (`"YYYY-MM"`; leave `endDate` out or `null` for something current), `description` (a blank line starts a new paragraph), `responsibilities` (list), `technologies` (list), `visible` (`false` hides it) and `sortOrder`. An entry with a missing or impossible date is left out rather than guessed. Without formal work, honest types such as `personal` or `academic` are fine. Example:
+
+  ```json
+  {
+    "id": "portfolio-website",
+    "position": "Full-Stack Developer",
+    "organization": "Personal project: Portfolio Website",
+    "type": "personal",
+    "startDate": "2026-10",
+    "endDate": null,
+    "description": "Building this portfolio as a full-stack application.",
+    "responsibilities": ["Building the React front end", "Setting up the Express server"],
+    "technologies": ["React", "Express"]
+  }
+  ```
+
+- `education.json`: `{ "education": [] }`. Each entry: `id` (unique), `institution`, `program`, `startYear`, `endYear` (numbers; leave `endYear` out or `null` while studying), `subjects` (list), `achievements` (list), `visible` and `sortOrder`. Add only what is true.
+
+The data shapes match what `GET /api/skills`, `GET /api/projects`, `GET /api/experiences` and `GET /api/education` will return, so Phase 15 replaces the files with the API without changing the pages.
 
 ## Screenshots
 

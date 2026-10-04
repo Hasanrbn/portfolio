@@ -5,6 +5,8 @@ import { NAV_ITEMS, RESUME_ITEM } from './siteNavigation.js';
 import Spinner from '../components/ui/Spinner.jsx';
 import ComingSoonPage from '../pages/public/ComingSoonPage.jsx';
 import AboutPage from '../pages/public/AboutPage.jsx';
+import EducationPage from '../pages/public/EducationPage.jsx';
+import ExperiencePage from '../pages/public/ExperiencePage.jsx';
 import HomePage from '../pages/public/HomePage.jsx';
 import ProjectDetailPage from '../pages/public/ProjectDetailPage.jsx';
 import NotFoundPage from '../pages/public/NotFoundPage.jsx';
@@ -21,6 +23,8 @@ const BUILT_PAGES = [
   { to: '/about', element: <AboutPage /> },
   { to: '/skills', element: <SkillsPage /> },
   { to: '/projects', element: <ProjectsPage /> },
+  { to: '/experience', element: <ExperiencePage /> },
+  { to: '/education', element: <EducationPage /> },
 ];
 const BUILT_PATHS = new Set(BUILT_PAGES.map((page) => page.to));
 const COMING_SOON_PAGES = [...NAV_ITEMS, RESUME_ITEM].filter(

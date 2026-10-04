@@ -1,0 +1,19 @@
+/* Shared by the pages that introduce a list of entries (Experience, Education). */
+.lead {
+  max-width: 40rem;
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--text-lg);
+}
+
+.body {
+  margin-top: var(--space-12);
+}
+
+.cards {
+  display: grid;
+  gap: var(--space-6);
+  max-width: 48rem;
+  padding: 0;
+  list-style: none;
+}

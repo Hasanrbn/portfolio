@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import EducationItem from '../../components/sections/EducationItem.jsx';
+import Timeline from '../../components/sections/Timeline.jsx';
 import ThemeToggle from '../../components/layout/ThemeToggle.jsx';
 import PageTitle from '../../components/layout/PageTitle.jsx';
 import Badge from '../../components/ui/Badge.jsx';
@@ -51,6 +53,42 @@ const COLOR_GROUPS = [
     ],
   },
 ];
+
+// Invented sample data, only for reviewing the layout here. The real pages read shared/data.
+const SAMPLE_EXPERIENCES = [
+  {
+    id: 'sample-1',
+    position: 'Sample role (current)',
+    organization: 'Example organisation',
+    type: 'internship',
+    startDate: '2025-03',
+    endDate: null,
+    description: 'Sample description of what this entry is about.',
+    responsibilities: ['A sample responsibility', 'Another sample responsibility'],
+    technologies: ['React', 'Node.js'],
+  },
+  {
+    id: 'sample-2',
+    position: 'Sample role (finished)',
+    organization: 'Another example',
+    type: 'academic',
+    startDate: '2024-01',
+    endDate: '2024-06',
+    description: '',
+    responsibilities: [],
+    technologies: [],
+  },
+];
+
+const SAMPLE_EDUCATION = {
+  id: 'sample-edu',
+  institution: 'Example University',
+  program: 'Sample programme',
+  startYear: 2022,
+  endYear: null,
+  subjects: ['Sample subject', 'Another subject'],
+  achievements: ['A sample achievement'],
+};
 
 const TEXT_SIZES = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl'];
 const SPACING_STEPS = [1, 2, 3, 4, 6, 8, 12, 16, 24];
@@ -205,6 +243,18 @@ export default function DesignPage() {
             {(controlProps) => <Textarea name="message" {...controlProps} />}
           </FormField>
         </div>
+      </section>
+
+      <section className={styles.section} aria-labelledby="timeline-heading">
+        <h2 id="timeline-heading">Timeline and education (sample data)</h2>
+        <p>
+          The names below are invented, to review the layout. Nothing here is shown on the site.
+        </p>
+        <Timeline experiences={SAMPLE_EXPERIENCES} headingAs="h3" />
+        {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
+        <ul role="list" className={styles.stack}>
+          <EducationItem education={SAMPLE_EDUCATION} headingAs="h3" />
+        </ul>
       </section>
 
       <section className={styles.section} aria-labelledby="states-heading">
