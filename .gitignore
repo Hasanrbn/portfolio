@@ -8,6 +8,9 @@ node_modules/
 *.pem
 *.key
 
+# Local data (contact messages saved before the database exists)
+server/data/
+
 # Build output
 dist/
 build/

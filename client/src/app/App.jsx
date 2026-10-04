@@ -8,6 +8,7 @@ import AboutPage from '../pages/public/AboutPage.jsx';
 import BlogPage from '../pages/public/BlogPage.jsx';
 import BlogPostPage from '../pages/public/BlogPostPage.jsx';
 import CertificatesPage from '../pages/public/CertificatesPage.jsx';
+import ContactPage from '../pages/public/ContactPage.jsx';
 import EducationPage from '../pages/public/EducationPage.jsx';
 import ExperiencePage from '../pages/public/ExperiencePage.jsx';
 import HomePage from '../pages/public/HomePage.jsx';
@@ -30,6 +31,7 @@ const BUILT_PAGES = [
   { to: '/education', element: <EducationPage /> },
   { to: '/certificates', element: <CertificatesPage /> },
   { to: '/blog', element: <BlogPage /> },
+  { to: '/contact', element: <ContactPage /> },
 ];
 const BUILT_PATHS = new Set(BUILT_PAGES.map((page) => page.to));
 const COMING_SOON_PAGES = [...NAV_ITEMS, RESUME_ITEM].filter(

@@ -28,8 +28,11 @@ export function createErrorHandler(logger) {
       return res.status(500).json({ success: false, message: GENERIC_MESSAGE });
     }
 
-    return res
-      .status(status)
-      .json({ success: false, message: BODY_PARSER_MESSAGES[err.type] ?? err.message });
+    const body = { success: false, message: BODY_PARSER_MESSAGES[err.type] ?? err.message };
+    if (Array.isArray(err.errors)) {
+      body.errors = err.errors;
+    }
+
+    return res.status(status).json(body);
   };
 }

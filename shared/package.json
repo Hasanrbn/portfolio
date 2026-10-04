@@ -6,6 +6,7 @@
   "description": "Data and schemas shared by client and server",
   "exports": {
     "./siteConfig.json": "./siteConfig.json",
+    "./contact.js": "./contact.js",
     "./data/skills.json": "./data/skills.json",
     "./data/about.json": "./data/about.json",
     "./data/projects.json": "./data/projects.json",

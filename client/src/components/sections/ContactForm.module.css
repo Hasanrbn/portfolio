@@ -1,0 +1,45 @@
+.form {
+  display: grid;
+  gap: var(--space-6);
+  width: 100%;
+}
+
+.note {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.actions {
+  display: flex;
+}
+
+.feedback:empty {
+  display: none;
+}
+
+.success,
+.failure {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.success {
+  background: var(--color-success-subtle);
+  color: var(--color-success-text);
+}
+
+.failure {
+  background: var(--color-danger-subtle);
+  color: var(--color-danger-text);
+}
+
+/* Off-screen rather than display:none, because some bots skip fields that are not rendered. */
+.trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
