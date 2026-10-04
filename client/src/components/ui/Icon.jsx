@@ -13,6 +13,12 @@ const ICON_PATHS = {
     </>
   ),
   'arrow-left': <path d="m12 19-7-7 7-7M19 12H5" />,
+  file: (
+    <>
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z" />
+      <path d="M14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8" />
+    </>
+  ),
   menu: <path d="M4 6h16M4 12h16M4 18h16" />,
   close: <path d="M18 6 6 18M6 6l12 12" />,
   mail: (

@@ -2,7 +2,7 @@
 
 Personal portfolio built as a full-stack web application: React frontend, Express REST API, PostgreSQL database.
 
-> **Status:** Phase 7 of 22 (experience and education). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience and Education pages; other pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phase 8 of 22 (certificates). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience and Education pages; other pages that are not built yet show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
@@ -23,6 +23,7 @@ Built so far:
 - Skills page: skills grouped by area (Frontend, Backend, Database, Tools, Other) with an optional Familiar / Intermediate / Advanced label and short description per skill, and loading, empty and error states. No percentages
 - Projects page: cards with status, category, year, technologies and GitHub / live demo links; search, category and technology filters (shown from two projects on, kept in the address so a filtered view can be shared); a detail page per project at `/projects/<slug>` with overview, problem, solution, features, technology stack, an architecture diagram, challenges, lessons learned and screenshots. Sections without content are not shown
 - Experience page: a timeline (newest first) of roles, internships, academic or personal projects, with dates, type, description, responsibilities and technologies. Education page: institution, programme, years, relevant subjects and achievements. Both show an honest empty state until real entries are added, and nothing is invented
+- Certificates page: a gallery with the title, issuer, date, category, credential ID, a preview (image or PDF symbol), a link to the file and a link to the issuer's verification page. Filters by issuer, year and category (shown from two certificates on, kept in the address). Empty until real certificates are added; nothing is invented
 - CI: format check, lint, tests and build on every push and pull request
 
 ## Tech Stack
@@ -160,7 +161,9 @@ These pages read JSON files in `shared/data/`. Edit the file and the page update
 
 - `education.json`: `{ "education": [] }`. Each entry: `id` (unique), `institution`, `program`, `startYear`, `endYear` (numbers; leave `endYear` out or `null` while studying), `subjects` (list), `achievements` (list), `visible` and `sortOrder`. Add only what is true.
 
-The data shapes match what `GET /api/skills`, `GET /api/projects`, `GET /api/experiences` and `GET /api/education` will return, so Phase 15 replaces the files with the API without changing the pages.
+- `certificates.json`: `{ "certificates": [] }`. Each entry: `id` (unique), `title`, `issuer`, `issuedDate` (`"YYYY-MM"`), `category`, `credentialId` and `credentialUrl` (`https` only), `file` (`{ "url", "alt" }`), `visible` and `sortOrder`. Put the image or PDF in `client/public/certificates/` and use a path such as `/certificates/web-basics.pdf`; a `.pdf` file is shown as a PDF symbol and opens in a new tab, anything else is shown as a picture. Give each picture an `alt` that describes it (without one, a generic text naming the certificate and issuer is used). Add only certificates you actually earned, and keep personal details such as a home address out of the files, because they are public.
+
+The data shapes match what `GET /api/skills`, `GET /api/projects`, `GET /api/experiences`, `GET /api/education` and `GET /api/certificates` will return, so Phase 15 replaces the files with the API without changing the pages.
 
 ## Screenshots
 

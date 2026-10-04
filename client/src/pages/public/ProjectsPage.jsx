@@ -1,4 +1,3 @@
-import { useSearchParams } from 'react-router';
 import PageTitle from '../../components/layout/PageTitle.jsx';
 import ProjectCard from '../../components/sections/ProjectCard.jsx';
 import ProjectFilters from '../../components/sections/ProjectFilters.jsx';
@@ -7,6 +6,7 @@ import EmptyState from '../../components/ui/EmptyState.jsx';
 import ErrorState from '../../components/ui/ErrorState.jsx';
 import Skeleton from '../../components/ui/Skeleton.jsx';
 import useAsync from '../../hooks/useAsync.js';
+import useUrlFilters from '../../hooks/useUrlFilters.js';
 import { filterProjects, getFilterOptions, getProjects } from '../../services/projectsService.js';
 import styles from './ProjectsPage.module.css';
 
@@ -37,38 +37,18 @@ function resultText(shown, total) {
 
 export default function ProjectsPage() {
   const { status, data: projects, retry } = useAsync(getProjects);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { requested, setFilter, clearFilters } = useUrlFilters(['q', 'category', 'tech']);
 
   const showFilters = status === 'success' && projects.length >= MIN_PROJECTS_FOR_FILTERS;
   const options = showFilters ? getFilterOptions(projects) : { categories: [], technologies: [] };
 
   // Values come from the address, so they can be anything. A category or technology that does
   // not exist is ignored instead of hiding every project.
-  const requested = {
-    q: searchParams.get('q') ?? '',
-    category: searchParams.get('category') ?? '',
-    tech: searchParams.get('tech') ?? '',
-  };
   const values = {
     q: requested.q,
     category: options.categories.includes(requested.category) ? requested.category : '',
     tech: options.technologies.includes(requested.tech) ? requested.tech : '',
   };
-
-  function changeFilter(name, value) {
-    const next = new URLSearchParams(searchParams);
-    if (value) {
-      next.set(name, value);
-    } else {
-      next.delete(name);
-    }
-    // Replace, so each keystroke does not add a history entry the Back button has to undo.
-    setSearchParams(next, { replace: true });
-  }
-
-  function clearFilters() {
-    setSearchParams(new URLSearchParams(), { replace: true });
-  }
 
   const visible =
     status === 'success' ? (showFilters ? filterProjects(projects, values) : projects) : [];
@@ -104,7 +84,7 @@ export default function ProjectsPage() {
                 values={values}
                 categories={options.categories}
                 technologies={options.technologies}
-                onChange={changeFilter}
+                onChange={setFilter}
                 onClear={clearFilters}
                 resultText={resultText(visible.length, projects.length)}
               />

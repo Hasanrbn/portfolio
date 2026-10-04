@@ -5,6 +5,7 @@ import { NAV_ITEMS, RESUME_ITEM } from './siteNavigation.js';
 import Spinner from '../components/ui/Spinner.jsx';
 import ComingSoonPage from '../pages/public/ComingSoonPage.jsx';
 import AboutPage from '../pages/public/AboutPage.jsx';
+import CertificatesPage from '../pages/public/CertificatesPage.jsx';
 import EducationPage from '../pages/public/EducationPage.jsx';
 import ExperiencePage from '../pages/public/ExperiencePage.jsx';
 import HomePage from '../pages/public/HomePage.jsx';
@@ -25,6 +26,7 @@ const BUILT_PAGES = [
   { to: '/projects', element: <ProjectsPage /> },
   { to: '/experience', element: <ExperiencePage /> },
   { to: '/education', element: <EducationPage /> },
+  { to: '/certificates', element: <CertificatesPage /> },
 ];
 const BUILT_PATHS = new Set(BUILT_PAGES.map((page) => page.to));
 const COMING_SOON_PAGES = [...NAV_ITEMS, RESUME_ITEM].filter(

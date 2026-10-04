@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import CertificateCard from '../../components/sections/CertificateCard.jsx';
 import EducationItem from '../../components/sections/EducationItem.jsx';
 import Timeline from '../../components/sections/Timeline.jsx';
 import ThemeToggle from '../../components/layout/ThemeToggle.jsx';
@@ -88,6 +89,18 @@ const SAMPLE_EDUCATION = {
   endYear: null,
   subjects: ['Sample subject', 'Another subject'],
   achievements: ['A sample achievement'],
+};
+
+const SAMPLE_CERTIFICATE = {
+  id: 'sample-cert',
+  title: 'Sample certificate',
+  issuer: 'Example Academy',
+  issuedDate: '2025-03',
+  year: '2025',
+  category: 'Web',
+  credentialId: 'SAMPLE-0000',
+  credentialUrl: 'https://example.com/verify',
+  file: { url: '/sample.pdf', alt: '', isPdf: true },
 };
 
 const TEXT_SIZES = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl'];
@@ -254,6 +267,15 @@ export default function DesignPage() {
         {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
         <ul role="list" className={styles.stack}>
           <EducationItem education={SAMPLE_EDUCATION} headingAs="h3" />
+        </ul>
+      </section>
+
+      <section className={styles.section} aria-labelledby="certificate-heading">
+        <h2 id="certificate-heading">Certificate card (sample data)</h2>
+        <p>Invented sample, to review the layout. Nothing here is shown on the site.</p>
+        {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
+        <ul role="list" className={styles.stack}>
+          <CertificateCard certificate={SAMPLE_CERTIFICATE} headingAs="h3" />
         </ul>
       </section>
 

@@ -10,6 +10,7 @@
     "./data/about.json": "./data/about.json",
     "./data/projects.json": "./data/projects.json",
     "./data/experiences.json": "./data/experiences.json",
-    "./data/education.json": "./data/education.json"
+    "./data/education.json": "./data/education.json",
+    "./data/certificates.json": "./data/certificates.json"
   }
 }

@@ -30,6 +30,11 @@ export function getImageSource(value) {
   return isUsableAddress(value) ? value : null;
 }
 
+/** File address (a file on this site or an https address), for downloads such as a certificate PDF. */
+export function getFileSource(value) {
+  return isUsableAddress(value) ? value : null;
+}
+
 /** Picture address from the config, or null when none is set. */
 export function getAvatarSource(value) {
   return getImageSource(value);
