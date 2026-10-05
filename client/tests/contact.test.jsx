@@ -1,11 +1,12 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import siteConfig from '@portfolio/shared/siteConfig.json';
 import App from '../src/app/App.jsx';
 import ThemeProvider from '../src/app/ThemeProvider.jsx';
 import ContactForm from '../src/components/sections/ContactForm.jsx';
+import { usePlaceholderProfile } from './helpers/profileConfig.js';
 
 const valid = {
   name: 'Ada Lovelace',
@@ -282,15 +283,7 @@ describe('ContactForm', () => {
 });
 
 describe('contact page', () => {
-  const originalConfig = {
-    email: siteConfig.email,
-    social: { ...siteConfig.social },
-  };
-
-  afterEach(() => {
-    siteConfig.email = originalConfig.email;
-    siteConfig.social = { ...originalConfig.social };
-  });
+  usePlaceholderProfile();
 
   function renderContact() {
     return render(

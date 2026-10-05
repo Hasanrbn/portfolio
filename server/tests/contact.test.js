@@ -9,12 +9,10 @@ import {
   createFileContactStore,
   createMemoryContactStore,
 } from '../src/repositories/contactMessages.js';
-import {
-  CONTACT_RATE_LIMIT_MESSAGE,
-  CONTACT_SUCCESS_MESSAGE,
-  HONEYPOT_FIELD,
-  createContactRateLimit,
-} from '../src/routes/contact.js';
+import { CONTACT_RATE_LIMIT_MESSAGE, createContactRateLimit } from '../src/routes/contact.js';
+import { CONTACT_SUCCESS_MESSAGE } from '../src/controllers/contactController.js';
+import { HONEYPOT_FIELD } from '../src/services/contactService.js';
+import { createFakeLogger } from './helpers/logger.js';
 import { createContactNotifier, createNotifierFromEnv } from '../src/services/contactNotifier.js';
 import { hashIp } from '../src/utils/hashIp.js';
 
@@ -26,7 +24,7 @@ const message = {
 };
 
 function buildApp({ envOverrides = {}, store = createMemoryContactStore(), limit } = {}) {
-  const logger = { error: vi.fn() };
+  const logger = createFakeLogger();
   const env = parseEnv({ NODE_ENV: 'test', ...envOverrides });
   const contactRateLimit = limit ? createContactRateLimit({ limit }) : undefined;
   const app = createApp({ env, logger, contactStore: store, contactRateLimit });
@@ -251,7 +249,10 @@ describe('POST /api/contact', () => {
       expect(response.status).toBe(500);
       expect(response.body).toEqual({ success: false, message: 'Something went wrong.' });
       expect(JSON.stringify(response.body)).not.toMatch(/secret/);
-      expect(logger.error).toHaveBeenCalledTimes(1);
+      // The cause is logged once with its stack; the request summary line carries no detail.
+      const unhandled = logger.error.mock.calls.filter(([, text]) => text === 'Unhandled error');
+      expect(unhandled).toHaveLength(1);
+      expect(unhandled[0][0].err.message).toBe('disk exploded at /secret/path');
     });
   });
 
@@ -440,7 +441,7 @@ describe('email notification', () => {
   it('sends one plain-text email per saved message, with the visitor in Reply-To', async () => {
     const sendMail = vi.fn().mockResolvedValue({});
     const notifier = createContactNotifier({ transport: { sendMail }, ...settings });
-    const logger = { error: vi.fn() };
+    const logger = createFakeLogger();
     const app = createApp({
       env: parseEnv({ NODE_ENV: 'test' }),
       logger,
@@ -468,7 +469,7 @@ describe('email notification', () => {
     const sendMail = vi.fn().mockResolvedValue({});
     const app = createApp({
       env: parseEnv({ NODE_ENV: 'test' }),
-      logger: { error: vi.fn() },
+      logger: createFakeLogger(),
       contactNotifier: createContactNotifier({ transport: { sendMail }, ...settings }),
     });
 
@@ -485,7 +486,7 @@ describe('email notification', () => {
     const sendMail = vi
       .fn()
       .mockRejectedValue(Object.assign(new Error(`rejected ${message.email}`), { code: 'EAUTH' }));
-    const logger = { error: vi.fn() };
+    const logger = createFakeLogger();
     const store = createMemoryContactStore();
     const app = createApp({
       env: parseEnv({ NODE_ENV: 'test' }),
@@ -500,15 +501,16 @@ describe('email notification', () => {
     expect(response.status).toBe(201);
     expect(await store.list()).toHaveLength(1);
     expect(logger.error).toHaveBeenCalledTimes(1);
-    expect(logger.error.mock.calls[0].join(' ')).toContain('EAUTH');
-    expect(logger.error.mock.calls[0].join(' ')).not.toContain(message.email);
+    const logged = JSON.stringify(logger.error.mock.calls[0]);
+    expect(logged).toContain('EAUTH');
+    expect(logged).not.toContain(message.email);
   });
 
   it('does not wait for a slow mail server', async () => {
     const sendMail = vi.fn(() => new Promise(() => {}));
     const app = createApp({
       env: parseEnv({ NODE_ENV: 'test' }),
-      logger: { error: vi.fn() },
+      logger: createFakeLogger(),
       contactNotifier: createContactNotifier({ transport: { sendMail }, ...settings }),
     });
 
@@ -521,7 +523,7 @@ describe('email notification', () => {
     const sendMail = vi.fn().mockResolvedValue({});
     const app = createApp({
       env: parseEnv({ NODE_ENV: 'test' }),
-      logger: { error: vi.fn() },
+      logger: createFakeLogger(),
       contactNotifier: createContactNotifier({ transport: { sendMail }, ...settings }),
     });
 

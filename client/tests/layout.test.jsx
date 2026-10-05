@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import siteConfig from '@portfolio/shared/siteConfig.json';
+import { usePlaceholderProfile } from './helpers/profileConfig.js';
 import App from '../src/app/App.jsx';
 import ThemeProvider from '../src/app/ThemeProvider.jsx';
 import { NAV_ITEMS } from '../src/app/siteNavigation.js';
@@ -179,6 +180,8 @@ describe('menu on small screens', () => {
 });
 
 describe('footer', () => {
+  usePlaceholderProfile();
+
   it('shows the copyright, the pages and what the site is built with', () => {
     renderApp();
     const footer = screen.getByRole('contentinfo');

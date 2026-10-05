@@ -8,11 +8,14 @@ import { getSocialLinks } from '../../utils/socialLinks.js';
 import styles from './HomePage.module.css';
 
 // Computed once: the config is a static file, so there is nothing to recompute per render.
-const socialLinks = getSocialLinks(siteConfig);
-const avatarSrc = getAvatarSource(siteConfig.avatar);
-const resume = getResumeLink(siteConfig.resumeUrl);
 
 export default function HomePage() {
+  // Read when the page renders (not when the file loads), so edits to the profile are always
+  // reflected and tests can set their own profile.
+  const socialLinks = getSocialLinks(siteConfig);
+  const avatarSrc = getAvatarSource(siteConfig.avatar);
+  const resume = getResumeLink(siteConfig.resumeUrl);
+
   return (
     <>
       <PageTitle />

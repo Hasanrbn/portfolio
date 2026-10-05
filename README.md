@@ -2,7 +2,7 @@
 
 Personal portfolio built as a full-stack web application: React frontend, Express REST API, PostgreSQL database.
 
-> **Status:** Phase 10 of 22 (contact). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience, Education, Certificates, Blog and Contact pages; pages that are not built yet (Resume) show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phase 11 of 22 (backend structure). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience, Education, Certificates, Blog and Contact pages; pages that are not built yet (Resume) show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
@@ -26,6 +26,7 @@ Built so far:
 - Certificates page: a gallery with the title, issuer, date, category, credential ID, a preview (image or PDF symbol), a link to the file and a link to the issuer's verification page. Filters by issuer, year and category (shown from two certificates on, kept in the address). Empty until real certificates are added; nothing is invented
 - Blog: articles written as markdown files, with a list (search, category and tag filters, six per page, kept in the address) and an article page with date, reading time, a table of contents for longer articles, related articles, share buttons and a safe markdown renderer (raw HTML is never rendered, unsafe links and pictures are dropped). Empty until you add an article
 - Contact: a form (name, email, subject, message) at `/contact`, checked in the browser for quick feedback and again on the server, which is the check that counts. Errors appear next to each field and keyboard focus moves to the first one; success ("Your message has been sent.") and failure ("Something went wrong.") are announced to screen readers; what the visitor typed is kept when sending fails. Spam protection: a hidden trap field, a limit of five messages per hour per visitor, length limits and no line breaks in single-line fields. Messages are saved on the server, and optionally emailed to you (see below). Profile links appear beside the form once real ones are set
+- Backend structure: layered server (routes, controllers, services, repositories), one envelope for all answers, a central error handler (generic 500 in every environment, fixed messages for framework errors), structured JSON logging with a request id and no personal data in the log, zod request validation middleware, a reusable rate limiter, and a clean shutdown on SIGTERM/SIGINT or a fatal error
 - CI: format check, lint, tests and build on every push and pull request
 
 ## Tech Stack
@@ -33,7 +34,7 @@ Built so far:
 | Layer    | Technology                               |
 | -------- | ---------------------------------------- |
 | Frontend | React, Vite, React Router, CSS Modules   |
-| Backend  | Node.js, Express, zod, helmet            |
+| Backend  | Node.js, Express, zod, helmet, pino      |
 | Database | PostgreSQL (local container via Docker)  |
 | Quality  | ESLint (with jsx-a11y), Prettier, Vitest |
 | CI       | GitHub Actions                           |
@@ -41,6 +42,8 @@ Built so far:
 ## Architecture
 
 One Node.js service will serve the API and the built React app, backed by one PostgreSQL database. During development, Vite serves the client on port 5173 and proxies `/api` and `/healthz` to the Express server on port 3000.
+
+The server is built in layers: `routes` (URLs and middleware) → `controllers` (HTTP in, HTTP out) → `services` (the rules) → `repositories` (the only code that touches stored data). Errors thrown anywhere end up in one error handler that never shows a visitor anything but a prepared message; every request gets an id and one structured log line that contains no personal data. See [docs/backend.md](docs/backend.md) for the details and a checklist for adding an endpoint.
 
 ## Installation
 
@@ -61,6 +64,7 @@ All variables are listed in `.env.example`. The server validates them on startup
 | --------------------------------------------------------------------------------------------------------------- | ------------------ | --------------------------------------------------------------------------- |
 | `NODE_ENV`                                                                                                      | No                 | `development` (default), `test`, `production`                               |
 | `PORT`                                                                                                          | No                 | Server port, default `3000`                                                 |
+| `LOG_LEVEL`                                                                                                     | No                 | `silent` … `fatal`; default `debug` in development, `info` in production    |
 | `SITE_URL`                                                                                                      | In production      | Public site URL, used for canonical links                                   |
 | `DATABASE_URL`                                                                                                  | From Phase 12      | PostgreSQL connection string                                                |
 | `POSTGRES_USER` / `_PASSWORD` / `_DB`                                                                           | For local database | Read by `docker-compose.yml`                                                |
@@ -135,7 +139,7 @@ Documented in Phase 21.
 client/    React app (Vite)
 server/    Express API
 shared/    Data used by both, e.g. siteConfig.json
-docs/      Project plan and, later, architecture and deployment notes
+docs/      Project plan, backend guide, and later deployment notes
 .github/   CI workflow
 ```
 

@@ -1,12 +1,13 @@
 import express from 'express';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../src/app.js';
 import { parseEnv } from '../src/config/env.js';
 import { createErrorHandler } from '../src/middleware/errorHandler.js';
 import { HttpError } from '../src/utils/httpError.js';
+import { createFakeLogger } from './helpers/logger.js';
 
-function buildTestApp(logger = { error: vi.fn() }) {
+function buildTestApp(logger = createFakeLogger()) {
   const env = parseEnv({ NODE_ENV: 'test' });
   return { app: createApp({ env, logger }), logger };
 }
@@ -66,7 +67,7 @@ describe('error handling', () => {
   });
 
   it('hides internal error details behind a generic 500 and logs them', async () => {
-    const logger = { error: vi.fn() };
+    const logger = createFakeLogger();
     const failingApp = express();
     failingApp.get('/boom', () => {
       throw new Error('database password is hunter2');
@@ -79,6 +80,7 @@ describe('error handling', () => {
     expect(response.body).toEqual({ success: false, message: 'Something went wrong.' });
     expect(JSON.stringify(response.body)).not.toContain('hunter2');
     expect(logger.error).toHaveBeenCalledOnce();
+    expect(logger.error.mock.calls[0][0].err.message).toBe('database password is hunter2');
   });
 
   it('exposes the message of an HttpError', async () => {
@@ -86,7 +88,7 @@ describe('error handling', () => {
     failingApp.get('/conflict', () => {
       throw new HttpError(409, 'Slug already exists');
     });
-    failingApp.use(createErrorHandler({ error: vi.fn() }));
+    failingApp.use(createErrorHandler(createFakeLogger()));
 
     const response = await request(failingApp).get('/conflict');
 

@@ -1,19 +1,29 @@
 import express from 'express';
 import helmet from 'helmet';
 import { healthRouter } from './routes/health.js';
-import { createContactRouter } from './routes/contact.js';
+import { createApiRouter } from './routes/api.js';
+import { createContactController } from './controllers/contactController.js';
+import { createContactService } from './services/contactService.js';
 import { createMemoryContactStore } from './repositories/contactMessages.js';
+import { createRequestId } from './middleware/requestId.js';
+import { requestLogger } from './middleware/requestLogger.js';
 import { notFoundHandler } from './middleware/notFound.js';
 import { createErrorHandler } from './middleware/errorHandler.js';
+import { createLogger } from './utils/logger.js';
 
 /**
- * Builds the Express app without starting a listener, so tests can exercise
- * it directly. Configuration, logger and storage are injected rather than
- * imported.
+ * Builds the Express app without starting a listener, so tests can exercise it directly.
+ * Everything with side effects (configuration, logger, storage, email) is passed in rather
+ * than imported, and the layers are wired together here and nowhere else:
+ *
+ *   routes -> controllers -> services -> repositories
+ *
+ * Routes map URLs and attach middleware; controllers translate between HTTP and the service;
+ * services hold the rules; repositories are the only code that touches storage.
  */
 export function createApp({
   env,
-  logger = console,
+  logger = createLogger(env),
   contactStore = createMemoryContactStore(),
   contactNotifier = null,
   contactRateLimit,
@@ -28,18 +38,21 @@ export function createApp({
     app.set('trust proxy', env.TRUST_PROXY_HOPS);
   }
 
+  // Order matters: ids and request logging first, so even rejected requests are recorded.
+  app.use(createRequestId(logger));
+  app.use(requestLogger);
   app.use(helmet());
   app.use(express.json({ limit: '10kb' }));
 
+  const contactService = createContactService({
+    store: contactStore,
+    notifier: contactNotifier,
+    ipHashSalt: env.IP_HASH_SALT,
+  });
+  const contactController = createContactController({ contactService });
+
   app.use(healthRouter);
-  app.use(
-    createContactRouter({
-      store: contactStore,
-      notifier: contactNotifier,
-      rateLimiter: contactRateLimit,
-      ipHashSalt: env.IP_HASH_SALT,
-    }),
-  );
+  app.use('/api', createApiRouter({ contactController, contactRateLimit }));
 
   app.use(notFoundHandler);
   app.use(createErrorHandler(logger));

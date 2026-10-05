@@ -6,6 +6,7 @@ import App from '../src/app/App.jsx';
 import ThemeProvider from '../src/app/ThemeProvider.jsx';
 import Hero from '../src/components/sections/Hero.jsx';
 import HighlightStrip from '../src/components/sections/HighlightStrip.jsx';
+import { usePlaceholderProfile } from './helpers/profileConfig.js';
 
 function renderHome() {
   return render(
@@ -28,6 +29,8 @@ function renderHero(props) {
 }
 
 describe('home page', () => {
+  usePlaceholderProfile();
+
   it('introduces the person with name, role and introduction', () => {
     renderHome();
     const main = screen.getByRole('main');

@@ -1,7 +1,8 @@
 import { Router } from 'express';
+import { sendSuccess } from '../utils/respond.js';
 
 export const healthRouter = Router();
 
 healthRouter.get('/healthz', (req, res) => {
-  res.json({ success: true, data: { status: 'ok' } });
+  sendSuccess(res, { status: 'ok' });
 });
