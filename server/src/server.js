@@ -1,43 +1,44 @@
 import { fileURLToPath } from 'node:url';
 import { loadEnv } from './config/env.js';
 import { createApp } from './app.js';
+import { installShutdownHandlers } from './lifecycle.js';
 import { createFileContactStore } from './repositories/contactMessages.js';
 import { createNotifierFromEnv } from './services/contactNotifier.js';
+import { createLogger } from './utils/logger.js';
 
-const SHUTDOWN_TIMEOUT_MS = 10_000;
+// Slow or stalled requests are cut off instead of holding connections open forever.
+const REQUEST_TIMEOUT_MS = 30_000;
 
 let env;
 try {
   env = loadEnv();
 } catch (error) {
+  // The logger needs the environment, so this one message goes straight to the console.
   console.error(error.message);
   process.exit(1);
 }
+
+const logger = createLogger(env);
 
 // Until the database exists (Phase 12), contact messages are saved to a local file.
 const contactFile =
   env.CONTACT_STORE_PATH ??
   fileURLToPath(new URL('../data/contact-messages.jsonl', import.meta.url));
-const contactNotifier = createNotifierFromEnv(env);
+const contactNotifier = createNotifierFromEnv(env, logger);
 if (!contactNotifier) {
-  console.log('Contact email notifications are off (SMTP_HOST is not set).');
+  logger.info('Contact email notifications are off (SMTP_HOST is not set)');
 }
+
 const app = createApp({
   env,
+  logger,
   contactStore: createFileContactStore({ filePath: contactFile }),
   contactNotifier,
 });
 
 const server = app.listen(env.PORT, () => {
-  console.log(`Server listening on http://localhost:${env.PORT} (${env.NODE_ENV})`);
+  logger.info(`Server listening on http://localhost:${env.PORT} (${env.NODE_ENV})`);
 });
+server.requestTimeout = REQUEST_TIMEOUT_MS;
 
-function shutdown(signal) {
-  console.log(`${signal} received, shutting down`);
-  server.close(() => process.exit(0));
-  // Force exit if open connections keep the server from closing.
-  setTimeout(() => process.exit(1), SHUTDOWN_TIMEOUT_MS).unref();
-}
-
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT', () => shutdown('SIGINT'));
+installShutdownHandlers({ server, logger });

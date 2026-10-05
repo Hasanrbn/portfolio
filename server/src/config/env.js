@@ -3,11 +3,16 @@ import dotenv from 'dotenv';
 import { z } from 'zod';
 
 const DEFAULT_DEV_SITE_URL = 'http://localhost:5173';
+const LOG_LEVELS = ['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'];
+const DEFAULT_LOG_LEVEL = { test: 'silent', development: 'debug', production: 'info' };
 
 const envSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     PORT: z.coerce.number().int().min(1).max(65535).default(3000),
+    // How much the server writes to its log. When not set: silent in tests, debug while
+    // developing, info in production.
+    LOG_LEVEL: z.enum(LOG_LEVELS).optional(),
     SITE_URL: z.string().url().optional(),
     // Not used until Phase 12; validated now so a malformed value fails early.
     DATABASE_URL: z.string().url().optional(),
@@ -53,6 +58,7 @@ const envSchema = z
     ...env,
     SITE_URL: (env.SITE_URL ?? DEFAULT_DEV_SITE_URL).replace(/\/+$/, ''),
     SMTP_SECURE: env.SMTP_SECURE ?? env.SMTP_PORT === 465,
+    LOG_LEVEL: env.LOG_LEVEL ?? DEFAULT_LOG_LEVEL[env.NODE_ENV],
   }));
 
 /**

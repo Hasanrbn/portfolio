@@ -1,7 +1,7 @@
 /**
  * Error whose message is safe to show to API clients.
- * Anything that is not an HttpError (or a body-parser error) is reported as a
- * generic 500 so internal details never leak.
+ * Anything that is not an HttpError (or a known body-parser error) is reported as a
+ * generic error so internal details never leak.
  */
 export class HttpError extends Error {
   constructor(status, message) {
@@ -26,3 +26,10 @@ export class ValidationError extends HttpError {
     }));
   }
 }
+
+/** Shortcuts for the other statuses the API uses (plan, section 10). */
+export const badRequest = (message = 'Bad request') => new HttpError(400, message);
+export const unauthorized = (message = 'Authentication required') => new HttpError(401, message);
+export const forbidden = (message = 'Forbidden') => new HttpError(403, message);
+export const notFound = (message = 'Not found') => new HttpError(404, message);
+export const conflict = (message = 'Conflict') => new HttpError(409, message);

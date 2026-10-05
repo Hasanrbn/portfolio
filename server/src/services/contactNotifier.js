@@ -37,7 +37,7 @@ export function buildNotificationEmail({ name, email, subject, message }, { from
  * outage must not turn a saved message into an error for the visitor. Failures are
  * logged with the error code only, never the message, which is personal data.
  */
-export function createContactNotifier({ transport, from, to, logger = console }) {
+export function createContactNotifier({ transport, from, to, logger }) {
   return {
     async notify(record) {
       try {
@@ -52,7 +52,7 @@ export function createContactNotifier({ transport, from, to, logger = console })
 }
 
 /** Returns a notifier for the SMTP settings in `env`, or null when SMTP is not configured. */
-export function createNotifierFromEnv(env, logger = console) {
+export function createNotifierFromEnv(env, logger) {
   if (!env.SMTP_HOST) {
     return null;
   }
