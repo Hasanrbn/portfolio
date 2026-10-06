@@ -12,7 +12,8 @@
     "db:rollback": "node src/db/cli.js rollback",
     "db:status": "node src/db/cli.js status",
     "db:seed": "node src/db/cli.js seed",
-    "db:reset": "node src/db/cli.js reset"
+    "db:reset": "node src/db/cli.js reset",
+    "db:import-messages": "node src/db/cli.js import-messages"
   },
   "dependencies": {
     "@portfolio/shared": "^0.1.0",

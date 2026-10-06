@@ -7,14 +7,15 @@ How the PostgreSQL database is set up, filled and used. Read this before changin
 Run these from the repository root. The database must be running (`docker compose up -d db`, then
 `docker compose ps` shows `healthy`) and `DATABASE_URL` must be set in `.env`.
 
-| Command                       | What it does                                                                          |
-| ----------------------------- | ------------------------------------------------------------------------------------- |
-| `npm run db:migrate`          | Creates or updates the tables (applies every migration that has not run yet)          |
-| `npm run db:status`           | Lists applied and pending migrations                                                  |
-| `npm run db:seed`             | Adds the content in `shared/data` to the database; rows that already exist are kept   |
-| `npm run db:seed -- --update` | Same, but overwrites existing rows with what the files say                            |
-| `npm run db:rollback`         | Reverts the last migration (`npm run db:rollback -- 2` reverts two)                   |
-| `npm run db:reset`            | Reverts everything, migrates and seeds again. Development only: refuses in production |
+| Command                       | What it does                                                                                                                                    |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run db:migrate`          | Creates or updates the tables (applies every migration that has not run yet)                                                                    |
+| `npm run db:status`           | Lists applied and pending migrations                                                                                                            |
+| `npm run db:seed`             | Adds the content in `shared/data` to the database; rows that already exist are kept                                                             |
+| `npm run db:seed -- --update` | Same, but overwrites existing rows with what the files say                                                                                      |
+| `npm run db:import-messages`  | Copies messages from the old `server/data/contact-messages.jsonl` (or the path you add) into `messages`. Keeps ids and dates; safe to run again |
+| `npm run db:rollback`         | Reverts the last migration (`npm run db:rollback -- 2` reverts two)                                                                             |
+| `npm run db:reset`            | Reverts everything, migrates and seeds again. Development only: refuses in production                                                           |
 
 When the server starts with a `DATABASE_URL`, it checks that every migration has been applied and stops
 with a clear message if not. It never changes the schema by itself.

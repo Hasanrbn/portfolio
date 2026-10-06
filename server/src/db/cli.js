@@ -1,5 +1,7 @@
+import { fileURLToPath } from 'node:url';
 import { loadEnv } from '../config/env.js';
 import { createLogger } from '../utils/logger.js';
+import { importContactMessages } from './importContactMessages.js';
 import { createPool } from './pool.js';
 import { getMigrationStatus, runMigrations } from './migrate.js';
 import { loadSeedData } from './seed/loadData.js';
@@ -14,7 +16,14 @@ Commands:
   seed [--update]    Add the content in shared/data to the database.
                      Existing rows are kept; --update overwrites them from the files.
   reset              Revert everything, migrate again and seed (development only)
+  import-messages [file]
+                     Copy messages saved by the old file-based store into the database
+                     (default: server/data/contact-messages.jsonl). Safe to run again.
 `;
+
+const DEFAULT_MESSAGES_FILE = fileURLToPath(
+  new URL('../../data/contact-messages.jsonl', import.meta.url),
+);
 
 function fail(message) {
   console.error(message);
@@ -23,7 +32,7 @@ function fail(message) {
 
 async function main(argv) {
   const [command, ...args] = argv;
-  if (!['migrate', 'rollback', 'status', 'seed', 'reset'].includes(command)) {
+  if (!['migrate', 'rollback', 'status', 'seed', 'reset', 'import-messages'].includes(command)) {
     console.error(USAGE);
     process.exitCode = command ? 1 : 0;
     return;
@@ -81,6 +90,23 @@ async function main(argv) {
         );
         process.exitCode = 1;
       }
+      return;
+    }
+
+    if (command === 'import-messages') {
+      const status = await getMigrationStatus(pool);
+      if (status.pending.length > 0) {
+        fail('The database has pending migrations. Run "npm run db:migrate" first.');
+        return;
+      }
+      const file = args.find((arg) => !arg.startsWith('--')) ?? DEFAULT_MESSAGES_FILE;
+      const result = await importContactMessages(pool, file);
+      console.log(
+        result.missing
+          ? `No file at ${file}, nothing to import.`
+          : `Messages: ${result.imported} imported, ${result.alreadyThere} already there, ` +
+              `${result.skipped} skipped.`,
+      );
       return;
     }
 
