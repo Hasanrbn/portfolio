@@ -31,7 +31,8 @@ export async function createTestDatabase({ migrate = true } = {}) {
     schema,
     connection: TEST_DATABASE_URL,
     async drop() {
-      await pool.end();
+      // A test may already have closed it (to simulate a database that went away).
+      if (!pool.ended) await pool.end();
       await adminPool.query(`DROP SCHEMA IF EXISTS ${schema} CASCADE`);
       await adminPool.end();
     },

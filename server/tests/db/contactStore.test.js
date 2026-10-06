@@ -140,9 +140,7 @@ describe.skipIf(!TEST_DATABASE_URL)('contact messages in PostgreSQL', () => {
 
       const down = await request(app).get('/readyz');
       expect(down.status).toBe(503);
-      await expect(own.drop())
-        .resolves.toBeUndefined()
-        .catch(() => {});
+      await own.drop();
     });
   });
 });
