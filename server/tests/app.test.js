@@ -1,5 +1,5 @@
 import express from 'express';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../src/app.js';
 import { parseEnv } from '../src/config/env.js';
@@ -29,6 +29,48 @@ describe('GET /healthz', () => {
 
     expect(response.headers['x-powered-by']).toBeUndefined();
     expect(response.headers['x-content-type-options']).toBe('nosniff');
+  });
+});
+
+describe('GET /readyz', () => {
+  const build = (checkReady) =>
+    createApp({ env: parseEnv({ NODE_ENV: 'test' }), logger: createFakeLogger(), checkReady });
+
+  it('is ready when no database is configured (nothing to wait for)', async () => {
+    const response = await request(build(null)).get('/readyz');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      success: true,
+      data: { status: 'ready', database: 'not_configured' },
+    });
+  });
+
+  it('is ready when the database answers', async () => {
+    const response = await request(build(async () => true)).get('/readyz');
+
+    expect(response.status).toBe(200);
+    expect(response.body.data).toEqual({ status: 'ready', database: 'up' });
+    expect(response.headers['cache-control']).toBe('no-store');
+  });
+
+  it('answers 503 without details when the database does not answer', async () => {
+    const response = await request(build(async () => false)).get('/readyz');
+
+    expect(response.status).toBe(503);
+    expect(response.body).toEqual({
+      success: false,
+      message: 'Service unavailable',
+      status: 'unavailable',
+    });
+  });
+
+  it('keeps /healthz alive while the database is down', async () => {
+    const checkReady = vi.fn(async () => false);
+    const response = await request(build(checkReady)).get('/healthz');
+
+    expect(response.status).toBe(200);
+    expect(checkReady).not.toHaveBeenCalled();
   });
 });
 
@@ -115,6 +157,32 @@ describe('parseEnv', () => {
 
   it('requires SITE_URL in production', () => {
     expect(() => parseEnv({ NODE_ENV: 'production' })).toThrow(/SITE_URL/);
+  });
+
+  it('requires DATABASE_URL in production, because a hosted disk is temporary', () => {
+    expect(() => parseEnv({ NODE_ENV: 'production', SITE_URL: 'https://example.org' })).toThrow(
+      /DATABASE_URL/,
+    );
+  });
+
+  it('accepts postgres:// and postgresql:// addresses and refuses other schemes', () => {
+    expect(parseEnv({ DATABASE_URL: 'postgres://u:p@localhost:5432/db' }).DATABASE_URL).toMatch(
+      /^postgres:/,
+    );
+    expect(parseEnv({ DATABASE_URL: 'postgresql://u:p@localhost/db' }).DATABASE_URL).toMatch(
+      /^postgresql:/,
+    );
+    expect(() => parseEnv({ DATABASE_URL: 'mysql://u:p@localhost/db' })).toThrow(/DATABASE_URL/);
+    expect(() => parseEnv({ DATABASE_URL: 'not a url' })).toThrow(/DATABASE_URL/);
+  });
+
+  it('does not repeat the connection string, with its password, in the error', () => {
+    try {
+      parseEnv({ DATABASE_URL: 'mysql://user:secretpw@localhost/db' });
+      expect.unreachable();
+    } catch (error) {
+      expect(error.message).not.toContain('secretpw');
+    }
   });
 
   it('rejects an invalid port', () => {

@@ -7,7 +7,12 @@
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "db:migrate": "node src/db/cli.js migrate",
+    "db:rollback": "node src/db/cli.js rollback",
+    "db:status": "node src/db/cli.js status",
+    "db:seed": "node src/db/cli.js seed",
+    "db:reset": "node src/db/cli.js reset"
   },
   "dependencies": {
     "@portfolio/shared": "^0.1.0",
@@ -15,7 +20,9 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.7.0",
     "helmet": "^8.3.0",
+    "node-pg-migrate": "^9.0.0",
     "nodemailer": "^10.0.14",
+    "pg": "^8.23.1",
     "pino": "^10.4.0",
     "zod": "^4.6.5"
   },

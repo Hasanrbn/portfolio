@@ -7,6 +7,9 @@
   "exports": {
     "./siteConfig.json": "./siteConfig.json",
     "./contact.js": "./contact.js",
+    "./validation.js": "./validation.js",
+    "./frontmatter.js": "./frontmatter.js",
+    "./posts.js": "./posts.js",
     "./data/skills.json": "./data/skills.json",
     "./data/about.json": "./data/about.json",
     "./data/projects.json": "./data/projects.json",

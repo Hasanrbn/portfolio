@@ -5,9 +5,8 @@ import path from 'node:path';
 /**
  * Storage for contact messages.
  *
- * Both stores expose the same two methods, which are also what the PostgreSQL
- * version will expose in Phase 12, so the route does not change when the
- * database arrives:
+ * The memory, file and PostgreSQL stores expose the same two methods, so the route does
+ * not change with the storage:
  *
  *   create({ name, email, subject, message, ipHash }) -> { id, createdAt }
  *   list()                                           -> records, newest first
@@ -120,6 +119,50 @@ export function createFileContactStore({ filePath, maxBytes = DEFAULT_MAX_FILE_B
         }
       }
       return records.reverse();
+    },
+  };
+}
+
+/**
+ * Stores messages in the `messages` table. This is what runs in production; the file store
+ * is only a development fallback.
+ *
+ * Values go in as query parameters (never joined into the SQL text). The database also
+ * enforces the length limits, so a bug elsewhere cannot store an oversized message.
+ */
+export function createPgContactStore({ pool, listLimit = 200 }) {
+  return {
+    persistent: true,
+
+    async create({ name, email, subject, message, ipHash = null }) {
+      const { rows } = await pool.query(
+        `INSERT INTO messages (name, email, subject, body, ip_hash)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING id, created_at`,
+        [name, email, subject, message, ipHash],
+      );
+      return { id: rows[0].id, createdAt: rows[0].created_at.toISOString() };
+    },
+
+    /** The newest messages first, at most `listLimit` of them. */
+    async list() {
+      const { rows } = await pool.query(
+        `SELECT id, name, email, subject, body, status, ip_hash, created_at
+           FROM messages
+          ORDER BY created_at DESC, id
+          LIMIT $1`,
+        [listLimit],
+      );
+      return rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        email: row.email,
+        subject: row.subject,
+        message: row.body,
+        status: row.status,
+        ipHash: row.ip_hash,
+        createdAt: row.created_at.toISOString(),
+      }));
     },
   };
 }

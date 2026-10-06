@@ -47,31 +47,38 @@ The server is built in layers: `routes` (URLs and middleware) → `controllers` 
 
 ## Installation
 
-Requirements: Node.js 22 or newer, npm 10 or newer, Docker (only needed for the database, from Phase 12).
+Requirements: Node.js 22 or newer, npm 10 or newer, Docker (for the local database).
 
 ```bash
 npm install
 cp .env.example .env
 ```
 
-Edit `.env` and replace the placeholder database password.
+Edit `.env` and replace the placeholder database password (in both `POSTGRES_PASSWORD` and `DATABASE_URL`). Then create the tables and fill them with the content in `shared/data`:
+
+```bash
+docker compose up -d db     # wait until `docker compose ps` shows "healthy"
+npm run db:migrate
+npm run db:seed
+```
 
 ## Environment Variables
 
 All variables are listed in `.env.example`. The server validates them on startup and refuses to start if one is invalid.
 
-| Variable                                                                                                        | Required           | Description                                                                 |
-| --------------------------------------------------------------------------------------------------------------- | ------------------ | --------------------------------------------------------------------------- |
-| `NODE_ENV`                                                                                                      | No                 | `development` (default), `test`, `production`                               |
-| `PORT`                                                                                                          | No                 | Server port, default `3000`                                                 |
-| `LOG_LEVEL`                                                                                                     | No                 | `silent` … `fatal`; default `debug` in development, `info` in production    |
-| `SITE_URL`                                                                                                      | In production      | Public site URL, used for canonical links                                   |
-| `DATABASE_URL`                                                                                                  | From Phase 12      | PostgreSQL connection string                                                |
-| `POSTGRES_USER` / `_PASSWORD` / `_DB`                                                                           | For local database | Read by `docker-compose.yml`                                                |
-| `TRUST_PROXY_HOPS`                                                                                              | No                 | Reverse proxies in front of the server, default `0`                         |
-| `IP_HASH_SALT`                                                                                                  | No                 | 16+ random characters; stores a hash of the visitor's IP instead of nothing |
-| `CONTACT_STORE_PATH`                                                                                            | No                 | Where messages are saved until Phase 12                                     |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `CONTACT_NOTIFY_TO`, `CONTACT_MAIL_FROM` | No                 | Email notification for new messages; off while `SMTP_HOST` is empty         |
+| Variable                                                                                                        | Required           | Description                                                                        |
+| --------------------------------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------- |
+| `NODE_ENV`                                                                                                      | No                 | `development` (default), `test`, `production`                                      |
+| `PORT`                                                                                                          | No                 | Server port, default `3000`                                                        |
+| `LOG_LEVEL`                                                                                                     | No                 | `silent` … `fatal`; default `debug` in development, `info` in production           |
+| `SITE_URL`                                                                                                      | In production      | Public site URL, used for canonical links                                          |
+| `DATABASE_URL`                                                                                                  | In production      | PostgreSQL connection string; without it (development) messages go to a file       |
+| `TEST_DATABASE_URL`                                                                                             | For database tests | A database the tests may fill and empty; the database tests are skipped without it |
+| `POSTGRES_USER` / `_PASSWORD` / `_DB`                                                                           | For local database | Read by `docker-compose.yml`                                                       |
+| `TRUST_PROXY_HOPS`                                                                                              | No                 | Reverse proxies in front of the server, default `0`                                |
+| `IP_HASH_SALT`                                                                                                  | No                 | 16+ random characters; stores a hash of the visitor's IP instead of nothing        |
+| `CONTACT_STORE_PATH`                                                                                            | No                 | Where messages are saved without a database                                        |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `CONTACT_NOTIFY_TO`, `CONTACT_MAIL_FROM` | No                 | Email notification for new messages; off while `SMTP_HOST` is empty                |
 
 Never commit `.env`. Only `.env.example` belongs in Git.
 
@@ -96,7 +103,7 @@ npm run build          # production build of the client
 
 ## Contact Messages
 
-Until the database arrives (Phase 12), each message is appended as one JSON line to `server/data/contact-messages.jsonl` (created when the first message arrives, readable by the server's user only, ignored by Git). Open it to read messages. The file stops accepting new messages at 5 MB instead of filling the disk. A hosting platform's disk is often temporary, so for the live site rely on email notification until messages move into PostgreSQL.
+Messages are saved in the `messages` table of PostgreSQL whenever `DATABASE_URL` is set (always in production). Without it (local development only) each message is appended as one JSON line to `server/data/contact-messages.jsonl` (created when the first message arrives, readable by the server's user only, ignored by Git, stops at 5 MB instead of filling the disk). Read stored messages with `docker compose exec db psql -U portfolio -c "select created_at, name, email, subject from messages order by created_at desc"`.
 
 To get an email for every new message, set the `SMTP_*` and `CONTACT_NOTIFY_TO` values in `.env`. With Gmail, turn on 2-step verification, create an App Password at https://myaccount.google.com/apppasswords, use `smtp.gmail.com`, port `587`, your address as `SMTP_USER` and the App Password as `SMTP_PASSWORD`. Never use your normal password, and never put these values in Git or in a file other than `.env`. A mail failure never loses a message or shows the visitor an error: the message is already saved, and the failure is logged with an error code only.
 
@@ -108,14 +115,17 @@ Only the visitor's name, email, subject and message are stored. The visitor's IP
 docker compose up -d db
 ```
 
-The container listens on `127.0.0.1:5432` only. Tables and migrations are added in Phase 12.
+The container listens on `127.0.0.1:5432` only. Tables are created by migrations and filled by the seed; see [docs/database.md](docs/database.md) for the commands (`db:migrate`, `db:seed`, `db:status`, `db:rollback`, `db:reset`), the table design and the tests.
+
+The password in `POSTGRES_PASSWORD` is only used the first time the container is created. If you change it later, run `docker compose down -v` (this deletes the local data) and start again, then migrate and seed.
 
 ## API Documentation
 
-| Method | Path           | Description            |
-| ------ | -------------- | ---------------------- |
-| GET    | `/healthz`     | Health check           |
-| POST   | `/api/contact` | Send a contact message |
+| Method | Path           | Description                                                |
+| ------ | -------------- | ---------------------------------------------------------- |
+| GET    | `/healthz`     | Liveness: the server is running                            |
+| GET    | `/readyz`      | Readiness: `200` when the database answers, `503` when not |
+| POST   | `/api/contact` | Send a contact message                                     |
 
 `POST /api/contact` takes JSON `{ "name", "email", "subject", "message" }` (plus the hidden `website` trap field, which must stay empty). It answers `201` with `{ "success": true, "data": { "message": "Your message has been sent." } }`; `422` with `{ "success": false, "message": "...", "errors": [{ "field", "message" }] }` for invalid fields; `429` after five messages per hour from one address; and a generic `500` otherwise. Limits: name 100, email 254, subject 150, message 10 to 2000 characters.
 

@@ -1,12 +1,11 @@
 import certificatesData from '@portfolio/shared/data/certificates.json';
 import { getFileSource, getHttpsUrl } from '../utils/profile.js';
+import { isPdfAddress } from '@portfolio/shared/validation.js';
 import { isMonth } from '../utils/dates.js';
 import { isText, text, uniqueBy } from './normalize.js';
 
-/** True when the address points to a PDF (ignoring any ?query or #fragment). */
-export function isPdfAddress(address) {
-  return /\.pdf$/i.test(address.split(/[?#]/)[0]);
-}
+// The check itself lives in shared/ so the server answers with the same value.
+export { isPdfAddress };
 
 function normalizeFile(file, title, issuer) {
   const url = getFileSource(file?.url);

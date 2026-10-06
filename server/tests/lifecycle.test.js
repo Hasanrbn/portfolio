@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { installShutdownHandlers } from '../src/lifecycle.js';
 import { createFakeLogger } from './helpers/logger.js';
 
-function setup() {
+function setup(cleanup = []) {
   const processRef = new EventEmitter();
   const exit = vi.fn();
   const logger = createFakeLogger();
@@ -14,7 +14,7 @@ function setup() {
     }),
     closeIdleConnections: vi.fn(),
   };
-  installShutdownHandlers({ server, logger, processRef, exit, timeoutMs: 5000 });
+  installShutdownHandlers({ server, logger, processRef, exit, timeoutMs: 5000, cleanup });
   return { processRef, exit, logger, server, finishClosing: (error) => onClosed(error) };
 }
 
@@ -37,6 +37,40 @@ describe('shutdown handlers', () => {
       expect(exit).toHaveBeenCalledWith(0);
     },
   );
+
+  it('runs cleanup (such as closing the database pool) only after the server has closed', async () => {
+    const order = [];
+    const pool = vi.fn(async () => order.push('pool closed'));
+    const { processRef, exit, finishClosing } = setup([pool]);
+    exit.mockImplementation(() => order.push('exit'));
+
+    processRef.emit('SIGTERM');
+    expect(pool).not.toHaveBeenCalled();
+
+    await finishClosing();
+
+    expect(order).toEqual(['pool closed', 'exit']);
+  });
+
+  it('logs a failing cleanup task, still runs the others and still exits', async () => {
+    const second = vi.fn();
+    const { processRef, exit, logger, finishClosing } = setup([
+      async () => {
+        throw new Error('pool is stuck');
+      },
+      second,
+    ]);
+
+    processRef.emit('SIGTERM');
+    await finishClosing();
+
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.objectContaining({ err: expect.any(Error) }),
+      'error during shutdown cleanup',
+    );
+    expect(second).toHaveBeenCalled();
+    expect(exit).toHaveBeenCalledWith(0);
+  });
 
   it('forces exit 1 when connections do not drain in time', () => {
     const { processRef, exit } = setup();

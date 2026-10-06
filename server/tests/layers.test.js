@@ -150,6 +150,7 @@ describe('error handler', () => {
       const env = parseEnv({
         NODE_ENV: nodeEnv,
         SITE_URL: 'https://example.org',
+        DATABASE_URL: 'postgres://user:pass@localhost:5432/portfolio',
         LOG_LEVEL: 'silent',
       });
       const app = createApp({
@@ -443,13 +444,13 @@ describe('LOG_LEVEL in the environment', () => {
   it('defaults by environment and accepts an explicit level', () => {
     expect(parseEnv({ NODE_ENV: 'test' }).LOG_LEVEL).toBe('silent');
     expect(parseEnv({ NODE_ENV: 'development' }).LOG_LEVEL).toBe('debug');
-    expect(parseEnv({ NODE_ENV: 'production', SITE_URL: 'https://example.org' }).LOG_LEVEL).toBe(
-      'info',
-    );
-    expect(
-      parseEnv({ NODE_ENV: 'production', SITE_URL: 'https://example.org', LOG_LEVEL: 'warn' })
-        .LOG_LEVEL,
-    ).toBe('warn');
+    const production = {
+      NODE_ENV: 'production',
+      SITE_URL: 'https://example.org',
+      DATABASE_URL: 'postgres://user:pass@localhost:5432/portfolio',
+    };
+    expect(parseEnv(production).LOG_LEVEL).toBe('info');
+    expect(parseEnv({ ...production, LOG_LEVEL: 'warn' }).LOG_LEVEL).toBe('warn');
     expect(parseEnv({ NODE_ENV: 'test', LOG_LEVEL: '' }).LOG_LEVEL).toBe('silent');
   });
 

@@ -1,62 +1,10 @@
-import { isDate } from '../utils/dates.js';
-import { getImageSource } from '../utils/profile.js';
-import { parseFrontmatter } from './frontmatter.js';
+import { parsePostFile, readingTimeMinutes } from '@portfolio/shared/posts.js';
 import { postFiles } from './postsSource.js';
-import { isText, text } from './normalize.js';
 
-const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const WORDS_PER_MINUTE = 200;
+// Reading the article files lives in shared/ so the server turns them into posts the same way.
+export { readingTimeMinutes };
 
 export const POSTS_PER_PAGE = 6;
-
-function slugFromPath(path) {
-  return path.split('/').pop().replace(/\.md$/i, '');
-}
-
-function parseTags(value) {
-  const seen = new Set();
-  return (typeof value === 'string' ? value.split(',') : [])
-    .map((tag) => tag.trim())
-    .filter((tag) => {
-      const key = tag.toLowerCase();
-      if (!tag || seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-}
-
-/** Minutes to read a text, at 200 words a minute, never less than one. */
-export function readingTimeMinutes(body) {
-  const words = body.split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.ceil(words / WORDS_PER_MINUTE));
-}
-
-function parsePost({ path, raw }) {
-  const { data, body } = parseFrontmatter(raw);
-  const slug = isText(data.slug) ? data.slug.trim() : slugFromPath(path);
-  const title = text(data.title);
-  const content = body.trim();
-
-  if (!SLUG_PATTERN.test(slug) || !title || !content || !isDate(data.publishedAt)) {
-    return null;
-  }
-
-  const cover = getImageSource(data.coverImage);
-
-  return {
-    slug,
-    title,
-    excerpt: text(data.excerpt),
-    content,
-    category: text(data.category),
-    tags: parseTags(data.tags),
-    publishedAt: data.publishedAt,
-    // An update date before the publish date is a typing mistake, so it is ignored.
-    updatedAt: isDate(data.updatedAt) && data.updatedAt >= data.publishedAt ? data.updatedAt : null,
-    cover: cover ? { url: cover, alt: text(data.coverAlt) || `Cover image for ${title}` } : null,
-    readingTime: readingTimeMinutes(content),
-  };
-}
 
 /**
  * Turns post files ([{ path, raw }]) into posts. A file is skipped when its slug (the
@@ -68,7 +16,7 @@ export function normalizePosts(entries) {
   const seen = new Set();
 
   return (Array.isArray(entries) ? entries : [])
-    .map((entry) => (entry && typeof entry.raw === 'string' ? parsePost(entry) : null))
+    .map((entry) => (entry && typeof entry.raw === 'string' ? parsePostFile(entry) : null))
     .filter((post) => post && !seen.has(post.slug) && seen.add(post.slug))
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.title.localeCompare(b.title));
 }

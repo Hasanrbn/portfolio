@@ -1,6 +1,6 @@
 import express from 'express';
 import helmet from 'helmet';
-import { healthRouter } from './routes/health.js';
+import { createHealthRouter } from './routes/health.js';
 import { createApiRouter } from './routes/api.js';
 import { createContactController } from './controllers/contactController.js';
 import { createContactService } from './services/contactService.js';
@@ -27,6 +27,7 @@ export function createApp({
   contactStore = createMemoryContactStore(),
   contactNotifier = null,
   contactRateLimit,
+  checkReady = null,
 }) {
   const app = express();
 
@@ -51,7 +52,7 @@ export function createApp({
   });
   const contactController = createContactController({ contactService });
 
-  app.use(healthRouter);
+  app.use(createHealthRouter({ checkReady }));
   app.use('/api', createApiRouter({ contactController, contactRateLimit }));
 
   app.use(notFoundHandler);

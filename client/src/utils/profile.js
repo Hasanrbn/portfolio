@@ -1,24 +1,8 @@
+import { isHttpsUrl, isSitePath, isUsableAddress } from '@portfolio/shared/validation.js';
+
 // Helpers that turn raw values in shared/siteConfig.json into something safe to render.
 // A value that is empty or still a placeholder (such as "CV_URL") yields null, so the page
 // leaves that element out instead of showing a broken link or image.
-
-function isHttpsUrl(value) {
-  try {
-    return new URL(value).protocol === 'https:';
-  } catch {
-    return false;
-  }
-}
-
-// A file served by this site, such as "/cv.pdf". Rejects "//host/file", which browsers treat
-// as another site, and backslashes, which some browsers read as slashes.
-function isSitePath(value) {
-  return typeof value === 'string' && /^\/(?![/\\])\S*$/.test(value);
-}
-
-function isUsableAddress(value) {
-  return isSitePath(value) || (typeof value === 'string' && isHttpsUrl(value));
-}
 
 /** The value when it is an https address, otherwise null. Used for links to other sites. */
 export function getHttpsUrl(value) {
