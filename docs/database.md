@@ -31,6 +31,8 @@ with a clear message if not. It never changes the schema by itself.
 | `education`, `certificates`                          | Education entries and certificates                                                     |
 | `posts`, `tags`, `post_tags`                         | Blog posts (Markdown text), tags, and which post has which tag                         |
 | `messages`                                           | Messages sent through the contact form                                                 |
+| `users`                                              | The admin account(s): lower-case email and an argon2id password hash (see auth.md)     |
+| `session`                                            | Login sessions, kept by `connect-pg-simple`; deleting a row signs that browser out     |
 | `pgmigrations`                                       | Which migrations have run (kept by `node-pg-migrate`)                                  |
 
 Decisions that apply to every table:
@@ -137,3 +139,12 @@ in parallel and leave nothing behind. GitHub Actions starts a PostgreSQL service
 `messages` holds names and email addresses. Decide how long to keep them and delete old ones. Back up the
 database before every deployment that includes a migration (Phase 21 covers hosted backups), and never commit a
 dump.
+
+## Accounts and sessions
+
+`users` has a unique email that the database insists on keeping lower case and trimmed, a `role` that can only be
+`admin`, and a `password_hash` that must start with `$argon2id$`, so a plain password cannot be saved by mistake.
+Accounts are created with `npm run admin:create`, never by a seed or an endpoint. `session` is the table
+`connect-pg-simple` expects (`sid`, `sess`, `expire`); the server deletes expired rows every 15 minutes. Both tables
+are created by migration `..._auth.js`, which is why a server started before `npm run db:migrate` stops with the
+usual "missing migration" message. `npm run db:reset` removes the accounts too: create the admin again afterwards.

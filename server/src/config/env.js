@@ -28,6 +28,11 @@ const envSchema = z
     TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(10).default(0),
     // Secret that salts the stored IP hash. Without it no IP information is stored.
     IP_HASH_SALT: z.string().min(16, 'must be at least 16 characters').optional(),
+    // Secret that signs the session cookie. Required in production; elsewhere a random one is
+    // made at start-up (every restart then signs everybody out).
+    SESSION_SECRET: z.string().min(32, 'must be at least 32 characters').optional(),
+    // A signed-in admin is signed out after this many hours without activity.
+    SESSION_IDLE_HOURS: z.coerce.number().int().min(1).max(168).default(8),
     // Where contact messages are saved when there is no DATABASE_URL (local development).
     CONTACT_STORE_PATH: z.string().min(1).optional(),
     // Email notification for new contact messages (SMTP). Leave SMTP_HOST empty to turn it off.
@@ -60,6 +65,10 @@ const envSchema = z
   .refine((env) => env.NODE_ENV !== 'production' || Boolean(env.SITE_URL), {
     message: 'SITE_URL is required in production',
     path: ['SITE_URL'],
+  })
+  .refine((env) => env.NODE_ENV !== 'production' || Boolean(env.SESSION_SECRET), {
+    message: 'SESSION_SECRET is required in production',
+    path: ['SESSION_SECRET'],
   })
   // A hosted server's disk is temporary, so production must not keep messages in a file.
   .refine((env) => env.NODE_ENV !== 'production' || Boolean(env.DATABASE_URL), {

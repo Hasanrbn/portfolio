@@ -185,6 +185,38 @@ describe('parseEnv', () => {
     }
   });
 
+  it('requires SESSION_SECRET in production, so the login cookie is always signed with a real secret', () => {
+    const production = {
+      NODE_ENV: 'production',
+      SITE_URL: 'https://example.org',
+      DATABASE_URL: 'postgres://u:p@localhost:5432/db',
+    };
+
+    expect(() => parseEnv(production)).toThrow(/SESSION_SECRET/);
+    expect(() => parseEnv({ ...production, SESSION_SECRET: 'too short' })).toThrow(
+      /SESSION_SECRET/,
+    );
+    expect(parseEnv({ ...production, SESSION_SECRET: 'x'.repeat(32) }).SESSION_SECRET).toHaveLength(
+      32,
+    );
+  });
+
+  it('does not repeat SESSION_SECRET in an error message', () => {
+    try {
+      parseEnv({ SESSION_SECRET: 'short-secret-value' });
+      expect.unreachable();
+    } catch (error) {
+      expect(error.message).not.toContain('short-secret-value');
+    }
+  });
+
+  it('sets the idle limit of a login to 8 hours unless told otherwise, within sensible bounds', () => {
+    expect(parseEnv({}).SESSION_IDLE_HOURS).toBe(8);
+    expect(parseEnv({ SESSION_IDLE_HOURS: '2' }).SESSION_IDLE_HOURS).toBe(2);
+    expect(() => parseEnv({ SESSION_IDLE_HOURS: '0' })).toThrow(/SESSION_IDLE_HOURS/);
+    expect(() => parseEnv({ SESSION_IDLE_HOURS: '1000' })).toThrow(/SESSION_IDLE_HOURS/);
+  });
+
   it('rejects an invalid port', () => {
     expect(() => parseEnv({ PORT: '99999' })).toThrow(/PORT/);
   });

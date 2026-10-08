@@ -151,6 +151,7 @@ describe('error handler', () => {
         NODE_ENV: nodeEnv,
         SITE_URL: 'https://example.org',
         DATABASE_URL: 'postgres://user:pass@localhost:5432/portfolio',
+        SESSION_SECRET: 'a-test-secret-that-is-at-least-32-characters',
         LOG_LEVEL: 'silent',
       });
       const app = createApp({
@@ -448,6 +449,7 @@ describe('LOG_LEVEL in the environment', () => {
       NODE_ENV: 'production',
       SITE_URL: 'https://example.org',
       DATABASE_URL: 'postgres://user:pass@localhost:5432/portfolio',
+      SESSION_SECRET: 'a-test-secret-that-is-at-least-32-characters',
     };
     expect(parseEnv(production).LOG_LEVEL).toBe('info');
     expect(parseEnv({ ...production, LOG_LEVEL: 'warn' }).LOG_LEVEL).toBe('warn');

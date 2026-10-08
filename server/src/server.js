@@ -5,6 +5,8 @@ import { createPool, pingDatabase } from './db/pool.js';
 import { assertMigrated } from './db/migrate.js';
 import { installShutdownHandlers } from './lifecycle.js';
 import { createFileContactStore, createPgContactStore } from './repositories/contactMessages.js';
+import { createPgSessionStore } from './repositories/sessions.js';
+import { createPgUserStore } from './repositories/users.js';
 import { createNotifierFromEnv } from './services/contactNotifier.js';
 import { createLogger } from './utils/logger.js';
 
@@ -26,6 +28,8 @@ const logger = createLogger(env);
 // environment check requires DATABASE_URL in production) they are appended to a local file.
 let pool = null;
 let contactStore;
+let userStore;
+let sessionStore;
 if (env.DATABASE_URL) {
   pool = createPool({ connectionString: env.DATABASE_URL, logger });
   try {
@@ -38,12 +42,20 @@ if (env.DATABASE_URL) {
     process.exit(1);
   }
   contactStore = createPgContactStore({ pool });
+  userStore = createPgUserStore({ pool });
+  sessionStore = createPgSessionStore({ pool, logger });
 } else {
   logger.warn('DATABASE_URL is not set: contact messages are saved to a local file');
   const contactFile =
     env.CONTACT_STORE_PATH ??
     fileURLToPath(new URL('../data/contact-messages.jsonl', import.meta.url));
   contactStore = createFileContactStore({ filePath: contactFile });
+}
+
+if (!env.SESSION_SECRET) {
+  logger.warn(
+    'SESSION_SECRET is not set: a temporary one is used, so every restart signs admins out',
+  );
 }
 
 const contactNotifier = createNotifierFromEnv(env, logger);
@@ -56,6 +68,8 @@ const app = createApp({
   logger,
   contactStore,
   contactNotifier,
+  userStore,
+  sessionStore,
   checkReady: pool ? () => pingDatabase(pool) : null,
 });
 
@@ -67,5 +81,6 @@ server.requestTimeout = REQUEST_TIMEOUT_MS;
 installShutdownHandlers({
   server,
   logger,
-  cleanup: pool ? [() => pool.end()] : [],
+  // The session store stops its clean-up timer first, then the pool closes.
+  cleanup: pool ? [() => sessionStore.close(), () => pool.end()] : [],
 });

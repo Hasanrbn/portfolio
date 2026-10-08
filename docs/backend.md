@@ -22,7 +22,7 @@ routes  ->  controllers  ->  services  ->  repositories  ->  storage
 nothing needs to be mocked globally. `src/server.js` is the other half: it creates the real pieces and starts
 listening.
 
-Supporting folders: `middleware/` (request id, request log, rate limit, validation, 404, error handler),
+Supporting folders: `middleware/` (request id, request log, rate limit, validation, session, CSRF, `requireAdmin`, 404, error handler),
 `utils/` (`httpError`, `respond`, `logger`, `hashIp`), `config/env.js` (environment checks), `lifecycle.js`
 (clean shutdown), `db/` (connection pool, migrations, seed and the `db:*` command line; see
 [database.md](database.md)).
@@ -89,10 +89,17 @@ To follow one request, search the logs for its `requestId` (the value of its `X-
 5. **Mount** it in `routes/api.js`; build its pieces in `app.js`.
 6. **Test** with Supertest through `createApp` (see `tests/contact.test.js`), and the service on its own with fakes.
 
+## Authentication
+
+Sign-in, sessions, CSRF and the admin guard are described in [auth.md](auth.md). The short version for a new
+endpoint: anything for the owner goes under `/api/admin` by registering its router in `adminRoutes`; the guard is
+installed once there. Public endpoints do not get the session middleware.
+
 ## Known limits
 
 - The rate limiter counts in memory. Counts reset on restart and are not shared if several copies of the
   server run. That is fine for one small service; with several copies, move the counts into the database.
+- The sign-in limits (`loginThrottle`, `loginRateLimit`, `csrfRateLimit`) also count in memory (see auth.md).
 - `trust proxy` is off unless `TRUST_PROXY_HOPS` is set. Set it to the number of proxies in front of the
   server when deployed, otherwise every visitor looks like the proxy and shares one rate limit.
 - The log only goes to standard output. Keeping and searching old logs is the hosting platform's job

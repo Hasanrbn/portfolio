@@ -19,9 +19,11 @@ const TABLES = [
   'project_images',
   'project_technologies',
   'projects',
+  'session',
   'skills',
   'tags',
   'technologies',
+  'users',
 ];
 
 describe.skipIf(!TEST_DATABASE_URL)('migrations (PostgreSQL)', () => {

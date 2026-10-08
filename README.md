@@ -2,7 +2,7 @@
 
 Personal portfolio built as a full-stack web application: React frontend, Express REST API, PostgreSQL database.
 
-> **Status:** Phase 11 of 22 (backend structure). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience, Education, Certificates, Blog and Contact pages; pages that are not built yet (Resume) show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phase 13 of 22 (authentication). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience, Education, Certificates, Blog and Contact pages; pages that are not built yet (Resume) show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
@@ -27,6 +27,7 @@ Built so far:
 - Blog: articles written as markdown files, with a list (search, category and tag filters, six per page, kept in the address) and an article page with date, reading time, a table of contents for longer articles, related articles, share buttons and a safe markdown renderer (raw HTML is never rendered, unsafe links and pictures are dropped). Empty until you add an article
 - Contact: a form (name, email, subject, message) at `/contact`, checked in the browser for quick feedback and again on the server, which is the check that counts. Errors appear next to each field and keyboard focus moves to the first one; success ("Your message has been sent.") and failure ("Something went wrong.") are announced to screen readers; what the visitor typed is kept when sending fails. Spam protection: a hidden trap field, a limit of five messages per hour per visitor, length limits and no line breaks in single-line fields. Messages are saved on the server, and optionally emailed to you (see below). Profile links appear beside the form once real ones are set
 - Backend structure: layered server (routes, controllers, services, repositories), one envelope for all answers, a central error handler (generic 500 in every environment, fixed messages for framework errors), structured JSON logging with a request id and no personal data in the log, zod request validation middleware, a reusable rate limiter, and a clean shutdown on SIGTERM/SIGINT or a fatal error
+- Admin authentication: the admin account is created from the command line (`npm run admin:create`, password typed hidden, stored as an argon2id hash; no sign-up page). Sign-in with server-side sessions in PostgreSQL, an `HttpOnly` / `SameSite=Lax` cookie (`Secure` and `__Host-` in production), a session id replaced at sign-in, a CSRF token on every write, a limit on failed attempts per email and per visitor with the same generic message for a wrong password and an unknown email, and one `requireAdmin` + CSRF check in front of every `/api/admin` route. Details in [docs/auth.md](docs/auth.md). The admin pages themselves arrive in Phase 14
 - CI: format check, lint, tests and build on every push and pull request
 
 ## Tech Stack
@@ -60,25 +61,28 @@ Edit `.env` and replace the placeholder database password (in both `POSTGRES_PAS
 docker compose up -d db     # wait until `docker compose ps` shows "healthy"
 npm run db:migrate
 npm run db:seed
+npm run admin:create        # asks for your admin email and password (hidden)
 ```
 
 ## Environment Variables
 
 All variables are listed in `.env.example`. The server validates them on startup and refuses to start if one is invalid.
 
-| Variable                                                                                                        | Required           | Description                                                                        |
-| --------------------------------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------- |
-| `NODE_ENV`                                                                                                      | No                 | `development` (default), `test`, `production`                                      |
-| `PORT`                                                                                                          | No                 | Server port, default `3000`                                                        |
-| `LOG_LEVEL`                                                                                                     | No                 | `silent` … `fatal`; default `debug` in development, `info` in production           |
-| `SITE_URL`                                                                                                      | In production      | Public site URL, used for canonical links                                          |
-| `DATABASE_URL`                                                                                                  | In production      | PostgreSQL connection string; without it (development) messages go to a file       |
-| `TEST_DATABASE_URL`                                                                                             | For database tests | A database the tests may fill and empty; the database tests are skipped without it |
-| `POSTGRES_USER` / `_PASSWORD` / `_DB`                                                                           | For local database | Read by `docker-compose.yml`                                                       |
-| `TRUST_PROXY_HOPS`                                                                                              | No                 | Reverse proxies in front of the server, default `0`                                |
-| `IP_HASH_SALT`                                                                                                  | No                 | 16+ random characters; stores a hash of the visitor's IP instead of nothing        |
-| `CONTACT_STORE_PATH`                                                                                            | No                 | Where messages are saved without a database                                        |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `CONTACT_NOTIFY_TO`, `CONTACT_MAIL_FROM` | No                 | Email notification for new messages; off while `SMTP_HOST` is empty                |
+| Variable                                                                                                        | Required           | Description                                                                          |
+| --------------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------ |
+| `NODE_ENV`                                                                                                      | No                 | `development` (default), `test`, `production`                                        |
+| `PORT`                                                                                                          | No                 | Server port, default `3000`                                                          |
+| `LOG_LEVEL`                                                                                                     | No                 | `silent` … `fatal`; default `debug` in development, `info` in production             |
+| `SITE_URL`                                                                                                      | In production      | Public site URL, used for canonical links                                            |
+| `DATABASE_URL`                                                                                                  | In production      | PostgreSQL connection string; without it (development) messages go to a file         |
+| `TEST_DATABASE_URL`                                                                                             | For database tests | A database the tests may fill and empty; the database tests are skipped without it   |
+| `POSTGRES_USER` / `_PASSWORD` / `_DB`                                                                           | For local database | Read by `docker-compose.yml`                                                         |
+| `TRUST_PROXY_HOPS`                                                                                              | No                 | Reverse proxies in front of the server, default `0`                                  |
+| `IP_HASH_SALT`                                                                                                  | No                 | 16+ random characters; stores a hash of the visitor's IP instead of nothing          |
+| `SESSION_SECRET`                                                                                                | In production      | 32+ random characters that sign the admin login cookie; temporary one in development |
+| `SESSION_IDLE_HOURS`                                                                                            | No                 | Hours of inactivity before the admin is signed out, default `8`                      |
+| `CONTACT_STORE_PATH`                                                                                            | No                 | Where messages are saved without a database                                          |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `CONTACT_NOTIFY_TO`, `CONTACT_MAIL_FROM` | No                 | Email notification for new messages; off while `SMTP_HOST` is empty                  |
 
 Never commit `.env`. Only `.env.example` belongs in Git.
 
@@ -121,11 +125,16 @@ The password in `POSTGRES_PASSWORD` is only used the first time the container is
 
 ## API Documentation
 
-| Method | Path           | Description                                                |
-| ------ | -------------- | ---------------------------------------------------------- |
-| GET    | `/healthz`     | Liveness: the server is running                            |
-| GET    | `/readyz`      | Readiness: `200` when the database answers, `503` when not |
-| POST   | `/api/contact` | Send a contact message                                     |
+| Method | Path               | Description                                                              |
+| ------ | ------------------ | ------------------------------------------------------------------------ |
+| GET    | `/healthz`         | Liveness: the server is running                                          |
+| GET    | `/readyz`          | Readiness: `200` when the database answers, `503` when not               |
+| POST   | `/api/contact`     | Send a contact message                                                   |
+| GET    | `/api/csrf-token`  | Token to send as `X-CSRF-Token` on sign-in, sign-out and admin writes    |
+| POST   | `/api/auth/login`  | Sign in with `{ "email", "password" }`; returns the user and a new token |
+| POST   | `/api/auth/logout` | Sign out (`204`)                                                         |
+| GET    | `/api/auth/me`     | The signed-in admin, or `401`                                            |
+| \*     | `/api/admin/*`     | Admin only: `401` without a sign-in, `403` for a write without the token |
 
 `POST /api/contact` takes JSON `{ "name", "email", "subject", "message" }` (plus the hidden `website` trap field, which must stay empty). It answers `201` with `{ "success": true, "data": { "message": "Your message has been sent." } }`; `422` with `{ "success": false, "message": "...", "errors": [{ "field", "message" }] }` for invalid fields; `429` after five messages per hour from one address; and a generic `500` otherwise. Limits: name 100, email 254, subject 150, message 10 to 2000 characters.
 

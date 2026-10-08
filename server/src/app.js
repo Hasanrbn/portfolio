@@ -1,10 +1,19 @@
+import { randomBytes } from 'node:crypto';
 import express from 'express';
 import helmet from 'helmet';
 import { createHealthRouter } from './routes/health.js';
 import { createApiRouter } from './routes/api.js';
+import { createAuthController } from './controllers/authController.js';
 import { createContactController } from './controllers/contactController.js';
 import { createContactService } from './services/contactService.js';
+import { createAuthService } from './services/authService.js';
+import { createPasswordService } from './services/passwordService.js';
+import { createLoginThrottle } from './services/loginThrottle.js';
 import { createMemoryContactStore } from './repositories/contactMessages.js';
+import { createMemoryUserStore } from './repositories/users.js';
+import { createRequireAdmin } from './middleware/requireAdmin.js';
+import { createCsrfRateLimit, createLoginRateLimit } from './routes/auth.js';
+import { createSessionMiddleware, sessionCookieSettings } from './middleware/session.js';
 import { createRequestId } from './middleware/requestId.js';
 import { requestLogger } from './middleware/requestLogger.js';
 import { notFoundHandler } from './middleware/notFound.js';
@@ -28,6 +37,16 @@ export function createApp({
   contactNotifier = null,
   contactRateLimit,
   checkReady = null,
+  // Authentication. The defaults keep everything in memory (tests, development without a
+  // database); server.js passes the PostgreSQL stores.
+  userStore = createMemoryUserStore(),
+  sessionStore,
+  passwordService = createPasswordService(),
+  loginThrottle = createLoginThrottle(),
+  loginRateLimit = createLoginRateLimit(),
+  csrfRateLimit = createCsrfRateLimit(),
+  // Routers for /api/admin, as `{ path, router }`. Everything in here sits behind the admin check.
+  adminRoutes = [],
 }) {
   const app = express();
 
@@ -52,8 +71,36 @@ export function createApp({
   });
   const contactController = createContactController({ contactService });
 
+  const sessionMiddleware = createSessionMiddleware({
+    env,
+    store: sessionStore,
+    secret: env.SESSION_SECRET ?? randomBytes(32).toString('hex'),
+  });
+  const authService = createAuthService({
+    userStore,
+    passwordService,
+    throttle: loginThrottle,
+    logger,
+  });
+  const authController = createAuthController({
+    authService,
+    cookie: sessionCookieSettings(env),
+  });
+
   app.use(createHealthRouter({ checkReady }));
-  app.use('/api', createApiRouter({ contactController, contactRateLimit }));
+  app.use(
+    '/api',
+    createApiRouter({
+      contactController,
+      contactRateLimit,
+      authController,
+      sessionMiddleware,
+      requireAdmin: createRequireAdmin({ userStore }),
+      loginRateLimit,
+      csrfRateLimit,
+      adminRoutes,
+    }),
+  );
 
   app.use(notFoundHandler);
   app.use(createErrorHandler(logger));

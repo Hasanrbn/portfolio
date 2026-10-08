@@ -13,13 +13,18 @@
     "db:status": "node src/db/cli.js status",
     "db:seed": "node src/db/cli.js seed",
     "db:reset": "node src/db/cli.js reset",
-    "db:import-messages": "node src/db/cli.js import-messages"
+    "db:import-messages": "node src/db/cli.js import-messages",
+    "admin:create": "node src/auth/cli.js create-admin",
+    "admin:reset-password": "node src/auth/cli.js reset-password"
   },
   "dependencies": {
     "@portfolio/shared": "^0.1.0",
+    "argon2": "^0.45.1",
+    "connect-pg-simple": "^10.0.0",
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
     "express-rate-limit": "^8.7.0",
+    "express-session": "^1.19.0",
     "helmet": "^8.3.0",
     "node-pg-migrate": "^9.0.0",
     "nodemailer": "^10.0.14",
