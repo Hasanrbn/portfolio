@@ -56,12 +56,26 @@ name order, each in its own transaction.
   database that has run them must keep a matching history; a new database simply runs all of them.
 - To add one, copy an existing file, name it with a later timestamp (`<number>_<what-it-does>.js`), and write its `up` and `down`.
 
+## Reading and cleaning up messages
+
+```bash
+npm run messages                  # the newest 20 messages, one line each
+npm run messages -- --limit 50    # more (at most 200)
+npm run messages -- --full        # with the whole text
+npm run messages:prune            # counts the messages older than 12 months; deletes nothing
+npm run messages:prune -- --months 6 --yes    # really deletes messages older than 6 months
+```
+
+Names, emails and message texts are personal data. Decide how long you keep them (twelve months is a
+reasonable default) and run the prune command now and then; it never deletes without `--yes`. Anything that could
+move the cursor or rewrite earlier lines in your terminal is removed before a message is printed.
+
 ## Messages
 
 `createPgContactStore` in `server/src/repositories/contactMessages.js` saves contact messages. It has the same
 methods (`create`, `list`) as the memory and file stores, so nothing above it changes. `list` returns at most 200
-messages, newest first. There is no admin page: you get an email for each message (see the README) and can read the
-stored ones with `psql`. Every query uses parameters (`$1`, `$2`, ...); a value is never joined into SQL text.
+messages, newest first. There is no admin page: you get an email for each message (see the README) and read the stored ones with
+`npm run messages`. Every query uses parameters (`$1`, `$2`, ...); a value is never joined into SQL text.
 
 ## Connection and health
 

@@ -94,6 +94,7 @@ To follow one request, search the logs for its `requestId` (the value of its `X-
 - The rate limiter counts in memory. Counts reset on restart and are not shared if several copies of the
   server run. That is fine for one small service; with several copies, move the counts into the database.
 - `trust proxy` is off unless `TRUST_PROXY_HOPS` is set. Set it to the number of proxies in front of the
-  server when deployed, otherwise every visitor looks like the proxy and shares one rate limit.
+  server when deployed, otherwise every visitor looks like the proxy and shares one rate limit (the whole
+  site could then receive only 5 messages per hour). In production the server logs a warning at start when it is 0.
 - The log only goes to standard output. Keeping and searching old logs is the hosting platform's job
   (decided in Phase 21).

@@ -13,7 +13,9 @@
     "db:status": "node src/db/cli.js status",
     "db:reset": "node src/db/cli.js reset",
     "db:import-messages": "node src/db/cli.js import-messages",
-    "content:check": "node src/content/check.js"
+    "content:check": "node src/content/check.js",
+    "messages": "node src/db/cli.js messages",
+    "messages:prune": "node src/db/cli.js prune-messages"
   },
   "dependencies": {
     "@portfolio/shared": "^0.1.0",
