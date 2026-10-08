@@ -4,8 +4,6 @@ import { createLogger } from '../utils/logger.js';
 import { importContactMessages } from './importContactMessages.js';
 import { createPool } from './pool.js';
 import { getMigrationStatus, runMigrations } from './migrate.js';
-import { loadSeedData } from './seed/loadData.js';
-import { seedDatabase } from './seed/seed.js';
 
 const USAGE = `Usage: node src/db/cli.js <command> [options]
 
@@ -13,9 +11,7 @@ Commands:
   migrate            Apply every pending migration
   rollback [count]   Revert the last migration (or the last <count>)
   status             Show applied and pending migrations
-  seed [--update]    Add the content in shared/data to the database.
-                     Existing rows are kept; --update overwrites them from the files.
-  reset              Revert everything, migrate again and seed (development only)
+  reset              Revert everything and migrate again (development only; deletes the data)
   import-messages [file]
                      Copy messages saved by the old file-based store into the database
                      (default: server/data/contact-messages.jsonl). Safe to run again.
@@ -32,7 +28,7 @@ function fail(message) {
 
 async function main(argv) {
   const [command, ...args] = argv;
-  if (!['migrate', 'rollback', 'status', 'seed', 'reset', 'import-messages'].includes(command)) {
+  if (!['migrate', 'rollback', 'status', 'reset', 'import-messages'].includes(command)) {
     console.error(USAGE);
     process.exitCode = command ? 1 : 0;
     return;
@@ -110,20 +106,10 @@ async function main(argv) {
       return;
     }
 
-    if (command === 'reset') {
-      await runMigrations({ connection, direction: 'down', count: Infinity, logger });
-      await runMigrations({ connection, logger });
-    }
-
-    const status = await getMigrationStatus(pool);
-    if (status.pending.length > 0) {
-      fail('The database has pending migrations. Run "npm run db:migrate" first.');
-      return;
-    }
-    const data = await loadSeedData();
-    const mode = args.includes('--update') ? 'update' : 'missing';
-    const summary = await seedDatabase({ pool, data, mode, logger });
-    console.table(summary);
+    // reset
+    await runMigrations({ connection, direction: 'down', count: Infinity, logger });
+    await runMigrations({ connection, logger });
+    console.log('Database reset: every table was dropped and created again.');
   } finally {
     await pool.end();
   }

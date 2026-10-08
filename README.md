@@ -54,12 +54,11 @@ npm install
 cp .env.example .env
 ```
 
-Edit `.env` and replace the placeholder database password (in both `POSTGRES_PASSWORD` and `DATABASE_URL`). Then create the tables and fill them with the content in `shared/data`:
+Edit `.env` and replace the placeholder database password (in both `POSTGRES_PASSWORD` and `DATABASE_URL`). Then create the table for contact messages:
 
 ```bash
 docker compose up -d db     # wait until `docker compose ps` shows "healthy"
 npm run db:migrate
-npm run db:seed
 ```
 
 ## Environment Variables
@@ -115,9 +114,9 @@ Only the visitor's name, email, subject and message are stored. The visitor's IP
 docker compose up -d db
 ```
 
-The container listens on `127.0.0.1:5432` only. Tables are created by migrations and filled by the seed; see [docs/database.md](docs/database.md) for the commands (`db:migrate`, `db:seed`, `db:status`, `db:rollback`, `db:reset`), the table design and the tests.
+The container listens on `127.0.0.1:5432` only. The database only stores contact messages; the site's content lives in files (see below). Tables are created by migrations; see [docs/database.md](docs/database.md) for the commands (`db:migrate`, `db:status`, `db:rollback`, `db:reset`) and the tests.
 
-The password in `POSTGRES_PASSWORD` is only used the first time the container is created. If you change it later, run `docker compose down -v` (this deletes the local data) and start again, then migrate and seed.
+The password in `POSTGRES_PASSWORD` is only used the first time the container is created. If you change it later, run `docker compose down -v` (this deletes the local data) and start again, then migrate.
 
 ## API Documentation
 
@@ -167,7 +166,7 @@ Personal details live in `shared/siteConfig.json`. Values such as `GITHUB_URL` a
 
 ### Editing site content
 
-These pages read JSON files in `shared/data/`. Edit the file and the page updates; nothing in the React code needs to change.
+These pages read JSON files in `shared/data/`. Edit the file and the page updates; nothing in the React code needs to change. Before committing a change, run `npm run content:check`: it applies strict rules and names the file and field of any mistake (the site itself quietly skips a bad entry so a page never breaks, which would hide it).
 
 - `about.json`: `paragraphs` (extra biography paragraphs under the introduction), `highlights` (short labels) and `sections`. Each section is `{ "id", "title", "paragraphs": [], "items": [] }`; add sections such as Background, Career goals or Approach. Sections with no text are not shown.
 - `skills.json`: categories with skills. Each skill has `id`, `name`, `level` (`"familiar"`, `"intermediate"`, `"advanced"` or `null`) and `description`. A skill without a level or description simply shows its name. The "What the levels mean" guide appears as soon as one skill has a level. Only set a level you can stand behind in an interview.

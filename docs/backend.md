@@ -24,7 +24,7 @@ listening.
 
 Supporting folders: `middleware/` (request id, request log, rate limit, validation, 404, error handler),
 `utils/` (`httpError`, `respond`, `logger`, `hashIp`), `config/env.js` (environment checks), `lifecycle.js`
-(clean shutdown), `db/` (connection pool, migrations, seed and the `db:*` command line; see
+(clean shutdown), `db/` (connection pool, migrations and the `db:*` command line; see
 [database.md](database.md)).
 
 ## One request, step by step

@@ -1,20 +1,20 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { loadSeedData, DEFAULT_DATA_DIR } from '../src/db/seed/loadData.js';
+import { loadContent, DEFAULT_DATA_DIR } from '../src/content/loadContent.js';
 import { createDataDir } from './helpers/dataDir.js';
 
 const dirs = [];
 async function load(options) {
   const data = await createDataDir(options);
   dirs.push(data);
-  return loadSeedData(data.dir);
+  return loadContent(data.dir);
 }
 afterEach(async () => {
   await Promise.all(dirs.splice(0).map((data) => data.remove()));
 });
 
-describe('loadSeedData', () => {
+describe('loadContent', () => {
   it('reads the real files in shared/data without errors', async () => {
-    const data = await loadSeedData(DEFAULT_DATA_DIR);
+    const data = await loadContent(DEFAULT_DATA_DIR);
 
     expect(data.skills.length).toBeGreaterThan(0);
     expect(data.projects.length).toBeGreaterThan(0);
@@ -62,7 +62,7 @@ describe('loadSeedData', () => {
 
     const error = await load({ files: { 'projects.json': bad } }).catch((e) => e);
 
-    expect(error.message).toMatch(/^Invalid seed data:/);
+    expect(error.message).toMatch(/^Invalid content:/);
     expect(error.message).toContain('projects.json: projects[0].slug');
     expect(error.message).toContain('projects.json: projects[0].repoUrl: must be an https address');
     expect(error.message).toContain('projects[1].title');
@@ -116,7 +116,7 @@ describe('loadSeedData', () => {
       { projects: [{ slug: 'p', title: 'T', summary: 'S', repoURL: 'https://x.org' }] },
     ],
   ])('refuses %s', async (_name, file, content) => {
-    await expect(load({ files: { [file]: content } })).rejects.toThrow(/Invalid seed data/);
+    await expect(load({ files: { [file]: content } })).rejects.toThrow(/Invalid content/);
   });
 
   it('refuses the same id twice', async () => {
@@ -137,7 +137,7 @@ describe('loadSeedData', () => {
       /skills\.json is not valid JSON/,
     );
     await expect(load({ files: { 'education.json': null } })).rejects.toThrow(
-      /Cannot read seed file education\.json/,
+      /Cannot read content file education\.json/,
     );
   });
 

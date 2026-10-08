@@ -23,9 +23,9 @@
     "db:migrate": "npm run db:migrate -w @portfolio/server --",
     "db:rollback": "npm run db:rollback -w @portfolio/server --",
     "db:status": "npm run db:status -w @portfolio/server --",
-    "db:seed": "npm run db:seed -w @portfolio/server --",
     "db:reset": "npm run db:reset -w @portfolio/server --",
-    "db:import-messages": "npm run db:import-messages -w @portfolio/server --"
+    "db:import-messages": "npm run db:import-messages -w @portfolio/server --",
+    "content:check": "npm run content:check -w @portfolio/server --"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
