@@ -1,9 +1,7 @@
 import { Suspense, lazy } from 'react';
 import { Route, Routes } from 'react-router';
 import SiteLayout from './SiteLayout.jsx';
-import { NAV_ITEMS, RESUME_ITEM } from './siteNavigation.js';
 import Spinner from '../components/ui/Spinner.jsx';
-import ComingSoonPage from '../pages/public/ComingSoonPage.jsx';
 import AboutPage from '../pages/public/AboutPage.jsx';
 import BlogPage from '../pages/public/BlogPage.jsx';
 import BlogPostPage from '../pages/public/BlogPostPage.jsx';
@@ -21,8 +19,7 @@ import SkillsPage from '../pages/public/SkillsPage.jsx';
 // constant, production builds drop both this line and its route.
 const DesignPage = import.meta.env.DEV ? lazy(() => import('../pages/dev/DesignPage.jsx')) : null;
 
-// Every navigation link needs a page to land on. Pages that are not built yet share a
-// placeholder; when a real page is added, list it here and it leaves the placeholder set.
+// Every item in the navigation (siteNavigation.js) needs a route here; the layout test checks it.
 const BUILT_PAGES = [
   { to: '/about', element: <AboutPage /> },
   { to: '/skills', element: <SkillsPage /> },
@@ -33,10 +30,6 @@ const BUILT_PAGES = [
   { to: '/blog', element: <BlogPage /> },
   { to: '/contact', element: <ContactPage /> },
 ];
-const BUILT_PATHS = new Set(BUILT_PAGES.map((page) => page.to));
-const COMING_SOON_PAGES = [...NAV_ITEMS, RESUME_ITEM].filter(
-  (item) => item.to !== '/' && !BUILT_PATHS.has(item.to),
-);
 
 export default function App() {
   return (
@@ -48,9 +41,6 @@ export default function App() {
         ))}
         <Route path="projects/:slug" element={<ProjectDetailPage />} />
         <Route path="blog/:slug" element={<BlogPostPage />} />
-        {COMING_SOON_PAGES.map((page) => (
-          <Route key={page.to} path={page.to} element={<ComingSoonPage title={page.label} />} />
-        ))}
         {DesignPage && (
           <Route
             path="design"

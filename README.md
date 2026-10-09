@@ -2,11 +2,11 @@
 
 Personal portfolio: a React site whose content lives in files in this repository, plus a small Express API and PostgreSQL database for one purpose: the contact form.
 
-> **Status:** Phases 1 to 12 are done; the project direction was simplified afterwards (see "Decisions" below). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience, Education, Certificates, Blog and Contact pages; pages that are not built yet (Resume) show "Coming soon". The design system can be reviewed at `/design` while developing. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phases 1 to 12 are done; the project direction was simplified afterwards (see "Decisions" below). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience, Education, Certificates, Blog and Contact pages. The design system can be reviewed at `/design` while developing. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
-Pages: home, about, skills, projects with detail pages, experience, education, certificates, blog, contact form, and a resume download (still to come).
+Pages: home, about, skills, projects with detail pages, experience, education, certificates, blog, contact form, and a "Download CV" button that opens your CV as a PDF (there is no separate resume page).
 
 Built so far:
 
@@ -159,7 +159,7 @@ docs/      Project plan, backend guide, and later deployment notes
 .github/   CI workflow
 ```
 
-Personal details live in `shared/siteConfig.json`. Values such as `GITHUB_URL` and `CV_URL` are placeholders to replace with real ones; until then the matching elements stay hidden.
+Personal details live in `shared/siteConfig.json`. Values such as `CV_URL` are placeholders to replace with real ones; until then the matching elements stay hidden. To show the CV button, put your CV in `client/public/cv.pdf` and set `"resumeUrl": "/cv.pdf"`.
 
 | Field               | What it does                                                                                          |
 | ------------------- | ----------------------------------------------------------------------------------------------------- |

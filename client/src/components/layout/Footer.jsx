@@ -1,12 +1,10 @@
 import { Link } from 'react-router';
 import siteConfig from '@portfolio/shared/siteConfig.json';
 import SocialLinks from '../sections/SocialLinks.jsx';
-import { NAV_ITEMS, RESUME_ITEM } from '../../app/siteNavigation.js';
+import { NAV_ITEMS } from '../../app/siteNavigation.js';
 import { classNames } from '../../utils/classNames.js';
 import { getSocialLinks } from '../../utils/socialLinks.js';
 import styles from './Footer.module.css';
-
-const FOOTER_LINKS = [...NAV_ITEMS, RESUME_ITEM];
 
 export default function Footer() {
   const socialLinks = getSocialLinks(siteConfig);
@@ -26,7 +24,7 @@ export default function Footer() {
           <h2 className={styles.caption}>Pages</h2>
           {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
           <ul role="list" className={styles.links}>
-            {FOOTER_LINKS.map((item) => (
+            {NAV_ITEMS.map((item) => (
               <li key={item.to}>
                 <Link to={item.to} className={styles.link}>
                   {item.label}

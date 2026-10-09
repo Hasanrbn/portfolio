@@ -10,6 +10,3 @@ export const NAV_ITEMS = [
   { label: 'Blog', to: '/blog' },
   { label: 'Contact', to: '/contact' },
 ];
-
-/** The resume page is reached from calls to action rather than the main navigation. */
-export const RESUME_ITEM = { label: 'Resume', to: '/resume' };
