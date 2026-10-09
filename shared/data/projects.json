@@ -11,27 +11,28 @@
         "Light, dark and system themes, applied before the first paint so the page never flashes",
         "Keyboard-friendly layout: skip link, a menu that works without a mouse, and focus moved to each new page's heading",
         "Colour contrast of every design token checked against WCAG AA by automated tests",
-        "Skills and projects read through a service layer, ready to switch from seed files to the API",
+        "Page content (skills, projects, experience, blog) lives in files in the repository and is checked by a script, so the site needs no CMS and no login",
+        "A contact form checked in the browser and again on the server, with a hidden trap field, a limit per visitor and no personal data in the logs; messages are stored in PostgreSQL",
         "Continuous integration that runs the format check, lint, tests and build on every push"
       ],
       "architecture": {
-        "description": "The browser loads a React single-page app. The app reads its data through a service layer, which today reads seed files and will call the REST API. In production the Express server answers API requests and serves the built client.",
+        "description": "The browser loads a React single-page app that reads its content from files in the repository. The only server feature is the contact form: the Express API validates a message, limits how often one visitor can send, stores it in PostgreSQL and can email a notification.",
         "layers": [
           {
             "name": "Frontend",
-            "detail": "React single-page app built with Vite"
+            "detail": "React single-page app built with Vite; content comes from files in the repository"
           },
           {
             "name": "API",
-            "detail": "REST endpoints returning JSON (health check today, content endpoints planned)"
+            "detail": "POST /api/contact for the contact form, plus /healthz and /readyz health checks"
           },
           {
             "name": "Backend",
-            "detail": "Express server with validation and central error handling"
+            "detail": "Express server with validation, rate limiting and central error handling"
           },
           {
             "name": "Database",
-            "detail": "PostgreSQL (planned)"
+            "detail": "PostgreSQL stores the contact messages"
           }
         ]
       },

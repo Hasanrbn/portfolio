@@ -57,6 +57,22 @@ describe('page frame', () => {
   });
 });
 
+describe('routes', () => {
+  it('has a real page behind every navigation item', () => {
+    for (const item of NAV_ITEMS) {
+      cleanup();
+      renderApp(item.to);
+      expect(pageHeading()).not.toHaveTextContent('404');
+    }
+  });
+
+  it('has no /resume page: the CV is a download button, not a page', () => {
+    renderApp('/resume');
+
+    expect(pageHeading()).toHaveTextContent('404');
+  });
+});
+
 describe('main navigation', () => {
   it('marks only the current page', () => {
     renderApp('/skills');
@@ -189,7 +205,7 @@ describe('footer', () => {
     expect(footer).toHaveTextContent(`© ${new Date().getFullYear()} ${siteConfig.name}`);
     expect(footer).toHaveTextContent('Built with React, Vite and Express.');
     expect(within(footer).getByRole('navigation', { name: 'Footer' })).toBeInTheDocument();
-    expect(within(footer).getByRole('link', { name: 'Resume' })).toHaveAttribute('href', '/resume');
+    expect(within(footer).queryByRole('link', { name: 'Resume' })).toBeNull();
   });
 
   it('does not show profile links that are still placeholders', () => {
