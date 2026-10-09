@@ -41,7 +41,7 @@ function normalizeCertificate(entry) {
  * Cleans certificate data. An entry is dropped when it is hidden, lacks an id, title or issuer,
  * or has an issue date that is not a real "YYYY-MM". The credential link must be https and the
  * file must be a path on this site or an https address, otherwise it is left out. Ordered by
- * `sortOrder`, then newest first. The shape matches GET /api/certificates (Phase 15).
+ * `sortOrder`, then newest first.
  */
 export function normalizeCertificates(data) {
   const entries = Array.isArray(data?.certificates) ? data.certificates : [];
@@ -80,7 +80,7 @@ export function getCertificateFilterOptions(certificates) {
   };
 }
 
-/** Async on purpose: only this function changes when the API replaces the seed file (Phase 15). */
+/** Async on purpose: the pages already show loading and error states, so where the data comes from can change without touching them. */
 export async function getCertificates() {
   return normalizeCertificates(certificatesData);
 }

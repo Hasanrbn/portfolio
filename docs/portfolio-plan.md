@@ -2,6 +2,39 @@
 
 > Dokumen perencanaan tahap awal. Belum ada kode. Setelah dokumen ini disetujui, pekerjaan dimulai dari **Phase 1** (lihat bagian 17).
 
+## Revisi arah (Oktober 2026)
+
+Setelah Phase 12 selesai, arah proyek disederhanakan. **Bagian yang ditandai "Digantikan" di bawah tidak berlaku lagi**; sisanya tetap menjadi acuan.
+
+| Hal                 | Sebelumnya                                          | Sekarang                                                                           |
+| ------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Akun, login, admin  | Dashboard admin dengan session + CSRF (Phase 13-14) | **Tidak ada.** Tidak ada akun, login, atau halaman admin                           |
+| Sumber konten       | Database, disajikan lewat API (Phase 15)            | **File di repo** (`shared/data`, `shared/posts`), dicek dengan `content:check`     |
+| Peran backend       | CMS + API konten + kontak                           | **Hanya form kontak** (`POST /api/contact`, `/healthz`, `/readyz`)                 |
+| Isi database        | 14 tabel                                            | **`messages`** saja                                                                |
+| Membaca pesan masuk | Dashboard admin                                     | Email notifikasi + `npm run messages`; pembersihan dengan `npm run messages:prune` |
+
+Implementasi autentikasi sudah dibuat dan diuji, tetapi sengaja tidak digabungkan ke `main`. Kodenya tetap ada di branch `phase-13-authentication`.
+
+**Roadmap yang berlaku**
+
+| #    | Phase               | Keterangan                                                         |
+| ---- | ------------------- | ------------------------------------------------------------------ |
+| 1-12 | Selesai             | Setup sampai database pesan kontak                                 |
+| 13   | ~~Authentication~~  | Dibatalkan (tidak ada pengguna yang perlu login)                   |
+| 14   | ~~Admin dashboard~~ | Dibatalkan                                                         |
+| 15   | ~~API konten~~      | Dibatalkan (konten dibaca dari file)                               |
+| -    | Konten nyata        | CV, foto, pengalaman, pendidikan, sertifikat, halaman `/resume`    |
+| 16   | Testing             | Melengkapi tes (termasuk uji alur penting di browser)              |
+| 17   | SEO                 | Judul dan deskripsi per halaman, Open Graph, sitemap, robots       |
+| 18   | Accessibility       | Audit penuh                                                        |
+| 19   | Performance         | Anggaran bundle, gambar, Lighthouse                                |
+| 20   | Security review     | CSP, header, audit dependency, tinjauan form kontak                |
+| 21   | Deployment          | Dockerfile atau hosting statis + API kecil, staging dan production |
+| 22   | CI/CD               | Perluasan pipeline                                                 |
+
+---
+
 ## 0. Ringkasan keputusan
 
 | Hal           | Keputusan                                                                                         |
@@ -139,6 +172,8 @@ Konten utama tetap dirender oleh React di client. Googlebot menjalankan JavaScri
 
 ### 4.3 Alur autentikasi admin
 
+> **Digantikan:** tidak ada autentikasi dan tidak ada admin (lihat "Revisi arah").
+
 1. `GET /api/csrf-token` → token disimpan di memori client.
 2. `POST /api/auth/login` (rate limited) → verifikasi argon2 → buat session → cookie `HttpOnly; Secure; SameSite=Lax`.
 3. Setiap request tulis wajib membawa header `X-CSRF-Token`.
@@ -210,6 +245,8 @@ portfolio/
 ---
 
 ## 6. Database schema (PostgreSQL)
+
+> **Digantikan:** hanya tabel `messages` yang dipakai. Tabel `users`, `session`, dan tabel konten (`technologies`, `skills`, `projects*`, `experiences*`, `education`, `certificates`, `posts`, `tags`, `post_tags`) tidak dipakai; tabel konten sudah dihapus oleh migrasi `..._drop-unused-content-tables.js`.
 
 Prinsip: relasional dan ternormalisasi seperlunya; tanpa tabel yang belum dibutuhkan. Kolom `created_at` dan `updated_at` ada di semua tabel konten (tidak diulang di bawah).
 
@@ -284,6 +321,8 @@ Keputusan desain:
 ---
 
 ## 7. API architecture
+
+> **Digantikan:** endpoint yang ada hanya `POST /api/contact`, `GET /healthz` dan `GET /readyz`. Endpoint publik konten, `/api/csrf-token`, `/api/auth/*` dan `/api/admin/*` tidak dibangun.
 
 Konvensi: JSON, prefix `/api`, huruf kecil dan jamak.
 

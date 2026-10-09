@@ -61,8 +61,7 @@ function normalizeProject(project) {
 /**
  * Cleans project data so pages never have to guard against bad values. Entries are dropped
  * when they are unpublished, have a slug that is not URL-safe or repeated, or lack a title or
- * summary. Links must be https. The result is sorted by `sortOrder`. The shape matches what
- * GET /api/projects will return in Phase 15.
+ * summary. Links must be https. The result is sorted by `sortOrder`.
  */
 export function normalizeProjects(data) {
   const entries = Array.isArray(data?.projects) ? data.projects : [];
@@ -103,8 +102,8 @@ export function getFilterOptions(projects) {
 }
 
 /**
- * Async on purpose: today these read the bundled seed file, and in Phase 15 only these two
- * functions change to call the API, with no change to the pages.
+ * Async on purpose: the pages already show loading and error states, so where the data comes
+ * from can change without touching them. Today it is the bundled file in shared/data.
  */
 export async function getProjects() {
   return normalizeProjects(projectsData);

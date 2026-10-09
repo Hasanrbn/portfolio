@@ -24,7 +24,7 @@ function normalizeExperience(entry) {
  * Cleans experience data. An entry is dropped when it is hidden, lacks an id, position or
  * organization, or has dates that are not "YYYY-MM" or that end before they start. A wrong date
  * is never guessed at (an unreadable end date must not turn into "Present"). The result is
- * newest first. The shape matches what GET /api/experiences will return in Phase 15.
+ * newest first.
  */
 export function normalizeExperiences(data) {
   const entries = Array.isArray(data?.experiences) ? data.experiences : [];
@@ -41,7 +41,7 @@ export function normalizeExperiences(data) {
     .sort((a, b) => b.startDate.localeCompare(a.startDate) || a.sortOrder - b.sortOrder);
 }
 
-/** Async on purpose: only this function changes when the API replaces the seed file (Phase 15). */
+/** Async on purpose: the pages already show loading and error states, so where the data comes from can change without touching them. */
 export async function getExperiences() {
   return normalizeExperiences(experiencesData);
 }
