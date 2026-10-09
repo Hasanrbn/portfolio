@@ -55,6 +55,7 @@ beforeEach(() => {
 
 describe('experience page', () => {
   it('shows an honest empty state while no experience has been added', async () => {
+    getExperiences.mockResolvedValue([]);
     renderAt('/experience');
 
     expect(screen.getByRole('heading', { level: 1, name: 'Experience' })).toBeInTheDocument();
@@ -65,6 +66,7 @@ describe('experience page', () => {
   });
 
   it('announces loading before the content', async () => {
+    getExperiences.mockResolvedValue([]);
     renderAt('/experience');
 
     expect(screen.getByRole('status')).toHaveTextContent('Loading experience');
@@ -124,7 +126,9 @@ describe('experience page', () => {
 
   it('shows a friendly error and recovers on Try again', async () => {
     const user = userEvent.setup();
-    getExperiences.mockRejectedValueOnce(new Error('secret internal detail'));
+    getExperiences
+      .mockRejectedValueOnce(new Error('secret internal detail'))
+      .mockResolvedValueOnce([]);
     renderAt('/experience');
 
     const alert = await screen.findByRole('alert');
@@ -282,8 +286,9 @@ describe('normalizeExperiences', () => {
     expect(normalizeExperiences({ experiences: 'nope' })).toEqual([]);
   });
 
-  it('accepts every entry of the shipped data file', () => {
-    expect(normalizeExperiences(experiencesData)).toHaveLength(experiencesData.experiences.length);
+  it('accepts every visible entry of the shipped data file', () => {
+    const visible = experiencesData.experiences.filter((entry) => entry.visible !== false);
+    expect(normalizeExperiences(experiencesData)).toHaveLength(visible.length);
   });
 });
 
