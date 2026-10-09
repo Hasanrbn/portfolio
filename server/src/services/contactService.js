@@ -11,8 +11,7 @@ function isFilled(value) {
 
 /**
  * Business rules for contact messages. Knows nothing about HTTP: it receives plain values and
- * returns plain results, so it can be tested without a server and reused unchanged by the
- * admin screens later.
+ * returns plain results, so it can be tested without a server.
  *
  * - A message with the hidden trap field filled in is dropped without a word: the caller
  *   still answers "sent", so a bot learns nothing from the reply.

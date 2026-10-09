@@ -2,11 +2,11 @@ import { z } from 'zod';
 import { isHttpsUrl, isMonth, isSlug, isUsableAddress } from '@portfolio/shared/validation.js';
 
 /**
- * Rules for the seed files. They repeat the database CHECK constraints on purpose: a mistake
- * in a JSON file is reported with the file path and the field ("projects[0].repoUrl: ...")
- * instead of as a constraint name from PostgreSQL. Unlike the site (which quietly skips a bad
- * entry so a page never breaks), the seed stops on the first bad file: the author should fix
- * the data, not lose it silently.
+ * Strict rules for the content files in shared/data (and the articles in shared/posts). The
+ * site itself quietly skips a bad entry so a page never breaks; these rules do the opposite
+ * and stop on the first bad file, naming the file and the field ("projects[0].repoUrl: ..."),
+ * so the author fixes the data instead of losing an entry silently. `npm run content:check`
+ * and the tests run them.
  */
 
 const text = (max) => z.string().trim().min(1).max(max);
@@ -190,8 +190,8 @@ export const certificatesFileSchema = z.object({
   ),
 });
 
-/** Throws one readable error listing every problem found in a seed file. */
-export function parseSeedFile(name, schema, data) {
+/** Throws one readable error listing every problem found in a content file. */
+export function parseContentFile(name, schema, data) {
   const result = schema.safeParse(data);
   if (result.success) {
     return result.data;
@@ -203,5 +203,5 @@ export function parseSeedFile(name, schema, data) {
       .replace(/^\./, '');
     return `- ${name}${where ? `: ${where}` : ''}: ${issue.message}`;
   });
-  throw new Error(`Invalid seed data:\n${problems.join('\n')}`);
+  throw new Error(`Invalid content:\n${problems.join('\n')}`);
 }

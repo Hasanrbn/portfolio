@@ -1,12 +1,12 @@
 # Portfolio Website
 
-Personal portfolio built as a full-stack web application: React frontend, Express REST API, PostgreSQL database.
+Personal portfolio: a React site whose content lives in files in this repository, plus a small Express API and PostgreSQL database for one purpose: the contact form.
 
-> **Status:** Phase 11 of 22 (backend structure). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience, Education, Certificates, Blog and Contact pages; pages that are not built yet (Resume) show "Coming soon". The design system can be reviewed at `/design` while developing. Features below are the plan, not what is built yet. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phases 1 to 12 are done; the project direction was simplified afterwards (see "Decisions" below). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience, Education, Certificates, Blog and Contact pages; pages that are not built yet (Resume) show "Coming soon". The design system can be reviewed at `/design` while developing. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
-Planned, in roadmap order: home, about, skills, projects with detail pages, experience, education, certificates, blog, contact form, resume download, admin dashboard.
+Pages: home, about, skills, projects with detail pages, experience, education, certificates, blog, contact form, and a resume download (still to come).
 
 Built so far:
 
@@ -35,15 +35,22 @@ Built so far:
 | -------- | ---------------------------------------- |
 | Frontend | React, Vite, React Router, CSS Modules   |
 | Backend  | Node.js, Express, zod, helmet, pino      |
-| Database | PostgreSQL (local container via Docker)  |
+| Database | PostgreSQL (contact messages only)       |
 | Quality  | ESLint (with jsx-a11y), Prettier, Vitest |
 | CI       | GitHub Actions                           |
 
 ## Architecture
 
-One Node.js service will serve the API and the built React app, backed by one PostgreSQL database. During development, Vite serves the client on port 5173 and proxies `/api` and `/healthz` to the Express server on port 3000.
+The site is a React single-page app (static files). The only server code is a small Express API for the contact form (`POST /api/contact`, plus `/healthz` and `/readyz`), which saves each message in PostgreSQL and optionally emails it to you. How both are hosted is decided in Phase 21. During development, Vite serves the client on port 5173 and proxies `/api` and `/healthz` to the Express server on port 3000.
 
 The server is built in layers: `routes` (URLs and middleware) → `controllers` (HTTP in, HTTP out) → `services` (the rules) → `repositories` (the only code that touches stored data). Errors thrown anywhere end up in one error handler that never shows a visitor anything but a prepared message; every request gets an id and one structured log line that contains no personal data. See [docs/backend.md](docs/backend.md) for the details and a checklist for adding an endpoint.
+
+## Decisions
+
+- **No accounts, no admin page.** Visitors open the site and see everything; nobody signs in. A login would protect nothing here, because the site has no data that anyone but its owner edits.
+- **Content lives in files** (`shared/data`, `shared/posts`), under version control: every change is reviewed, tested (`npm run content:check`) and can be undone with Git. Changing a text means a commit and a deploy.
+- **The backend exists for the contact form only.** Messages are stored in PostgreSQL (so a failed email never loses one) and announced by email. Read and clean them up with `npm run messages` and `npm run messages:prune`.
+- An authentication system (sessions, CSRF, password hashing, an admin CLI) was built in a separate branch and deliberately not merged; it is kept in the Git history as `phase-13-authentication`.
 
 ## Installation
 
@@ -54,12 +61,11 @@ npm install
 cp .env.example .env
 ```
 
-Edit `.env` and replace the placeholder database password (in both `POSTGRES_PASSWORD` and `DATABASE_URL`). Then create the tables and fill them with the content in `shared/data`:
+Edit `.env` and replace the placeholder database password (in both `POSTGRES_PASSWORD` and `DATABASE_URL`). Then create the table for contact messages:
 
 ```bash
 docker compose up -d db     # wait until `docker compose ps` shows "healthy"
 npm run db:migrate
-npm run db:seed
 ```
 
 ## Environment Variables
@@ -103,11 +109,11 @@ npm run build          # production build of the client
 
 ## Contact Messages
 
-Messages are saved in the `messages` table of PostgreSQL whenever `DATABASE_URL` is set (always in production). Without it (local development only) each message is appended as one JSON line to `server/data/contact-messages.jsonl` (created when the first message arrives, readable by the server's user only, ignored by Git, stops at 5 MB instead of filling the disk). Messages saved by the earlier file-based version can be copied into the database once with `npm run db:import-messages` (add a file path to import another file); running it again does not duplicate anything. Read stored messages with `docker compose exec db psql -U portfolio -c "select created_at, name, email, subject from messages order by created_at desc"`.
+Messages are saved in the `messages` table of PostgreSQL whenever `DATABASE_URL` is set (always in production). Without it (local development only) each message is appended as one JSON line to `server/data/contact-messages.jsonl` (created when the first message arrives, readable by the server's user only, ignored by Git, stops at 5 MB instead of filling the disk). Messages saved by the earlier file-based version can be copied into the database once with `npm run db:import-messages` (add a file path to import another file); running it again does not duplicate anything. Read stored messages with `npm run messages` (add `-- --full` for the whole text). Delete old ones with `npm run messages:prune` (it only counts until you add `-- --yes`; the default is messages older than 12 months).
 
 To get an email for every new message, set the `SMTP_*` and `CONTACT_NOTIFY_TO` values in `.env`. With Gmail, turn on 2-step verification, create an App Password at https://myaccount.google.com/apppasswords, use `smtp.gmail.com`, port `587`, your address as `SMTP_USER` and the App Password as `SMTP_PASSWORD`. Never use your normal password, and never put these values in Git or in a file other than `.env`. A mail failure never loses a message or shows the visitor an error: the message is already saved, and the failure is logged with an error code only.
 
-Only the visitor's name, email, subject and message are stored. The visitor's IP address is never stored; with `IP_HASH_SALT` set, a salted one-way hash is kept so repeated spam from one source can be noticed. Decide how long you keep messages, and delete old ones.
+Only the visitor's name, email, subject and message are stored. The visitor's IP address is never stored; with `IP_HASH_SALT` set, a salted one-way hash is kept so repeated spam from one source can be noticed. Twelve months is a reasonable time to keep them; delete older ones with `npm run messages:prune`.
 
 ## Database Setup
 
@@ -115,9 +121,9 @@ Only the visitor's name, email, subject and message are stored. The visitor's IP
 docker compose up -d db
 ```
 
-The container listens on `127.0.0.1:5432` only. Tables are created by migrations and filled by the seed; see [docs/database.md](docs/database.md) for the commands (`db:migrate`, `db:seed`, `db:status`, `db:rollback`, `db:reset`), the table design and the tests.
+The container listens on `127.0.0.1:5432` only. The database only stores contact messages; the site's content lives in files (see below). Tables are created by migrations; see [docs/database.md](docs/database.md) for the commands (`db:migrate`, `db:status`, `db:rollback`, `db:reset`) and the tests.
 
-The password in `POSTGRES_PASSWORD` is only used the first time the container is created. If you change it later, run `docker compose down -v` (this deletes the local data) and start again, then migrate and seed.
+The password in `POSTGRES_PASSWORD` is only used the first time the container is created. If you change it later, run `docker compose down -v` (this deletes the local data) and start again, then migrate.
 
 ## API Documentation
 
@@ -129,7 +135,7 @@ The password in `POSTGRES_PASSWORD` is only used the first time the container is
 
 `POST /api/contact` takes JSON `{ "name", "email", "subject", "message" }` (plus the hidden `website` trap field, which must stay empty). It answers `201` with `{ "success": true, "data": { "message": "Your message has been sent." } }`; `422` with `{ "success": false, "message": "...", "errors": [{ "field", "message" }] }` for invalid fields; `429` after five messages per hour from one address; and a generic `500` otherwise. Limits: name 100, email 254, subject 150, message 10 to 2000 characters.
 
-Responses use a consistent envelope: `{ "success": true, "data": {} }` on success and `{ "success": false, "message": "..." }` on error. The full API is documented in Phase 15.
+Responses use a consistent envelope: `{ "success": true, "data": {} }` on success and `{ "success": false, "message": "..." }` on error. That is the whole API: the site's content is read from files, not from the API.
 
 ## Testing
 
@@ -167,7 +173,7 @@ Personal details live in `shared/siteConfig.json`. Values such as `GITHUB_URL` a
 
 ### Editing site content
 
-These pages read JSON files in `shared/data/`. Edit the file and the page updates; nothing in the React code needs to change.
+These pages read JSON files in `shared/data/`. Edit the file and the page updates; nothing in the React code needs to change. Before committing a change, run `npm run content:check`: it applies strict rules and names the file and field of any mistake (the site itself quietly skips a bad entry so a page never breaks, which would hide it).
 
 - `about.json`: `paragraphs` (extra biography paragraphs under the introduction), `highlights` (short labels) and `sections`. Each section is `{ "id", "title", "paragraphs": [], "items": [] }`; add sections such as Background, Career goals or Approach. Sections with no text are not shown.
 - `skills.json`: categories with skills. Each skill has `id`, `name`, `level` (`"familiar"`, `"intermediate"`, `"advanced"` or `null`) and `description`. A skill without a level or description simply shows its name. The "What the levels mean" guide appears as soon as one skill has a level. Only set a level you can stand behind in an interview.
@@ -194,7 +200,7 @@ These pages read JSON files in `shared/data/`. Edit the file and the page update
 
 - `certificates.json`: `{ "certificates": [] }`. Each entry: `id` (unique), `title`, `issuer`, `issuedDate` (`"YYYY-MM"`), `category`, `credentialId` and `credentialUrl` (`https` only), `file` (`{ "url", "alt" }`), `visible` and `sortOrder`. Put the image or PDF in `client/public/certificates/` and use a path such as `/certificates/web-basics.pdf`; a `.pdf` file is shown as a PDF symbol and opens in a new tab, anything else is shown as a picture. Give each picture an `alt` that describes it (without one, a generic text naming the certificate and issuer is used). Add only certificates you actually earned, and keep personal details such as a home address out of the files, because they are public.
 
-The data shapes match what `GET /api/skills`, `GET /api/projects`, `GET /api/experiences`, `GET /api/education` and `GET /api/certificates` will return, so Phase 15 replaces the files with the API without changing the pages.
+Anything that is empty is not shown, so a page never displays a placeholder. Run `npm run content:check` after editing.
 
 ### Writing blog articles
 

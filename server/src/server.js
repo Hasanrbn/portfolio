@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'node:url';
 import { loadEnv } from './config/env.js';
+import { productionWarnings } from './config/warnings.js';
 import { createApp } from './app.js';
 import { createPool, pingDatabase } from './db/pool.js';
 import { assertMigrated } from './db/migrate.js';
@@ -21,6 +22,9 @@ try {
 }
 
 const logger = createLogger(env);
+for (const warning of productionWarnings(env)) {
+  logger.warn(warning);
+}
 
 // With a database, messages go into PostgreSQL. Without one (local development only; the
 // environment check requires DATABASE_URL in production) they are appended to a local file.

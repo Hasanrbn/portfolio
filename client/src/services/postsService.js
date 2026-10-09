@@ -9,8 +9,7 @@ export const POSTS_PER_PAGE = 6;
 /**
  * Turns post files ([{ path, raw }]) into posts. A file is skipped when its slug (the
  * `slug` header or the file name) is not URL-safe or is used twice, or when it has no title,
- * no text or no real publish date ("YYYY-MM-DD"). Newest first. The shape matches
- * GET /api/posts in Phase 15.
+ * no text or no real publish date ("YYYY-MM-DD"). Newest first.
  */
 export function normalizePosts(entries) {
   const seen = new Set();
@@ -76,7 +75,7 @@ export function getRelatedPosts(post, posts, limit = 3) {
     .map(({ other }) => other);
 }
 
-/** Async on purpose: only these two functions change when the API replaces the files (Phase 15). */
+/** Async on purpose: the pages already show loading and error states, so where the data comes from can change without touching them. */
 export async function getPosts() {
   return normalizePosts(postFiles);
 }

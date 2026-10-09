@@ -9,7 +9,7 @@ import { dataFiles, postFiles } from '../fixtures/content.js';
  * (file name -> raw text). Returns the folder and a function that deletes it.
  */
 export async function createDataDir({ files = {}, posts } = {}) {
-  const dir = await mkdtemp(path.join(tmpdir(), 'portfolio-seed-'));
+  const dir = await mkdtemp(path.join(tmpdir(), 'portfolio-content-'));
   const all = { ...dataFiles, ...files };
 
   for (const [name, content] of Object.entries(all)) {

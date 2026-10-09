@@ -2,8 +2,8 @@ import { Router } from 'express';
 import { createContactRouter } from './contact.js';
 
 /**
- * Everything under /api. Each resource gets its router here; the `/api/admin` routes added in
- * Phase 13 will be mounted behind one `requireAdmin` check so none can be forgotten.
+ * Everything under /api. Each resource gets its router here. Today that is only the contact
+ * form: the site's content is read from files by the pages, and nobody signs in.
  */
 export function createApiRouter({ contactController, contactRateLimit }) {
   const router = Router();

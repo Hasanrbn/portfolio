@@ -6,7 +6,7 @@ const isText = (value) => typeof value === 'string' && value.trim() !== '';
 /**
  * Cleans skill data so the page never has to guard against bad values: entries without an id
  * or name are dropped, an unknown level becomes null (no label shown) and groups left with no
- * skills disappear. The shape matches what GET /api/skills will return in Phase 15.
+ * skills disappear.
  */
 export function normalizeSkillGroups(data) {
   const categories = Array.isArray(data?.categories) ? data.categories : [];
@@ -29,8 +29,9 @@ export function normalizeSkillGroups(data) {
 }
 
 /**
- * Skills grouped by category. It is async on purpose: today it reads the bundled seed file,
- * and in Phase 15 only this function changes to fetch the API, with no change to the page.
+ * Skills grouped by category. It is async on purpose: the page already shows loading and error
+ * states, so where the data comes from can change without touching it. Today it is the bundled
+ * file in shared/data.
  */
 export async function getSkillGroups() {
   return normalizeSkillGroups(skillsData);

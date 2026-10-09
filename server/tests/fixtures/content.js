@@ -1,5 +1,5 @@
-// Made-up content, shaped like the files in shared/data, used to test the seed and the
-// repositories without depending on the real profile. Rich on purpose: every optional field
+// Made-up content, shaped like the files in shared/data, used to test the content
+// checks without depending on the real profile. Rich on purpose: every optional field
 // is used somewhere and left out somewhere else.
 
 export const skills = {

@@ -19,8 +19,7 @@ function normalizeEducation(entry) {
 /**
  * Cleans education data. An entry is dropped when it is hidden, lacks an id, institution or
  * program, or has a start year that is not a real year or an end year that is not one or comes
- * before the start (a missing end year means "Present"). Newest first. The shape matches what
- * GET /api/education will return in Phase 15.
+ * before the start (a missing end year means "Present"). Newest first.
  */
 export function normalizeEducationList(data) {
   const entries = Array.isArray(data?.education) ? data.education : [];
@@ -39,7 +38,7 @@ export function normalizeEducationList(data) {
     .sort((a, b) => b.startYear - a.startYear || a.sortOrder - b.sortOrder);
 }
 
-/** Async on purpose: only this function changes when the API replaces the seed file (Phase 15). */
+/** Async on purpose: the pages already show loading and error states, so where the data comes from can change without touching them. */
 export async function getEducation() {
   return normalizeEducationList(educationData);
 }
