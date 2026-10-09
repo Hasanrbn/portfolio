@@ -1,3 +1,48 @@
 {
-  "education": []
+  "education": [
+    {
+      "id": "upn-veteran-yogyakarta",
+      "institution": "Universitas Pembangunan Nasional “Veteran” Yogyakarta",
+      "program": "Informatics Engineering (undergraduate)",
+      "startYear": 2024,
+      "endYear": null,
+      "subjects": [],
+      "achievements": [],
+      "sortOrder": 1,
+      "visible": true
+    },
+    {
+      "id": "mas-al-hassan",
+      "institution": "MAS Al Hassan",
+      "program": "Madrasah Aliyah (senior high school)",
+      "startYear": 2021,
+      "endYear": 2024,
+      "subjects": [],
+      "achievements": [],
+      "sortOrder": 2,
+      "visible": true
+    },
+    {
+      "id": "smpit-al-hassan",
+      "institution": "SMPIT Al Hassan",
+      "program": "Junior high school",
+      "startYear": 2017,
+      "endYear": 2021,
+      "subjects": [],
+      "achievements": [],
+      "sortOrder": 3,
+      "visible": false
+    },
+    {
+      "id": "sdit-al-adzkar",
+      "institution": "SDIT Al Adzkar",
+      "program": "Elementary school",
+      "startYear": 2011,
+      "endYear": 2017,
+      "subjects": [],
+      "achievements": [],
+      "sortOrder": 4,
+      "visible": false
+    }
+  ]
 }
