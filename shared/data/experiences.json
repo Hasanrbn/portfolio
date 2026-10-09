@@ -1,3 +1,35 @@
 {
-  "experiences": []
+  "experiences": [
+    {
+      "id": "panitia-fti-cup-2025",
+      "position": "Staf Acara",
+      "organization": "Panitia FTI CUP 2025 – Fakultas Teknik Industri UPN “Veteran” Yogyakarta",
+      "type": "organization",
+      "startDate": "2025-09",
+      "endDate": "2025-09",
+      "description": "Staf acara pada kepanitiaan FTI CUP 2025, kompetisi olahraga dan e-sports yang diikuti mahasiswa Fakultas Teknik Industri. Kompetisi ini dibuka dan dijalankan pada 14 dan 27 September 2025.",
+      "responsibilities": [],
+      "technologies": [],
+      "sortOrder": 1,
+      "visible": true
+    },
+    {
+      "id": "bem-fti-seni-olahraga",
+      "position": "Staf Bidang Seni & Olahraga",
+      "organization": "Badan Eksekutif Mahasiswa Fakultas Teknik Industri (BEM FTI) UPN “Veteran” Yogyakarta",
+      "type": "organization",
+      "startDate": "2025-05",
+      "endDate": "2025-11",
+      "description": "",
+      "responsibilities": [
+        "Berkontribusi dalam penyelenggaraan FTI CUP 2025, kompetisi olahraga dan e-sports yang diikuti mahasiswa/i Fakultas Teknik Industri.",
+        "Terlibat dalam pelaksanaan Creation Fest 2.0, acara seni musik antarmahasiswa se-DIY, termasuk adaptasi rencana acara akibat kendala anggaran dan perubahan lokasi pelaksanaan.",
+        "Mendukung pembentukan dan pengelolaan tiga komunitas olahraga (Futsal, Basket, dan Badminton) di lingkup FTI, yang berkontribusi pada pencapaian Juara 1 Futsal Antar Fakultas se-UPN “Veteran” Yogyakarta.",
+        "Berpartisipasi dalam kegiatan Sekabinet Sehat sebagai upaya membangun gaya hidup aktif dan mempererat solidaritas antar pengurus BEM FTI."
+      ],
+      "technologies": [],
+      "sortOrder": 2,
+      "visible": true
+    }
+  ]
 }
