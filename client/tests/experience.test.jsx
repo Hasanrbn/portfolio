@@ -137,6 +137,7 @@ describe('experience page', () => {
 
 describe('education page', () => {
   it('shows an honest empty state while no education has been added', async () => {
+    getEducation.mockResolvedValue([]);
     renderAt('/education');
 
     expect(screen.getByRole('heading', { level: 1, name: 'Education' })).toBeInTheDocument();
@@ -187,7 +188,7 @@ describe('education page', () => {
 
   it('shows a friendly error and recovers on Try again', async () => {
     const user = userEvent.setup();
-    getEducation.mockRejectedValueOnce(new Error('boom'));
+    getEducation.mockRejectedValueOnce(new Error('boom')).mockResolvedValueOnce([]);
     renderAt('/education');
 
     await screen.findByRole('alert');
@@ -315,8 +316,10 @@ describe('normalizeEducationList', () => {
     expect(result[0].endYear).toBeNull();
   });
 
-  it('accepts every entry of the shipped data file', () => {
-    expect(normalizeEducationList(educationData)).toHaveLength(educationData.education.length);
+  it('accepts every visible entry of the shipped data file', () => {
+    const visible = educationData.education.filter((entry) => entry.visible !== false);
+
+    expect(normalizeEducationList(educationData)).toHaveLength(visible.length);
   });
 });
 
