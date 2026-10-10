@@ -5,7 +5,7 @@ export const CONTACT_ENDPOINT = '/api/contact';
 export const CONTACT_SUCCESS_MESSAGE = 'Your message has been sent.';
 export const CONTACT_ERROR_MESSAGE = 'Something went wrong.';
 
-// A free host puts an unused server to sleep and needs up to about a minute to wake it, so
+// A free host may put an unused server to sleep and need up to about a minute to wake it, so
 // the first message after a quiet spell is allowed that long before the form gives up.
 const REQUEST_TIMEOUT_MS = 70_000;
 const KNOWN_FIELDS = new Set(CONTACT_FIELDS);

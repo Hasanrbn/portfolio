@@ -80,6 +80,12 @@ const envSchema = z
  */
 export function parseEnv(source) {
   const cleaned = Object.fromEntries(Object.entries(source).filter(([, value]) => value !== ''));
+
+  // Vercel tells every deployment the project's public domain (without "https://"), so the
+  // site address does not have to be typed in by hand. An explicit SITE_URL always wins.
+  if (!cleaned.SITE_URL && cleaned.VERCEL_PROJECT_PRODUCTION_URL) {
+    cleaned.SITE_URL = `https://${cleaned.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
   const result = envSchema.safeParse(cleaned);
 
   if (!result.success) {

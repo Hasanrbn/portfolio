@@ -184,8 +184,8 @@ export default function ContactForm({ send = sendContactMessage }) {
       <div role="status" className={styles.feedback}>
         {sending && slow && (
           <p className={styles.waiting}>
-            The server is starting up after being idle. This can take up to a minute; please keep
-            this page open.
+            The server is waking up after being idle. This can take a little while; please keep this
+            page open.
           </p>
         )}
         {status === 'sent' && <p className={styles.success}>{CONTACT_SUCCESS_MESSAGE}</p>}
