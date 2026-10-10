@@ -65,9 +65,11 @@ Run the same command again after any future change to `server/src/db/migrations`
    | Name               | Value                                                     |
    | ------------------ | --------------------------------------------------------- |
    | `DATABASE_URL`     | the Neon connection string                                |
-   | `NODE_ENV`         | `production`                                              |
    | `TRUST_PROXY_HOPS` | `1`                                                       |
    | `IP_HASH_SALT`     | 30 or more random letters and digits you make up yourself |
+
+   Do **not** add `NODE_ENV`. A variable set in the project also applies while building, where
+   `production` makes `npm ci` skip the build tools. The function sets it for itself.
 
 5. **Deploy**. The first build takes a minute or two.
 

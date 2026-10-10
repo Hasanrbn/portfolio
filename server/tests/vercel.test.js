@@ -78,4 +78,18 @@ describe('api/index.js', () => {
       .set('Access-Control-Request-Method', 'POST');
     expect(preflight.status).toBe(204);
   });
+
+  it('runs as production when the host sets no NODE_ENV', async () => {
+    vi.resetModules();
+    vi.stubEnv('NODE_ENV', undefined);
+    vi.stubEnv('VERCEL_PROJECT_PRODUCTION_URL', 'me.example.com');
+    vi.stubEnv('SITE_URL', '');
+    vi.stubEnv('DATABASE_URL', 'postgresql://user:pass@localhost:5432/none');
+
+    const { default: app } = await import('../../api/index.js');
+
+    expect(process.env.NODE_ENV).toBe('production');
+    const health = await request(app).get('/healthz');
+    expect(health.status).toBe(200);
+  });
 });

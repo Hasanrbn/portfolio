@@ -8,6 +8,11 @@ import { loadEnv } from '../server/src/config/env.js';
 import { createRuntime } from '../server/src/runtime.js';
 import { createLogger } from '../server/src/utils/logger.js';
 
+// On Vercel the function is production code. NODE_ENV is deliberately not set as a project
+// variable (it would also reach the build and make "npm ci" skip the build tools), so it is
+// filled in here instead. A value that is already set (tests, a preview of your own) is kept.
+process.env.NODE_ENV ||= 'production';
+
 const env = loadEnv();
 const logger = createLogger(env);
 
