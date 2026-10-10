@@ -1,6 +1,7 @@
 import siteConfig from '@portfolio/shared/siteConfig.json';
 import aboutData from '@portfolio/shared/data/about.json';
 import PageTitle from '../../components/layout/PageTitle.jsx';
+import { PAGE_DESCRIPTIONS } from '../../utils/pageDescriptions.js';
 import TextSection from '../../components/sections/TextSection.jsx';
 import Avatar from '../../components/sections/Avatar.jsx';
 import Tag from '../../components/ui/Tag.jsx';
@@ -15,7 +16,7 @@ const highlights = (aboutData.highlights ?? []).filter(
 export default function AboutPage() {
   return (
     <>
-      <PageTitle title="About" />
+      <PageTitle title="About" description={PAGE_DESCRIPTIONS.about} />
       <div className={styles.page}>
         <div className={styles.intro}>
           <div className={styles.text}>

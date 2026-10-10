@@ -1,14 +1,21 @@
 import siteConfig from '@portfolio/shared/siteConfig.json';
 
 /**
- * Sets the browser tab title (React hoists <title> into <head>). Every page should render one,
- * so the tab and history entry always describe the page being shown. Detailed per-page SEO
- * metadata is added on the server in Phase 17.
+ * Sets what the browser tab, search results and history show for the current page. React hoists
+ * <title> and <meta> into <head> and removes them again when the page changes, so every page
+ * should render one of these. Pages that must not appear in search results (a missing page,
+ * for example) pass noIndex.
  */
-export default function PageTitle({ title }) {
+export default function PageTitle({ title, description, noIndex = false }) {
   const fullTitle = title
     ? `${title} | ${siteConfig.name}`
     : `${siteConfig.name} | ${siteConfig.role}`;
 
-  return <title>{fullTitle}</title>;
+  return (
+    <>
+      <title>{fullTitle}</title>
+      {description && <meta name="description" content={description} />}
+      {noIndex && <meta name="robots" content="noindex" />}
+    </>
+  );
 }

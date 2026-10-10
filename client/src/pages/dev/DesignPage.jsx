@@ -156,7 +156,7 @@ export default function DesignPage() {
 
   return (
     <>
-      <PageTitle title="Design system" />
+      <PageTitle title="Design system" noIndex />
       <header className={styles.header}>
         <h1>Design system</h1>
         <p className={styles.lead}>

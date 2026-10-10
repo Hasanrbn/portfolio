@@ -1,5 +1,6 @@
 import siteConfig from '@portfolio/shared/siteConfig.json';
 import PageTitle from '../../components/layout/PageTitle.jsx';
+import { PAGE_DESCRIPTIONS } from '../../utils/pageDescriptions.js';
 import CallToAction from '../../components/sections/CallToAction.jsx';
 import HighlightStrip from '../../components/sections/HighlightStrip.jsx';
 import Hero from '../../components/sections/Hero.jsx';
@@ -18,7 +19,7 @@ export default function HomePage() {
 
   return (
     <>
-      <PageTitle />
+      <PageTitle description={PAGE_DESCRIPTIONS.home} />
       <div className={styles.page}>
         <Hero
           name={siteConfig.name}
