@@ -167,7 +167,7 @@ describe('ContactForm', () => {
       expect(submit()).toHaveTextContent('Send message');
     });
 
-    it('explains a long wait, because a sleeping server needs up to a minute', async () => {
+    it('explains a long wait, because an idle server may need a while to wake up', async () => {
       vi.useFakeTimers({ shouldAdvanceTime: true });
       let finish;
       const send = vi.fn(() => new Promise((resolve) => (finish = resolve)));
@@ -176,16 +176,16 @@ describe('ContactForm', () => {
       await fill(user);
 
       await user.click(submit());
-      expect(screen.queryByText(/starting up/)).toBeNull();
+      expect(screen.queryByText(/waking up/)).toBeNull();
 
       await act(async () => {
         await vi.advanceTimersByTimeAsync(6_500);
       });
-      expect(screen.getByText(/starting up after being idle/)).toBeInTheDocument();
+      expect(screen.getByText(/waking up after being idle/)).toBeInTheDocument();
 
       finish({ ok: true });
       expect(await screen.findByText('Your message has been sent.')).toBeInTheDocument();
-      expect(screen.queryByText(/starting up/)).toBeNull();
+      expect(screen.queryByText(/waking up/)).toBeNull();
     });
 
     it('can be submitted from the keyboard', async () => {

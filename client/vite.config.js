@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import { seoPlugin } from './seo.js';
+import { seoPlugin, siteUrlFromEnv } from './seo.js';
 
 const API_TARGET = 'http://localhost:3000';
 const SHARED_DIR = fileURLToPath(new URL('../shared', import.meta.url));
@@ -9,7 +9,7 @@ const ROOT_DIR = fileURLToPath(new URL('..', import.meta.url));
 
 export default defineConfig(({ mode }) => {
   // SITE_URL is read from the repository's .env or from the build environment (a host's settings).
-  const { SITE_URL } = loadEnv(mode, ROOT_DIR, '');
+  const SITE_URL = siteUrlFromEnv(loadEnv(mode, ROOT_DIR, ''));
 
   return {
     plugins: [react(), seoPlugin({ siteUrl: SITE_URL, sharedDir: SHARED_DIR })],

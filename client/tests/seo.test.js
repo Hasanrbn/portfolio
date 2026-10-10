@@ -14,6 +14,7 @@ import {
   normalizeSiteUrl,
   readContentSlugs,
   seoPlugin,
+  siteUrlFromEnv,
 } from '../seo.js';
 
 const SHARED_DIR = fileURLToPath(new URL('../../shared', import.meta.url));
@@ -30,6 +31,27 @@ describe('normalizeSiteUrl', () => {
     for (const value of ['', undefined, null, 'example.com', 'http://example.com', 'nonsense']) {
       expect(normalizeSiteUrl(value)).toBeNull();
     }
+  });
+});
+
+describe('siteUrlFromEnv', () => {
+  it('prefers SITE_URL', () => {
+    expect(
+      siteUrlFromEnv({
+        SITE_URL: 'https://mine.dev',
+        VERCEL_PROJECT_PRODUCTION_URL: 'x.vercel.app',
+      }),
+    ).toBe('https://mine.dev');
+  });
+
+  it('falls back to the domain Vercel announces, adding https://', () => {
+    expect(siteUrlFromEnv({ VERCEL_PROJECT_PRODUCTION_URL: 'my-site.vercel.app' })).toBe(
+      'https://my-site.vercel.app',
+    );
+  });
+
+  it('is empty when neither is known', () => {
+    expect(siteUrlFromEnv({})).toBe('');
   });
 });
 

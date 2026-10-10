@@ -5,7 +5,7 @@
   "description": "Personal portfolio: full-stack web application",
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": "22.x"
   },
   "workspaces": [
     "client",

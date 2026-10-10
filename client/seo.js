@@ -32,6 +32,17 @@ export function normalizeSiteUrl(value) {
   }
 }
 
+/**
+ * The site's address from the build environment: SITE_URL when set, otherwise the domain Vercel
+ * announces to every build (VERCEL_PROJECT_PRODUCTION_URL, written without "https://").
+ */
+export function siteUrlFromEnv(env) {
+  if (env.SITE_URL) {
+    return env.SITE_URL;
+  }
+  return env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}` : '';
+}
+
 /** Every public path: fixed pages, one per published project and post, and /blog when it has posts. */
 export function collectPaths({ projectSlugs = [], postSlugs = [] }) {
   return [
