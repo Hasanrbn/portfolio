@@ -1,4 +1,5 @@
 import PageTitle from '../../components/layout/PageTitle.jsx';
+import { PAGE_DESCRIPTIONS } from '../../utils/pageDescriptions.js';
 import CertificateCard from '../../components/sections/CertificateCard.jsx';
 import CertificateFilters from '../../components/sections/CertificateFilters.jsx';
 import AsyncView from '../../components/ui/AsyncView.jsx';
@@ -71,7 +72,7 @@ export default function CertificatesPage() {
 
   return (
     <>
-      <PageTitle title="Certificates" />
+      <PageTitle title="Certificates" description={PAGE_DESCRIPTIONS.certificates} />
       <h1>Certificates</h1>
       <p className={listStyles.lead}>Courses and credentials I have completed.</p>
 

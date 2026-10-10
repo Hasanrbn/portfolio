@@ -32,7 +32,7 @@ function Article({ post, related }) {
 
   return (
     <>
-      <PageTitle title={post.title} />
+      <PageTitle title={post.title} description={post.excerpt || undefined} />
       <PostMeta post={post} showUpdated />
 
       {post.cover && (
@@ -115,7 +115,7 @@ export default function BlogPostPage() {
 
       {notFound && (
         <>
-          <PageTitle title="Article not found" />
+          <PageTitle title="Article not found" noIndex />
           <p>There is no article at this address.</p>
           <p>
             <LinkButton to="/blog">Back to the blog</LinkButton>

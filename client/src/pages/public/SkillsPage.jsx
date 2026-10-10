@@ -1,4 +1,5 @@
 import PageTitle from '../../components/layout/PageTitle.jsx';
+import { PAGE_DESCRIPTIONS } from '../../utils/pageDescriptions.js';
 import SkillGroup from '../../components/sections/SkillGroup.jsx';
 import EmptyState from '../../components/ui/EmptyState.jsx';
 import ErrorState from '../../components/ui/ErrorState.jsx';
@@ -52,7 +53,7 @@ export default function SkillsPage() {
 
   return (
     <>
-      <PageTitle title="Skills" />
+      <PageTitle title="Skills" description={PAGE_DESCRIPTIONS.skills} />
       <h1>Skills</h1>
       <p className={styles.lead}>The technologies and tools I work with, grouped by area.</p>
 

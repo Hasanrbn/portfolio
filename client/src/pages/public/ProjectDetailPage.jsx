@@ -49,7 +49,7 @@ function ProjectBody({ project }) {
 
   return (
     <>
-      <PageTitle title={project.title} />
+      <PageTitle title={project.title} description={project.summary} />
       <div className={styles.meta}>
         {status && <Badge tone={status.tone}>{status.label}</Badge>}
         {project.category && <span>{project.category}</span>}
@@ -171,7 +171,7 @@ export default function ProjectDetailPage() {
 
       {notFound && (
         <>
-          <PageTitle title="Project not found" />
+          <PageTitle title="Project not found" noIndex />
           <p>There is no project at this address.</p>
           <p>
             <LinkButton to="/projects">Back to Projects</LinkButton>

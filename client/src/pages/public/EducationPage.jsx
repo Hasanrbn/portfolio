@@ -1,4 +1,5 @@
 import PageTitle from '../../components/layout/PageTitle.jsx';
+import { PAGE_DESCRIPTIONS } from '../../utils/pageDescriptions.js';
 import EducationItem from '../../components/sections/EducationItem.jsx';
 import AsyncView from '../../components/ui/AsyncView.jsx';
 import useAsync from '../../hooks/useAsync.js';
@@ -10,7 +11,7 @@ export default function EducationPage() {
 
   return (
     <>
-      <PageTitle title="Education" />
+      <PageTitle title="Education" description={PAGE_DESCRIPTIONS.education} />
       <h1>Education</h1>
       <p className={styles.lead}>Where I have studied and what I focused on, newest first.</p>
 

@@ -72,19 +72,19 @@ npm run db:migrate
 
 All variables are listed in `.env.example`. The server validates them on startup and refuses to start if one is invalid.
 
-| Variable                                                                                                        | Required           | Description                                                                        |
-| --------------------------------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------- |
-| `NODE_ENV`                                                                                                      | No                 | `development` (default), `test`, `production`                                      |
-| `PORT`                                                                                                          | No                 | Server port, default `3000`                                                        |
-| `LOG_LEVEL`                                                                                                     | No                 | `silent` … `fatal`; default `debug` in development, `info` in production           |
-| `SITE_URL`                                                                                                      | In production      | Public site URL, used for canonical links                                          |
-| `DATABASE_URL`                                                                                                  | In production      | PostgreSQL connection string; without it (development) messages go to a file       |
-| `TEST_DATABASE_URL`                                                                                             | For database tests | A database the tests may fill and empty; the database tests are skipped without it |
-| `POSTGRES_USER` / `_PASSWORD` / `_DB`                                                                           | For local database | Read by `docker-compose.yml`                                                       |
-| `TRUST_PROXY_HOPS`                                                                                              | No                 | Reverse proxies in front of the server, default `0`                                |
-| `IP_HASH_SALT`                                                                                                  | No                 | 16+ random characters; stores a hash of the visitor's IP instead of nothing        |
-| `CONTACT_STORE_PATH`                                                                                            | No                 | Where messages are saved without a database                                        |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `CONTACT_NOTIFY_TO`, `CONTACT_MAIL_FROM` | No                 | Email notification for new messages; off while `SMTP_HOST` is empty                |
+| Variable                                                                                                        | Required           | Description                                                                             |
+| --------------------------------------------------------------------------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------- |
+| `NODE_ENV`                                                                                                      | No                 | `development` (default), `test`, `production`                                           |
+| `PORT`                                                                                                          | No                 | Server port, default `3000`                                                             |
+| `LOG_LEVEL`                                                                                                     | No                 | `silent` … `fatal`; default `debug` in development, `info` in production                |
+| `SITE_URL`                                                                                                      | In production      | Public https address of the site; the build uses it for `sitemap.xml` and link previews |
+| `DATABASE_URL`                                                                                                  | In production      | PostgreSQL connection string; without it (development) messages go to a file            |
+| `TEST_DATABASE_URL`                                                                                             | For database tests | A database the tests may fill and empty; the database tests are skipped without it      |
+| `POSTGRES_USER` / `_PASSWORD` / `_DB`                                                                           | For local database | Read by `docker-compose.yml`                                                            |
+| `TRUST_PROXY_HOPS`                                                                                              | No                 | Reverse proxies in front of the server, default `0`                                     |
+| `IP_HASH_SALT`                                                                                                  | No                 | 16+ random characters; stores a hash of the visitor's IP instead of nothing             |
+| `CONTACT_STORE_PATH`                                                                                            | No                 | Where messages are saved without a database                                             |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `CONTACT_NOTIFY_TO`, `CONTACT_MAIL_FROM` | No                 | Email notification for new messages; off while `SMTP_HOST` is empty                     |
 
 Never commit `.env`. Only `.env.example` belongs in Git.
 

@@ -1,4 +1,5 @@
 import PageTitle from '../../components/layout/PageTitle.jsx';
+import { PAGE_DESCRIPTIONS } from '../../utils/pageDescriptions.js';
 import ProjectCard from '../../components/sections/ProjectCard.jsx';
 import ProjectFilters from '../../components/sections/ProjectFilters.jsx';
 import Button from '../../components/ui/Button.jsx';
@@ -55,7 +56,7 @@ export default function ProjectsPage() {
 
   return (
     <>
-      <PageTitle title="Projects" />
+      <PageTitle title="Projects" description={PAGE_DESCRIPTIONS.projects} />
       <h1>Projects</h1>
       <p className={styles.lead}>Things I have built, and what I used to build them.</p>
 

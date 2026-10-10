@@ -5,9 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
     <title>Muhammad Hasan Rabbani | Full-Stack Web Developer</title>
+    <!--
+      The description of each page is set by the page itself (components/layout/PageTitle.jsx),
+      so there is deliberately no name="description" tag here: two would conflict. The tags
+      below are what link previews (chat apps, social sites) read, because those do not run
+      scripts. The address-based tags (og:url, og:image, structured data) and robots.txt and
+      sitemap.xml are added at build time from SITE_URL (client/seo.js).
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Muhammad Hasan Rabbani" />
+    <meta property="og:title" content="Muhammad Hasan Rabbani | Full-Stack Web Developer" />
     <meta
-      name="description"
-      content="Portfolio of Muhammad Hasan Rabbani, a full-stack web developer."
+      property="og:description"
+      content="Portfolio of Muhammad Hasan Rabbani, a Full-Stack Web Developer based in Indonesia: projects, skills, experience and contact details."
     />
     <!--
       Sets data-theme before first paint so there is no flash of the wrong theme.

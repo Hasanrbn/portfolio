@@ -1,4 +1,5 @@
 import PageTitle from '../../components/layout/PageTitle.jsx';
+import { PAGE_DESCRIPTIONS } from '../../utils/pageDescriptions.js';
 import Pagination from '../../components/sections/Pagination.jsx';
 import PostCard from '../../components/sections/PostCard.jsx';
 import PostFilters from '../../components/sections/PostFilters.jsx';
@@ -90,7 +91,7 @@ export default function BlogPage() {
 
   return (
     <>
-      <PageTitle title="Blog" />
+      <PageTitle title="Blog" description={PAGE_DESCRIPTIONS.blog} />
       <h1>Blog</h1>
       <p className={listStyles.lead}>Notes on what I build and learn, newest first.</p>
 

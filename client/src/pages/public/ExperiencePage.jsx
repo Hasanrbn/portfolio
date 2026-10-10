@@ -1,4 +1,5 @@
 import PageTitle from '../../components/layout/PageTitle.jsx';
+import { PAGE_DESCRIPTIONS } from '../../utils/pageDescriptions.js';
 import Timeline from '../../components/sections/Timeline.jsx';
 import AsyncView from '../../components/ui/AsyncView.jsx';
 import useAsync from '../../hooks/useAsync.js';
@@ -10,7 +11,7 @@ export default function ExperiencePage() {
 
   return (
     <>
-      <PageTitle title="Experience" />
+      <PageTitle title="Experience" description={PAGE_DESCRIPTIONS.experience} />
       <h1>Experience</h1>
       <p className={styles.lead}>
         Work, internships and projects where I applied what I know, newest first.

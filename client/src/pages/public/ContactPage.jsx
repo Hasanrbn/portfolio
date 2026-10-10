@@ -1,5 +1,6 @@
 import siteConfig from '@portfolio/shared/siteConfig.json';
 import PageTitle from '../../components/layout/PageTitle.jsx';
+import { PAGE_DESCRIPTIONS } from '../../utils/pageDescriptions.js';
 import ContactForm from '../../components/sections/ContactForm.jsx';
 import SocialLinks from '../../components/sections/SocialLinks.jsx';
 import Card from '../../components/ui/Card.jsx';
@@ -11,7 +12,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <PageTitle title="Contact" />
+      <PageTitle title="Contact" description={PAGE_DESCRIPTIONS.contact} />
       <div className={styles.page}>
         <header className={styles.intro}>
           <h1>Contact</h1>
