@@ -78,6 +78,7 @@ beforeEach(() => {
 
 describe('certificates page', () => {
   it('shows an honest empty state while no certificate has been added', async () => {
+    getCertificates.mockResolvedValue([]);
     renderPage();
 
     expect(screen.getByRole('heading', { level: 1, name: 'Certificates' })).toBeInTheDocument();
@@ -86,6 +87,7 @@ describe('certificates page', () => {
   });
 
   it('announces loading, then shows the content', async () => {
+    getCertificates.mockResolvedValue([]);
     renderPage();
 
     expect(screen.getByRole('status')).toHaveTextContent('Loading certificates');
@@ -95,7 +97,9 @@ describe('certificates page', () => {
 
   it('shows a friendly error and recovers on Try again', async () => {
     const user = userEvent.setup();
-    getCertificates.mockRejectedValueOnce(new Error('secret internal detail'));
+    getCertificates
+      .mockRejectedValueOnce(new Error('secret internal detail'))
+      .mockResolvedValueOnce([]);
     renderPage();
 
     const alert = await screen.findByRole('alert');
