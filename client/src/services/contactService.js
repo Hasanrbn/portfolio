@@ -1,10 +1,13 @@
 import { CONTACT_FIELDS } from '@portfolio/shared/contact.js';
+import { API_BASE_URL, apiUrl, buildApiUrl } from '../utils/apiUrl.js';
 
 export const CONTACT_ENDPOINT = '/api/contact';
 export const CONTACT_SUCCESS_MESSAGE = 'Your message has been sent.';
 export const CONTACT_ERROR_MESSAGE = 'Something went wrong.';
 
-const REQUEST_TIMEOUT_MS = 15_000;
+// A free host puts an unused server to sleep and needs up to about a minute to wake it, so
+// the first message after a quiet spell is allowed that long before the form gives up.
+const REQUEST_TIMEOUT_MS = 70_000;
 const KNOWN_FIELDS = new Set(CONTACT_FIELDS);
 
 /** Field messages from a 422 answer, limited to the form's own fields and to plain text. */
@@ -45,7 +48,7 @@ export async function sendContactMessage(payload, { fetchImpl = fetch } = {}) {
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   try {
-    const response = await fetchImpl(CONTACT_ENDPOINT, {
+    const response = await fetchImpl(apiUrl(CONTACT_ENDPOINT), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify(payload),
@@ -82,4 +85,30 @@ export async function sendContactMessage(payload, { fetchImpl = fetch } = {}) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+let woken = false;
+
+/**
+ * Wakes a sleeping server ahead of time: called when the contact page opens, so that it is
+ * usually ready by the time the visitor has written a message. Only does something when the
+ * API is on a different address; the answer is never read, and failure is ignored.
+ */
+export function wakeServer({ fetchImpl = fetch, base = API_BASE_URL } = {}) {
+  if (woken || !base) {
+    return;
+  }
+  woken = true;
+  try {
+    Promise.resolve(
+      fetchImpl(buildApiUrl(base, '/healthz'), { mode: 'no-cors', cache: 'no-store' }),
+    ).catch(() => {});
+  } catch {
+    // Nothing to do: this is only a courtesy request.
+  }
+}
+
+/** For tests: lets wakeServer run again. */
+export function resetWakeServer() {
+  woken = false;
 }

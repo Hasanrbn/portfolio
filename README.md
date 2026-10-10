@@ -41,7 +41,7 @@ Built so far:
 
 ## Architecture
 
-The site is a React single-page app (static files). The only server code is a small Express API for the contact form (`POST /api/contact`, plus `/healthz` and `/readyz`), which saves each message in PostgreSQL and optionally emails it to you. How both are hosted is decided in Phase 21. During development, Vite serves the client on port 5173 and proxies `/api` and `/healthz` to the Express server on port 3000.
+The site is a React single-page app (static files). The only server code is a small Express API for the contact form (`POST /api/contact`, plus `/healthz` and `/readyz`), which saves each message in PostgreSQL and optionally emails it to you. Both are hosted on free plans (see [Deployment](#deployment)). During development, Vite serves the client on port 5173 and proxies `/api` and `/healthz` to the Express server on port 3000.
 
 The server is built in layers: `routes` (URLs and middleware) → `controllers` (HTTP in, HTTP out) → `services` (the rules) → `repositories` (the only code that touches stored data). Errors thrown anywhere end up in one error handler that never shows a visitor anything but a prepared message; every request gets an id and one structured log line that contains no personal data. See [docs/backend.md](docs/backend.md) for the details and a checklist for adding an endpoint.
 
@@ -147,7 +147,7 @@ Server tests use Vitest and Supertest. Client tests use Vitest and Testing Libra
 
 ## Deployment
 
-Documented in Phase 21.
+The site runs on free plans: the website as a Render Static Site, the contact API as a Render Web Service and the messages in Neon PostgreSQL. `render.yaml` describes the Render services; the step-by-step guide, the limits of the free plans and how to read messages are in [docs/deployment.md](docs/deployment.md).
 
 ## Project Structure
 

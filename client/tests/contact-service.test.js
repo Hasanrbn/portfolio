@@ -102,7 +102,7 @@ describe('sendContactMessage', () => {
     );
 
     const pending = sendContactMessage(payload, { fetchImpl });
-    await vi.advanceTimersByTimeAsync(16_000);
+    await vi.advanceTimersByTimeAsync(71_000);
 
     expect(await pending).toEqual({ ok: false, kind: 'error', message: 'Something went wrong.' });
   });

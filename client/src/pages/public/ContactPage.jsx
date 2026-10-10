@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import siteConfig from '@portfolio/shared/siteConfig.json';
 import PageTitle from '../../components/layout/PageTitle.jsx';
 import { PAGE_DESCRIPTIONS } from '../../utils/pageDescriptions.js';
@@ -5,10 +6,16 @@ import ContactForm from '../../components/sections/ContactForm.jsx';
 import SocialLinks from '../../components/sections/SocialLinks.jsx';
 import Card from '../../components/ui/Card.jsx';
 import { getSocialLinks } from '../../utils/socialLinks.js';
+import { wakeServer } from '../../services/contactService.js';
 import styles from './ContactPage.module.css';
 
 export default function ContactPage() {
   const links = getSocialLinks(siteConfig);
+
+  // A free server sleeps when unused; opening this page starts waking it for the message.
+  useEffect(() => {
+    wakeServer();
+  }, []);
 
   return (
     <>
