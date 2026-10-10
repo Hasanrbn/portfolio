@@ -47,7 +47,7 @@ describe('about page', () => {
     }
   });
 
-  it('keeps heading levels in order and shows no picture while none is set', () => {
+  it('keeps heading levels in order', () => {
     renderAbout();
     const levels = within(screen.getByRole('main'))
       .getAllByRole('heading')
@@ -55,7 +55,19 @@ describe('about page', () => {
 
     expect(levels[0]).toBe(1);
     expect(levels.slice(1).every((level) => level === 2)).toBe(true);
-    expect(screen.queryByRole('img')).toBeNull();
+  });
+
+  it('shows the profile picture only when one is set in the site config', () => {
+    renderAbout();
+    const pictures = within(screen.getByRole('main')).queryAllByRole('img');
+
+    if (siteConfig.avatar) {
+      expect(pictures).toHaveLength(1);
+      expect(pictures[0]).toHaveAttribute('alt', siteConfig.name);
+      expect(pictures[0]).toHaveAttribute('src', siteConfig.avatar);
+    } else {
+      expect(pictures).toHaveLength(0);
+    }
   });
 });
 
