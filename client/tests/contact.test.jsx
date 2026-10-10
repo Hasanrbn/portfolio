@@ -1,7 +1,7 @@
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import siteConfig from '@portfolio/shared/siteConfig.json';
 import App from '../src/app/App.jsx';
 import ThemeProvider from '../src/app/ThemeProvider.jsx';
@@ -29,6 +29,10 @@ function setup(send = vi.fn().mockResolvedValue({ ok: true })) {
 }
 
 const submit = () => screen.getByRole('button', { name: /^Send message|^Sending/ });
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe('ContactForm', () => {
   it('has a labelled control for each field and says which are required', () => {
@@ -161,6 +165,27 @@ describe('ContactForm', () => {
       expect(await screen.findByText('Your message has been sent.')).toBeInTheDocument();
       expect(submit()).toBeEnabled();
       expect(submit()).toHaveTextContent('Send message');
+    });
+
+    it('explains a long wait, because a sleeping server needs up to a minute', async () => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      let finish;
+      const send = vi.fn(() => new Promise((resolve) => (finish = resolve)));
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      render(<ContactForm send={send} />);
+      await fill(user);
+
+      await user.click(submit());
+      expect(screen.queryByText(/starting up/)).toBeNull();
+
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(6_500);
+      });
+      expect(screen.getByText(/starting up after being idle/)).toBeInTheDocument();
+
+      finish({ ok: true });
+      expect(await screen.findByText('Your message has been sent.')).toBeInTheDocument();
+      expect(screen.queryByText(/starting up/)).toBeNull();
     });
 
     it('can be submitted from the keyboard', async () => {

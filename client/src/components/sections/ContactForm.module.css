@@ -17,12 +17,19 @@
   display: none;
 }
 
+.waiting,
 .success,
 .failure {
   padding: var(--space-3) var(--space-4);
   border: 1px solid currentColor;
   border-radius: var(--radius-sm);
   font-weight: 600;
+}
+
+.waiting {
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-text);
+  font-weight: 500;
 }
 
 .success {

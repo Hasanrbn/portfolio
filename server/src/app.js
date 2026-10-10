@@ -5,6 +5,7 @@ import { createApiRouter } from './routes/api.js';
 import { createContactController } from './controllers/contactController.js';
 import { createContactService } from './services/contactService.js';
 import { createMemoryContactStore } from './repositories/contactMessages.js';
+import { createCors } from './middleware/cors.js';
 import { createRequestId } from './middleware/requestId.js';
 import { requestLogger } from './middleware/requestLogger.js';
 import { notFoundHandler } from './middleware/notFound.js';
@@ -53,6 +54,7 @@ export function createApp({
   const contactController = createContactController({ contactService });
 
   app.use(createHealthRouter({ checkReady }));
+  app.use('/api', createCors({ siteUrl: env.SITE_URL }));
   app.use('/api', createApiRouter({ contactController, contactRateLimit }));
 
   app.use(notFoundHandler);

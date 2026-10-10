@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CONTACT_FIELDS, CONTACT_LIMITS, validateContact } from '@portfolio/shared/contact.js';
 import Button from '../ui/Button.jsx';
 import FormField from '../ui/FormField.jsx';
@@ -9,6 +9,9 @@ import styles from './ContactForm.module.css';
 
 // Hidden field that people never see but simple bots fill in. The server drops those messages.
 const HONEYPOT_FIELD = 'website';
+
+// After this long without an answer the form explains that the server may be waking up.
+const SLOW_SEND_MS = 6000;
 
 const EMPTY_VALUES = { name: '', email: '', subject: '', message: '', [HONEYPOT_FIELD]: '' };
 
@@ -30,6 +33,16 @@ export default function ContactForm({ send = sendContactMessage }) {
   const [failure, setFailure] = useState('');
 
   const sending = status === 'sending';
+  const [slow, setSlow] = useState(false);
+
+  useEffect(() => {
+    if (!sending) {
+      setSlow(false);
+      return undefined;
+    }
+    const timer = setTimeout(() => setSlow(true), SLOW_SEND_MS);
+    return () => clearTimeout(timer);
+  }, [sending]);
 
   function focusFirstInvalid(fieldErrors) {
     const first = CONTACT_FIELDS.find((field) => fieldErrors[field]);
@@ -169,6 +182,12 @@ export default function ContactForm({ send = sendContactMessage }) {
 
       {/* The region exists before its text does, which is what makes screen readers announce it. */}
       <div role="status" className={styles.feedback}>
+        {sending && slow && (
+          <p className={styles.waiting}>
+            The server is starting up after being idle. This can take up to a minute; please keep
+            this page open.
+          </p>
+        )}
         {status === 'sent' && <p className={styles.success}>{CONTACT_SUCCESS_MESSAGE}</p>}
       </div>
       {status === 'failed' && (
