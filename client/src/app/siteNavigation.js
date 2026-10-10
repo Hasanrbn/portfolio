@@ -1,4 +1,6 @@
-/** Pages shown in the main navigation, in display order. Used by the header and the footer. */
+import { hasPublishedPosts } from '../services/postsService.js';
+
+/** Every page of the site, in display order. The header and the footer show the ones from getNavItems(). */
 export const NAV_ITEMS = [
   { label: 'Home', to: '/' },
   { label: 'About', to: '/about' },
@@ -10,3 +12,12 @@ export const NAV_ITEMS = [
   { label: 'Blog', to: '/blog' },
   { label: 'Contact', to: '/contact' },
 ];
+
+/**
+ * The pages to show in the header and the footer. The Blog link appears only once there is an
+ * article to read; the /blog address itself keeps working either way.
+ */
+export function getNavItems() {
+  const blogReady = hasPublishedPosts();
+  return NAV_ITEMS.filter((item) => item.to !== '/blog' || blogReady);
+}

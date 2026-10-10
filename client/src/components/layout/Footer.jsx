@@ -1,12 +1,14 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router';
 import siteConfig from '@portfolio/shared/siteConfig.json';
 import SocialLinks from '../sections/SocialLinks.jsx';
-import { NAV_ITEMS } from '../../app/siteNavigation.js';
+import { getNavItems } from '../../app/siteNavigation.js';
 import { classNames } from '../../utils/classNames.js';
 import { getSocialLinks } from '../../utils/socialLinks.js';
 import styles from './Footer.module.css';
 
 export default function Footer() {
+  const navItems = useMemo(getNavItems, []);
   const socialLinks = getSocialLinks(siteConfig);
   const year = new Date().getFullYear();
 
@@ -24,7 +26,7 @@ export default function Footer() {
           <h2 className={styles.caption}>Pages</h2>
           {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
           <ul role="list" className={styles.links}>
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <li key={item.to}>
                 <Link to={item.to} className={styles.link}>
                   {item.label}

@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { DARK_QUERY, THEME_STORAGE_KEY } from '../src/utils/theme.js';
 
@@ -22,5 +22,14 @@ describe('index.html anti-flash theme script', () => {
 
     expect(scriptPosition).toBeGreaterThan(-1);
     expect(scriptPosition).toBeLessThan(bundlePosition);
+  });
+});
+
+describe('index.html favicon', () => {
+  it('links an icon file that exists in public/', () => {
+    const match = indexHtml.match(/<link rel="icon"[^>]*href="(\/[^"]+)"/);
+
+    expect(match).not.toBeNull();
+    expect(existsSync(new URL(`../public${match[1]}`, import.meta.url))).toBe(true);
   });
 });

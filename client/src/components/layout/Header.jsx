@@ -1,9 +1,9 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, NavLink } from 'react-router';
 import siteConfig from '@portfolio/shared/siteConfig.json';
 import Icon from '../ui/Icon.jsx';
 import ThemeToggle from './ThemeToggle.jsx';
-import { NAV_ITEMS } from '../../app/siteNavigation.js';
+import { getNavItems } from '../../app/siteNavigation.js';
 import { useScrolled } from '../../hooks/useScrolled.js';
 import { classNames } from '../../utils/classNames.js';
 import styles from './Header.module.css';
@@ -17,6 +17,7 @@ import styles from './Header.module.css';
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const scrolled = useScrolled();
+  const navItems = useMemo(getNavItems, []);
   const panelId = useId();
   const headerRef = useRef(null);
   const menuButtonRef = useRef(null);
@@ -83,7 +84,7 @@ export default function Header() {
             {/* role="list" keeps list semantics in Safari, which drops them when list-style is none. */}
             {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
             <ul role="list" className={styles.list}>
-              {NAV_ITEMS.map((item) => (
+              {navItems.map((item) => (
                 <li key={item.to}>
                   <NavLink
                     to={item.to}

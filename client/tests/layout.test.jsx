@@ -6,7 +6,7 @@ import siteConfig from '@portfolio/shared/siteConfig.json';
 import { usePlaceholderProfile } from './helpers/profileConfig.js';
 import App from '../src/app/App.jsx';
 import ThemeProvider from '../src/app/ThemeProvider.jsx';
-import { NAV_ITEMS } from '../src/app/siteNavigation.js';
+import { NAV_ITEMS, getNavItems } from '../src/app/siteNavigation.js';
 
 function renderApp(path = '/') {
   return render(
@@ -91,7 +91,7 @@ describe('main navigation', () => {
     const user = userEvent.setup();
     renderApp();
 
-    for (const item of NAV_ITEMS.filter((entry) => entry.to !== '/')) {
+    for (const item of getNavItems().filter((entry) => entry.to !== '/')) {
       await user.click(navLink(item.label));
       expect(pageHeading()).toHaveTextContent(item.label);
     }

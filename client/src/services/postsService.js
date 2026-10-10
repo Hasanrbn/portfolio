@@ -75,6 +75,11 @@ export function getRelatedPosts(post, posts, limit = 3) {
     .map(({ other }) => other);
 }
 
+/** True when at least one article is published. Synchronous, so the navigation can decide at render time. */
+export function hasPublishedPosts() {
+  return normalizePosts(postFiles).length > 0;
+}
+
 /** Async on purpose: the pages already show loading and error states, so where the data comes from can change without touching them. */
 export async function getPosts() {
   return normalizePosts(postFiles);
