@@ -38,6 +38,18 @@ function makeProjects(entries) {
   });
 }
 
+// One project written for these tests, so they do not change when the real projects do.
+const ONE = () =>
+  makeProjects([
+    {
+      slug: 'portfolio-website',
+      title: 'Portfolio Website',
+      category: 'Full-Stack',
+      status: 'in_progress',
+      year: 2026,
+    },
+  ]);
+
 const THREE = () =>
   makeProjects([
     { title: 'Shop', category: 'Web', technologies: ['React', 'Express'], sortOrder: 1 },
@@ -67,7 +79,11 @@ beforeEach(() => {
   getProjectBySlug.mockReset().mockImplementation(realGetProjectBySlug);
 });
 
-describe('projects page with the shipped data', () => {
+describe('projects page with a single project', () => {
+  beforeEach(() => {
+    getProjects.mockImplementation(async () => ONE());
+  });
+
   it('lists the project with a link to its page, and no filters for a single project', async () => {
     renderAt('/projects');
 
@@ -90,6 +106,10 @@ describe('projects page with the shipped data', () => {
 });
 
 describe('projects page states', () => {
+  beforeEach(() => {
+    getProjects.mockImplementation(async () => ONE());
+  });
+
   it('announces loading, then shows the projects', async () => {
     renderAt('/projects');
 
