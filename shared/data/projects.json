@@ -78,12 +78,12 @@
       "year": 2026,
       "thumbnail": null,
       "screenshots": [],
-      "repoUrl": "",
+      "repoUrl": "https://github.com/Hasanrbn/Sistem-Manajemen-Inventaris-BateraiListrikMotor",
       "demoUrl": "",
       "technologies": ["JavaScript", "Node.js", "Express", "EJS", "HTML", "CSS", "MySQL"],
       "featured": false,
       "published": true,
-      "sortOrder": 2
+      "sortOrder": 3
     },
     {
       "slug": "sistem-informasi-perawatan-kecantikan",
@@ -106,7 +106,7 @@
       "technologies": ["PHP", "MySQL", "Bootstrap"],
       "featured": false,
       "published": true,
-      "sortOrder": 3
+      "sortOrder": 4
     },
     {
       "slug": "sistem-informasi-film",
@@ -129,7 +129,35 @@
       "technologies": ["HTML", "CSS", "JavaScript", "MySQL", "Bootstrap"],
       "featured": false,
       "published": true,
-      "sortOrder": 4
+      "sortOrder": 5
+    },
+    {
+      "slug": "web-rekomendasi-travel-jogja",
+      "title": "Web Rekomendasi Travel Jogja",
+      "summary": "Aplikasi web sistem pendukung keputusan yang merangking destinasi wisata di Yogyakarta dengan metode SAW, proyek kelompok untuk praktikum SCPK.",
+      "description": "Aplikasi web sistem pendukung keputusan untuk merekomendasikan destinasi wisata di Yogyakarta, dibuat dengan Python dan Streamlit. Data 437 destinasi dibaca dari berkas CSV, lalu diurutkan dengan metode Simple Additive Weighting (SAW) berdasarkan lima kriteria: rating, harga tiket, fasilitas, aksesibilitas, dan popularitas. Pengguna dapat mengatur bobot tiap kriteria, menyaring jenis wisata dan harga tiket maksimum, serta melihat peringkat dan grafik.\n\nSebagian nilai kriteria (fasilitas, aksesibilitas, dan popularitas) diturunkan dari data lain atau dibuat sebagai data simulasi untuk keperluan praktikum.\n\nProyek kelompok untuk praktikum SCPK.",
+      "problem": "",
+      "solution": "",
+      "features": [
+        "Bobot kelima kriteria dapat diatur pengguna dan harus berjumlah 100",
+        "Penyaringan berdasarkan jenis wisata dan harga tiket maksimum",
+        "Tabel peringkat dengan tiga destinasi teratas disorot",
+        "Visualisasi data dengan Matplotlib"
+      ],
+      "architecture": null,
+      "challenges": "",
+      "lessons": "",
+      "category": "Web App",
+      "status": null,
+      "year": 2026,
+      "thumbnail": null,
+      "screenshots": [],
+      "repoUrl": "https://github.com/Hasanrbn/Travel-Recomendation-Jogja-App",
+      "demoUrl": "",
+      "technologies": ["Python", "Streamlit", "Pandas", "NumPy", "Matplotlib"],
+      "featured": false,
+      "published": true,
+      "sortOrder": 2
     }
   ]
 }
