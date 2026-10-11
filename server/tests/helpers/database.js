@@ -17,7 +17,9 @@ export async function createTestDatabase({ migrate = true } = {}) {
   await adminPool.query(`CREATE SCHEMA ${schema}`);
 
   if (migrate) {
-    await runMigrations({ connection: TEST_DATABASE_URL, schema });
+    // No lock: the lock is database-wide, so test files migrating their own schemas at the
+    // same moment would otherwise fail with "Another migration is already running".
+    await runMigrations({ connection: TEST_DATABASE_URL, schema, lock: false });
   }
 
   const pool = createPool({
