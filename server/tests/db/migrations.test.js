@@ -45,7 +45,7 @@ describe.skipIf(!TEST_DATABASE_URL)('migrations (PostgreSQL)', () => {
     return rows.map((row) => row.proname);
   };
   const migrate = (options = {}) =>
-    runMigrations({ connection: db.connection, schema: db.schema, ...options });
+    runMigrations({ connection: db.connection, schema: db.schema, lock: false, ...options });
 
   beforeAll(async () => {
     db = await createTestDatabase({ migrate: false });
