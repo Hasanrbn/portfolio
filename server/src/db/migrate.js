@@ -21,6 +21,11 @@ export async function listMigrationFiles(dir = MIGRATIONS_DIR) {
  *   direction 'down' -> revert the last `count` migrations (default 1; Infinity = all)
  *
  * `connection` is a connection string, or a pg client config (tests use it to pick a schema).
+ *
+ * `lock` (default true) takes a database-wide lock while migrating, and a second migration that
+ * starts meanwhile fails instead of waiting. That is what keeps two deployments from changing the
+ * tables at once. Only tests turn it off: they migrate private schemas of one shared test database
+ * in parallel, where that database-wide lock makes unrelated test files collide.
  */
 export async function runMigrations({
   connection,
@@ -29,6 +34,7 @@ export async function runMigrations({
   schema,
   logger,
   dir = MIGRATIONS_DIR,
+  lock = true,
 }) {
   const applied = await runner({
     databaseUrl: connection,
@@ -38,6 +44,7 @@ export async function runMigrations({
     migrationsTable: MIGRATIONS_TABLE,
     schema,
     createSchema: Boolean(schema),
+    noLock: !lock,
     checkOrder: true,
     // Each migration runs in its own transaction: it applies completely or not at all.
     singleTransaction: false,
