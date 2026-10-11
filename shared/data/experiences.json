@@ -2,13 +2,18 @@
   "experiences": [
     {
       "id": "panitia-fti-cup-2025",
-      "position": "Staf Acara",
+      "position": "Staf Divisi Perlengkapan",
       "organization": "Panitia FTI CUP 2025 – Fakultas Teknik Industri UPN “Veteran” Yogyakarta",
       "type": "organization",
       "startDate": "2025-09",
       "endDate": "2025-09",
-      "description": "Staf acara pada kepanitiaan FTI CUP 2025, kompetisi olahraga dan e-sports yang diikuti mahasiswa Fakultas Teknik Industri. Kompetisi ini dibuka dan dijalankan pada 14 dan 27 September 2025.",
-      "responsibilities": [],
+      "description": "Staf Divisi Perlengkapan pada kepanitiaan FTI CUP 2025, kompetisi olahraga dan e-sports yang diikuti mahasiswa Fakultas Teknik Industri. Kompetisi ini dibuka dan dijalankan pada 14 dan 27 September 2025.",
+      "responsibilities": [
+        "Menyiapkan dan memenuhi kebutuhan perlengkapan untuk mendukung persiapan serta kelancaran pelaksanaan FTI CUP 2025.",
+        "Melakukan pendataan, pemeriksaan, dan pengelolaan inventaris perlengkapan guna memastikan ketersediaan serta kesiapan peralatan sebelum acara berlangsung.",
+        "Bertanggung jawab atas distribusi dan pemasangan perlengkapan sesuai kebutuhan teknis selama pelaksanaan kompetisi.",
+        "Mengelola pengumpulan dan pengembalian perlengkapan setelah acara serta memastikan barang yang digunakan tertata dengan baik."
+      ],
       "technologies": [],
       "sortOrder": 1,
       "visible": true
@@ -22,10 +27,10 @@
       "endDate": "2025-11",
       "description": "",
       "responsibilities": [
-        "Berkontribusi dalam penyelenggaraan FTI CUP 2025, kompetisi olahraga dan e-sports yang diikuti mahasiswa/i Fakultas Teknik Industri.",
-        "Terlibat dalam pelaksanaan Creation Fest 2.0, acara seni musik antarmahasiswa se-DIY, termasuk adaptasi rencana acara akibat kendala anggaran dan perubahan lokasi pelaksanaan.",
-        "Mendukung pembentukan dan pengelolaan tiga komunitas olahraga (Futsal, Basket, dan Badminton) di lingkup FTI, yang berkontribusi pada pencapaian Juara 1 Futsal Antar Fakultas se-UPN “Veteran” Yogyakarta.",
-        "Berpartisipasi dalam kegiatan Sekabinet Sehat sebagai upaya membangun gaya hidup aktif dan mempererat solidaritas antar pengurus BEM FTI."
+        "Berkontribusi dalam persiapan dan pelaksanaan rangkaian pertandingan FTI CUP 2025 pada cabang olahraga dan e-sports, guna mendukung kelancaran acara.",
+        "Mendukung koordinasi teknis pelaksanaan acara serta penyesuaian alur kegiatan sesuai dengan kebutuhan di lapangan.",
+        "Membantu memastikan rangkaian kegiatan berjalan sesuai jadwal dan susunan acara yang telah direncanakan.",
+        "Berkolaborasi dengan panitia lintas divisi dalam menangani kebutuhan operasional selama pelaksanaan kompetisi."
       ],
       "technologies": [],
       "sortOrder": 2,
