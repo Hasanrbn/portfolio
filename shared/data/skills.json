@@ -27,12 +27,6 @@
           "name": "React",
           "level": null,
           "description": ""
-        },
-        {
-          "id": "responsive-design",
-          "name": "Responsive Design",
-          "level": null,
-          "description": ""
         }
       ]
     },
@@ -53,14 +47,8 @@
           "description": ""
         },
         {
-          "id": "rest-api",
-          "name": "REST API",
-          "level": null,
-          "description": ""
-        },
-        {
-          "id": "authentication",
-          "name": "Authentication",
+          "id": "php",
+          "name": "PHP",
           "level": null,
           "description": ""
         }
@@ -77,14 +65,14 @@
           "description": ""
         },
         {
-          "id": "postgresql",
-          "name": "PostgreSQL",
+          "id": "mongodb",
+          "name": "MongoDB",
           "level": null,
           "description": ""
         },
         {
-          "id": "database-design",
-          "name": "Database Design",
+          "id": "postgresql",
+          "name": "PostgreSQL",
           "level": null,
           "description": ""
         }
@@ -107,14 +95,14 @@
           "description": ""
         },
         {
-          "id": "vs-code",
-          "name": "VS Code",
+          "id": "figma",
+          "name": "Figma",
           "level": null,
           "description": ""
         },
         {
-          "id": "docker",
-          "name": "Docker",
+          "id": "vercel",
+          "name": "Vercel",
           "level": null,
           "description": ""
         }
@@ -122,29 +110,17 @@
     },
     {
       "id": "other",
-      "label": "Other",
+      "label": "Other languages",
       "skills": [
         {
-          "id": "networking",
-          "name": "Networking",
+          "id": "cpp",
+          "name": "C++",
           "level": null,
           "description": ""
         },
         {
-          "id": "api",
-          "name": "API",
-          "level": null,
-          "description": ""
-        },
-        {
-          "id": "linux",
-          "name": "Linux",
-          "level": null,
-          "description": ""
-        },
-        {
-          "id": "deployment",
-          "name": "Deployment",
+          "id": "python",
+          "name": "Python",
           "level": null,
           "description": ""
         }
