@@ -1,8 +1,76 @@
 .card {
   position: relative;
+
+  /* Its own stacking context, so the glow below can sit between the card's background and its
+     content without ever covering the text. */
+  isolation: isolate;
   display: grid;
   align-content: start;
   gap: var(--space-3);
+  transition:
+    box-shadow var(--duration-base) var(--ease),
+    border-color var(--duration-base) var(--ease),
+    transform var(--duration-base) var(--ease);
+}
+
+/* The soft glow. It is hidden until the card is hovered or has keyboard focus. Where the glow
+   sits comes from --glow-x / --glow-y, which ProjectCard.jsx updates as the mouse moves; until
+   then it rests at the top middle. */
+.card::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    22rem circle at var(--glow-x, 50%) var(--glow-y, 0%),
+    var(--color-accent-subtle),
+    transparent 70%
+  );
+  background: radial-gradient(
+    22rem circle at var(--glow-x, 50%) var(--glow-y, 0%),
+    color-mix(in srgb, var(--color-accent) 16%, transparent),
+    transparent 70%
+  );
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-base) var(--ease);
+}
+
+/* Hover only counts on devices that really hover; on a phone a tap would leave the card stuck
+   in its hover look. Keyboard focus on any link inside the card gets the same treatment. */
+@media (hover: hover) {
+  .card:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-md);
+  }
+
+  .card:hover::before {
+    opacity: 1;
+  }
+}
+
+.card:has(:focus-visible) {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.card:has(:focus-visible)::before {
+  opacity: 1;
+}
+
+/* The lift is movement, so only people who have not asked for reduced motion get it. Everyone
+   else still sees the colour change and the glow. */
+@media (prefers-reduced-motion: no-preference) {
+  @media (hover: hover) {
+    .card:hover {
+      transform: translateY(-4px);
+    }
+  }
+
+  .card:has(:focus-visible) {
+    transform: translateY(-4px);
+  }
 }
 
 .thumbnail {

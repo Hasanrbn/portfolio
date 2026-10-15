@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -370,6 +370,30 @@ describe('ProjectCard', () => {
       'loading',
       'lazy',
     );
+  });
+
+  describe('hover glow', () => {
+    const cardOf = () => screen.getByRole('link', { name: 'Project 1' }).closest('li');
+
+    it('follows the mouse inside the card', () => {
+      render1({});
+
+      fireEvent.pointerMove(cardOf(), { pointerType: 'mouse', clientX: 40, clientY: 25 });
+
+      // jsdom lays nothing out, so the card sits at 0,0 and the values equal the mouse position.
+      expect(cardOf().style.getPropertyValue('--glow-x')).toBe('40px');
+      expect(cardOf().style.getPropertyValue('--glow-y')).toBe('25px');
+    });
+
+    it('ignores touch and pen, which have no hover', () => {
+      render1({});
+
+      fireEvent.pointerMove(cardOf(), { pointerType: 'touch', clientX: 40, clientY: 25 });
+      fireEvent.pointerMove(cardOf(), { pointerType: 'pen', clientX: 40, clientY: 25 });
+
+      expect(cardOf().style.getPropertyValue('--glow-x')).toBe('');
+      expect(cardOf().style.getPropertyValue('--glow-y')).toBe('');
+    });
   });
 });
 
