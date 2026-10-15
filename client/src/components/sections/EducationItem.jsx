@@ -1,13 +1,15 @@
 import Card from '../ui/Card.jsx';
 import Tag from '../ui/Tag.jsx';
+import useReveal from '../../hooks/useReveal.js';
 import styles from './EducationItem.module.css';
 
 /** One education entry. Relevant subjects and achievements are shown only when there are some. */
 export default function EducationItem({ education, headingAs: Heading = 'h2' }) {
+  const revealRef = useReveal();
   const { startYear, endYear } = education;
 
   return (
-    <Card as="li" className={styles.card}>
+    <Card as="li" ref={revealRef} className={styles.card}>
       <p className={styles.years}>
         {startYear} – {endYear ?? 'Present'}
       </p>

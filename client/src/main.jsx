@@ -9,6 +9,7 @@ import './styles/reset.css';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/utilities.css';
+import './styles/reveal.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

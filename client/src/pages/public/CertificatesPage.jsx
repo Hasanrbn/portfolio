@@ -52,8 +52,12 @@ function CertificateList({ certificates }) {
       {visible.length > 0 ? (
         // eslint-disable-next-line jsx-a11y/no-redundant-roles
         <ul role="list" className={styles.grid}>
-          {visible.map((certificate) => (
-            <CertificateCard key={certificate.id} certificate={certificate} />
+          {visible.map((certificate, index) => (
+            <CertificateCard
+              key={certificate.id}
+              certificate={certificate}
+              revealDelay={(index % 3) * 80}
+            />
           ))}
         </ul>
       ) : (

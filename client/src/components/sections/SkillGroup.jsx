@@ -3,6 +3,7 @@ import Badge from '../ui/Badge.jsx';
 import Card from '../ui/Card.jsx';
 import Icon from '../ui/Icon.jsx';
 import SkillIcon from '../ui/SkillIcon.jsx';
+import useReveal from '../../hooks/useReveal.js';
 import { SKILL_LEVELS } from '../../utils/skillLevels.js';
 import styles from './SkillGroup.module.css';
 
@@ -21,9 +22,10 @@ const CATEGORY_ICONS = {
  */
 export default function SkillGroup({ group }) {
   const headingId = useId();
+  const revealRef = useReveal();
 
   return (
-    <section aria-labelledby={headingId}>
+    <section ref={revealRef} aria-labelledby={headingId}>
       <h2 id={headingId} className={styles.heading}>
         <Icon name={CATEGORY_ICONS[group.id] ?? 'layers'} size={24} />
         {group.label}
