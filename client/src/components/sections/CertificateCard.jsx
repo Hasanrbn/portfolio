@@ -1,6 +1,7 @@
 import Badge from '../ui/Badge.jsx';
 import Card from '../ui/Card.jsx';
 import Icon from '../ui/Icon.jsx';
+import useReveal from '../../hooks/useReveal.js';
 import { formatMonth } from '../../utils/dates.js';
 import styles from './CertificateCard.module.css';
 
@@ -8,11 +9,16 @@ import styles from './CertificateCard.module.css';
  * One certificate: a preview of the picture (or a PDF symbol), who issued it and when, and links
  * to the file and to the issuer's verification page. Parts that are not set are left out.
  */
-export default function CertificateCard({ certificate, headingAs: Heading = 'h2' }) {
+export default function CertificateCard({
+  certificate,
+  headingAs: Heading = 'h2',
+  revealDelay = 0,
+}) {
+  const revealRef = useReveal({ delay: revealDelay });
   const { file } = certificate;
 
   return (
-    <Card as="li" className={styles.card}>
+    <Card as="li" ref={revealRef} className={styles.card}>
       {file &&
         (file.isPdf ? (
           <div className={styles.pdf} aria-hidden="true">

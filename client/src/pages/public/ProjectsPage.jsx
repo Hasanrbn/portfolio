@@ -94,8 +94,12 @@ export default function ProjectsPage() {
             {visible.length > 0 ? (
               // eslint-disable-next-line jsx-a11y/no-redundant-roles
               <ul role="list" className={styles.grid}>
-                {visible.map((project) => (
-                  <ProjectCard key={project.slug} project={project} />
+                {visible.map((project, index) => (
+                  <ProjectCard
+                    key={project.slug}
+                    project={project}
+                    revealDelay={(index % 3) * 80}
+                  />
                 ))}
               </ul>
             ) : (

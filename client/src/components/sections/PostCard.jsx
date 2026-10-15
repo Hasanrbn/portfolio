@@ -1,13 +1,16 @@
 import { Link } from 'react-router';
 import Card from '../ui/Card.jsx';
 import Tag from '../ui/Tag.jsx';
+import useReveal from '../../hooks/useReveal.js';
 import PostMeta from './PostMeta.jsx';
 import styles from './PostCard.module.css';
 
 /** One article in the list. The title is the card's link and its clickable area covers the whole card. */
 export default function PostCard({ post, headingAs: Heading = 'h2' }) {
+  const revealRef = useReveal();
+
   return (
-    <Card as="li" interactive className={styles.card}>
+    <Card as="li" ref={revealRef} interactive className={styles.card}>
       {post.cover && (
         <img
           className={styles.cover}

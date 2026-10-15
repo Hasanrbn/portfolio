@@ -1,0 +1,32 @@
+/* Scroll reveal: elements that use the useReveal hook fade and slide up as they come into view.
+   The hook sets data-reveal="hidden" only on elements below the first screen, then switches it
+   to "shown" on arrival. Without the hook, without JavaScript or with reduced motion, nothing
+   here applies and the content is simply visible. `translate` is used instead of `transform` so
+   it never fights a hover effect that moves the same element. */
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal='hidden'] {
+    opacity: 0;
+    translate: 0 1.25rem;
+  }
+
+  [data-reveal='shown'] {
+    animation: reveal-in 600ms var(--ease) var(--reveal-delay, 0ms) backwards;
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    translate: 0 1.25rem;
+  }
+}
+
+/* A printed page has no scrolling, so everything must be visible. */
+@media print {
+  [data-reveal] {
+    opacity: 1 !important;
+    translate: none !important;
+    animation: none !important;
+  }
+}

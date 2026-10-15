@@ -3,6 +3,7 @@ import Badge from '../ui/Badge.jsx';
 import Card from '../ui/Card.jsx';
 import Icon from '../ui/Icon.jsx';
 import Tag from '../ui/Tag.jsx';
+import useReveal from '../../hooks/useReveal.js';
 import { PROJECT_STATUSES } from '../../utils/projectStatus.js';
 import styles from './ProjectCard.module.css';
 
@@ -23,15 +24,17 @@ function trackGlow(event) {
  * One project in the list. The title is the card's link and its clickable area covers the whole
  * card; the GitHub and demo links sit above it so they stay separate, working links.
  * Optional parts (picture, status, links) are left out when the project has none.
- * On hover or keyboard focus the card lifts and a soft glow appears (see the stylesheet for when
+ * It fades in when scrolled into view (`revealDelay` staggers cards in a row). On hover or
+ * keyboard focus the card lifts and a soft glow appears (see the stylesheet for when
  * the movement is switched off).
  */
-export default function ProjectCard({ project, headingAs: Heading = 'h2' }) {
+export default function ProjectCard({ project, headingAs: Heading = 'h2', revealDelay = 0 }) {
+  const revealRef = useReveal({ delay: revealDelay });
   const status = project.status ? PROJECT_STATUSES[project.status] : null;
   const { thumbnail } = project;
 
   return (
-    <Card as="li" className={styles.card} onPointerMove={trackGlow}>
+    <Card as="li" ref={revealRef} className={styles.card} onPointerMove={trackGlow}>
       {thumbnail && (
         <img
           className={styles.thumbnail}

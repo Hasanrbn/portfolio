@@ -1,5 +1,6 @@
 import Badge from '../ui/Badge.jsx';
 import Tag from '../ui/Tag.jsx';
+import useReveal from '../../hooks/useReveal.js';
 import { formatMonth } from '../../utils/dates.js';
 import { EXPERIENCE_TYPES } from '../../utils/experienceTypes.js';
 import { splitParagraphs } from '../../utils/text.js';
@@ -7,10 +8,11 @@ import styles from './TimelineItem.module.css';
 
 /** One entry of the experience timeline. Everything except position and organization is optional. */
 export default function TimelineItem({ experience, headingAs: Heading = 'h2' }) {
+  const revealRef = useReveal();
   const { startDate, endDate } = experience;
 
   return (
-    <li className={styles.item}>
+    <li ref={revealRef} className={styles.item}>
       <span className={styles.dot} aria-hidden="true" />
       <article className={styles.body}>
         <p className={styles.dates}>
