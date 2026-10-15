@@ -2,6 +2,7 @@ import { useId } from 'react';
 import Badge from '../ui/Badge.jsx';
 import Card from '../ui/Card.jsx';
 import Icon from '../ui/Icon.jsx';
+import SkillIcon from '../ui/SkillIcon.jsx';
 import { SKILL_LEVELS } from '../../utils/skillLevels.js';
 import styles from './SkillGroup.module.css';
 
@@ -15,6 +16,8 @@ const CATEGORY_ICONS = {
 /**
  * One category of skills (Frontend, Backend, ...). The level label and the description are
  * shown only for skills that have them, so nothing is claimed that has not been written down.
+ * The logo (`skill.icon`, an SVG path) is shown only for skills that have one; the name is
+ * always there as text.
  */
 export default function SkillGroup({ group }) {
   const headingId = useId();
@@ -33,7 +36,10 @@ export default function SkillGroup({ group }) {
           return (
             <Card as="li" key={skill.id} className={styles.item}>
               <div className={styles.top}>
-                <span className={styles.name}>{skill.name}</span>
+                <span className={styles.name}>
+                  {skill.icon && <SkillIcon path={skill.icon} className={styles.icon} />}
+                  {skill.name}
+                </span>
                 {level && (
                   <Badge tone={level.tone}>
                     <span className="visually-hidden">Level: </span>

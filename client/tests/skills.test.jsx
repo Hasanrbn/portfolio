@@ -6,7 +6,8 @@ import skillsData from '@portfolio/shared/data/skills.json';
 import App from '../src/app/App.jsx';
 import ThemeProvider from '../src/app/ThemeProvider.jsx';
 import SkillGroup from '../src/components/sections/SkillGroup.jsx';
-import { getSkillGroups, normalizeSkillGroups } from '../src/services/skillsService.js';
+import { getSkillGroups, normalizeSkillGroups, withIcons } from '../src/services/skillsService.js';
+import { SKILL_ICON_PATHS } from '../src/utils/skillIcons.js';
 
 vi.mock('../src/services/skillsService.js', async (importOriginal) => {
   const actual = await importOriginal();
@@ -54,6 +55,14 @@ describe('skills page', () => {
         .map((item) => item.textContent);
       expect(names).toEqual(category.skills.map((skill) => skill.name));
     }
+  });
+
+  it('shows logos once the skills have loaded', async () => {
+    renderSkillsPage();
+    await screen.findByRole('heading', { level: 2, name: 'Frontend' });
+
+    const items = within(screen.getByRole('main')).getAllByRole('listitem');
+    expect(items.some((item) => item.querySelector('svg'))).toBe(true);
   });
 
   it('claims no level and shows no level guide while none is set', async () => {
@@ -119,8 +128,14 @@ describe('SkillGroup', () => {
     id: 'frontend',
     label: 'Frontend',
     skills: [
-      { id: 'react', name: 'React', level: 'advanced', description: 'Used for this site.' },
-      { id: 'css', name: 'CSS', level: null, description: '' },
+      {
+        id: 'react',
+        name: 'React',
+        level: 'advanced',
+        description: 'Used for this site.',
+        icon: 'M0 0h24v24H0z',
+      },
+      { id: 'css', name: 'CSS', level: null, description: '', icon: 'M1 1h22v22H1z' },
     ],
   };
 
@@ -134,10 +149,79 @@ describe('SkillGroup', () => {
     expect(css).toHaveTextContent(/^CSS$/);
   });
 
+  it('draws a logo next to the name of a skill that has one, as decoration only', () => {
+    const { container } = render(<SkillGroup group={group} />);
+    const [react] = screen.getAllByRole('listitem');
+    const logo = react.querySelector('svg');
+
+    expect(logo).toHaveAttribute('aria-hidden', 'true');
+    expect(logo).toHaveAttribute('focusable', 'false');
+    expect(logo.querySelector('title')).toBeNull();
+    // The name is still plain text, so nothing depends on seeing the picture.
+    expect(react).toHaveTextContent(/^React/);
+    expect(container.querySelectorAll('li svg')).toHaveLength(2);
+  });
+
+  it('shows a skill without a logo as text alone', () => {
+    render(
+      <SkillGroup
+        group={{
+          ...group,
+          skills: [
+            { id: 'made-up-skill', name: 'Made Up', level: null, description: '', icon: '' },
+          ],
+        }}
+      />,
+    );
+    const [item] = screen.getAllByRole('listitem');
+
+    expect(item.querySelector('svg')).toBeNull();
+    expect(item).toHaveTextContent(/^Made Up$/);
+  });
+
   it('copes with a category that has no icon of its own', () => {
     render(<SkillGroup group={{ ...group, id: 'something-new' }} />);
 
     expect(screen.getByRole('heading', { name: 'Frontend' })).toBeInTheDocument();
+  });
+});
+
+describe('skill logos', () => {
+  it('are single, non-empty SVG paths keyed by skill id', () => {
+    const entries = Object.entries(SKILL_ICON_PATHS);
+
+    expect(entries.length).toBeGreaterThan(0);
+    for (const [id, path] of entries) {
+      expect(id).toMatch(/^[a-z0-9-]+$/);
+      expect(path).toMatch(/^[Mm][\d\s.,a-zA-Z-]+$/);
+    }
+  });
+});
+
+describe('withIcons', () => {
+  const groups = [
+    {
+      id: 'tools',
+      label: 'Tools',
+      skills: [
+        { id: 'git', name: 'Git', level: null, description: '' },
+        { id: 'constructor', name: 'Odd id', level: null, description: '' },
+        { id: 'unknown', name: 'Unknown', level: null, description: '' },
+      ],
+    },
+  ];
+
+  it('adds a logo path to skills that have one and an empty string to the rest', () => {
+    const [group] = withIcons(groups, { git: 'M0 0h1v1z' });
+
+    expect(group.skills.map((skill) => skill.icon)).toEqual(['M0 0h1v1z', '', '']);
+  });
+
+  it('keeps the rest of the group as it was', () => {
+    const [group] = withIcons(groups, {});
+
+    expect(group).toMatchObject({ id: 'tools', label: 'Tools' });
+    expect(group.skills[0]).toMatchObject({ id: 'git', name: 'Git', level: null });
   });
 });
 

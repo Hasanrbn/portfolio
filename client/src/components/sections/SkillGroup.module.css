@@ -35,8 +35,17 @@
 }
 
 .name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   font-weight: 600;
   overflow-wrap: anywhere;
+}
+
+/* The logo keeps its size and takes the accent colour; the name wraps beside it. */
+.icon {
+  flex: none;
+  color: var(--color-accent-text);
 }
 
 .description {
