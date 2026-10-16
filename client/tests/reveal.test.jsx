@@ -1,5 +1,6 @@
 import { act, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import TextSection from '../src/components/sections/TextSection.jsx';
 import useReveal from '../src/hooks/useReveal.js';
 
 function Box({ delay }) {
@@ -119,5 +120,19 @@ describe('useReveal', () => {
     unmount();
 
     expect(observer.disconnect).toHaveBeenCalled();
+  });
+});
+
+describe('text sections on the About page', () => {
+  it('ease in when they start below the first screen, and still hold their text', () => {
+    placeElementsAt(1500);
+    render(<TextSection title="Interests" paragraphs={['I like building things.']} />);
+
+    const section = screen.getByRole('region', { name: 'Interests' });
+    expect(section).toHaveAttribute('data-reveal', 'hidden');
+    expect(section).toHaveTextContent('I like building things.');
+
+    observers[0].report({ isIntersecting: true });
+    expect(section).toHaveAttribute('data-reveal', 'shown');
   });
 });

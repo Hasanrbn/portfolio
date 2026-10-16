@@ -2,6 +2,7 @@ import siteConfig from '@portfolio/shared/siteConfig.json';
 import aboutData from '@portfolio/shared/data/about.json';
 import PageTitle from '../../components/layout/PageTitle.jsx';
 import { PAGE_DESCRIPTIONS } from '../../utils/pageDescriptions.js';
+import useReveal from '../../hooks/useReveal.js';
 import TextSection from '../../components/sections/TextSection.jsx';
 import Avatar from '../../components/sections/Avatar.jsx';
 import Tag from '../../components/ui/Tag.jsx';
@@ -14,6 +15,8 @@ const highlights = (aboutData.highlights ?? []).filter(
 );
 
 export default function AboutPage() {
+  const highlightsRef = useReveal();
+
   return (
     <>
       <PageTitle title="About" description={PAGE_DESCRIPTIONS.about} />
@@ -33,7 +36,7 @@ export default function AboutPage() {
         </div>
 
         {highlights.length > 0 && (
-          <section aria-labelledby="highlights-heading">
+          <section ref={highlightsRef} aria-labelledby="highlights-heading">
             <h2 id="highlights-heading" className={styles.heading}>
               Personal highlights
             </h2>
