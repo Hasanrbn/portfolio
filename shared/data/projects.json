@@ -135,7 +135,7 @@
       "slug": "web-rekomendasi-travel-jogja",
       "title": "Web Rekomendasi Travel Jogja",
       "summary": "Aplikasi web sistem pendukung keputusan yang merangking destinasi wisata di Yogyakarta dengan metode SAW, proyek kelompok untuk praktikum SCPK.",
-      "description": "Aplikasi web sistem pendukung keputusan untuk merekomendasikan destinasi wisata di Yogyakarta, dibuat dengan Python dan Streamlit. Data 437 destinasi dibaca dari berkas CSV, lalu diurutkan dengan metode Simple Additive Weighting (SAW) berdasarkan lima kriteria: rating, harga tiket, jarak dari pusat kota, kategori wisata, dan popularitas. Pengguna mengatur bobot tiap kriteria, menyaring jenis wisata dan harga tiket maksimum, lalu melihat tahap perhitungan, peringkat, grafik, dan peta.\n\nSemua nilai kriteria diturunkan dari isi dataset: jarak dihitung dari koordinat dengan rumus haversine, kategori dari rata-rata rating per jenis wisata, dan popularitas dari pengelompokan rating.\n\nProyek kelompok untuk praktikum SCPK.",
+      "description": "Aplikasi web sistem pendukung keputusan untuk merekomendasikan destinasi wisata di Yogyakarta, dibuat dengan Python dan Streamlit. Data 436 destinasi dibaca dari berkas CSV, lalu diurutkan dengan metode Simple Additive Weighting (SAW) berdasarkan lima kriteria: rating, harga tiket, jarak dari pusat kota, kategori wisata, dan popularitas. Pengguna mengatur bobot tiap kriteria, menyaring jenis wisata dan harga tiket maksimum, lalu melihat tahap perhitungan, peringkat, grafik, dan peta.\n\nSemua nilai kriteria diturunkan dari isi dataset: jarak dihitung dari koordinat dengan rumus haversine, kategori dari rata-rata rating per jenis wisata, dan popularitas dari pengelompokan rating.\n\nProyek kelompok untuk praktikum SCPK.",
       "problem": "",
       "solution": "",
       "features": [
@@ -154,39 +154,46 @@
       "year": 2026,
       "thumbnail": {
         "url": "/images/travel-jogja/cover.webp",
-        "alt": "Halaman beranda aplikasi SPK Wisata Jogja dengan judul, jumlah destinasi, rata-rata rating dan harga tiket, serta alur metode SAW.",
+        "alt": "Halaman beranda aplikasi SPK Wisata Jogja: judul, ringkasan angka dataset (436 destinasi, 13 jenis wisata), cara kerja, dan tabel kriteria.",
         "caption": "",
-        "width": 1280,
-        "height": 720
+        "width": 1065,
+        "height": 599
       },
       "screenshots": [
         {
           "url": "/images/travel-jogja/bobot.webp",
-          "alt": "Pengaturan bobot lima kriteria dengan penggeser, serta filter jenis wisata, harga tiket maksimum, dan jumlah hasil.",
-          "caption": "Pengguna mengatur bobot kriteria (total 100) dan filter preferensi.",
-          "width": 1400,
-          "height": 472
+          "alt": "Halaman Hitung SPK dengan lima penggeser bobot kriteria yang totalnya 100.",
+          "caption": "Pengguna mengatur bobot lima kriteria. Total harus 100 sebelum perhitungan dijalankan.",
+          "width": 1065,
+          "height": 410
         },
         {
           "url": "/images/travel-jogja/matriks.webp",
-          "alt": "Tabel matriks keputusan dan matriks normalisasi SAW untuk sepuluh destinasi pertama.",
-          "caption": "Matriks keputusan dan matriks normalisasi ditampilkan langkah demi langkah.",
-          "width": 1400,
-          "height": 669
+          "alt": "Matriks keputusan sepuluh destinasi pertama dengan lima kriteria, serta dua tahap lain yang dapat dibuka.",
+          "caption": "Tahap perhitungan SAW ditampilkan satu per satu, dimulai dari matriks keputusan.",
+          "width": 1065,
+          "height": 630
         },
         {
           "url": "/images/travel-jogja/peringkat.webp",
-          "alt": "Tabel bobot yang digunakan dan tabel 20 destinasi teratas dengan skor SAW.",
-          "caption": "Tabel peringkat, tiga teratas disorot.",
-          "width": 1400,
-          "height": 669
+          "alt": "Tabel destinasi teratas dengan skor SAW, rating, tiket, dan jarak, di bawahnya tiga rekomendasi terbaik.",
+          "caption": "Tabel peringkat dengan tiga rekomendasi teratas.",
+          "width": 1065,
+          "height": 881
         },
         {
-          "url": "/images/travel-jogja/top3.webp",
-          "alt": "Tiga kartu rekomendasi terbaik berisi nama destinasi, jenis, skor SAW, rating, harga tiket, dan jarak dari pusat kota.",
-          "caption": "Tiga rekomendasi teratas.",
-          "width": 1400,
-          "height": 402
+          "url": "/images/travel-jogja/visualisasi.webp",
+          "alt": "Diagram batang sepuluh destinasi dengan skor SAW tertinggi.",
+          "caption": "Grafik sepuluh skor SAW tertinggi dari hasil perhitungan terakhir.",
+          "width": 1065,
+          "height": 550
+        },
+        {
+          "url": "/images/travel-jogja/peta.webp",
+          "alt": "Peta Yogyakarta berisi penanda destinasi hasil perhitungan SAW dengan legenda jenis wisata.",
+          "caption": "Peta interaktif. Destinasi hasil perhitungan bisa ditampilkan terpisah dari seluruh dataset.",
+          "width": 1065,
+          "height": 870
         }
       ],
       "repoUrl": "https://github.com/Hasanrbn/Travel-Recomendation-Jogja-App",
