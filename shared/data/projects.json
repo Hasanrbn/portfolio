@@ -99,8 +99,36 @@
       "category": "Web App",
       "status": null,
       "year": 2025,
-      "thumbnail": null,
-      "screenshots": [],
+      "thumbnail": {
+        "url": "/images/kecantikan/cover.webp",
+        "alt": "Beranda situs Lipalas Beauty Clinic: judul \"Rawat diri, tanpa terburu-buru\", tombol lihat perawatan dan buat janji temu, jam buka, dan foto ruang perawatan dalam bingkai berbentuk kelopak.",
+        "caption": "",
+        "width": 1200,
+        "height": 750
+      },
+      "screenshots": [
+        {
+          "url": "/images/kecantikan/layanan.webp",
+          "alt": "Daftar perawatan bergaya menu, dikelompokkan menjadi Wajah, Tubuh, dan Konsultasi, dengan durasi, harga contoh, dan satu perawatan yang dibuka.",
+          "caption": "Daftar perawatan. Tiap item bisa dibuka untuk membaca penjelasannya. Harga dan durasi adalah data contoh.",
+          "width": 1200,
+          "height": 921
+        },
+        {
+          "url": "/images/kecantikan/booking.webp",
+          "alt": "Halaman pelanggan dengan form permintaan janji temu, kartu ringkasan perawatan, dan riwayat permintaan beserta statusnya.",
+          "caption": "Pelanggan mengirim permintaan janji temu dan memantau statusnya. Permintaan berstatus menunggu konfirmasi sampai klinik mengonfirmasi.",
+          "width": 1200,
+          "height": 1288
+        },
+        {
+          "url": "/images/kecantikan/admin.webp",
+          "alt": "Dashboard admin berisi ringkasan jumlah booking, filter status, pencarian, dan tabel booking dengan tombol ubah dan hapus.",
+          "caption": "Admin melihat ringkasan, menyaring dan mencari booking, lalu mengubah status atau tanggalnya.",
+          "width": 1200,
+          "height": 1167
+        }
+      ],
       "repoUrl": "https://github.com/Hasanrbn/WebKecantikan-Lipalas",
       "demoUrl": "",
       "technologies": ["PHP", "MySQL", "Bootstrap"],
