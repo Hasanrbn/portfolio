@@ -2,9 +2,8 @@
 // tags in index.html. Everything here needs the public address of the site, which comes from
 // SITE_URL (the same variable the server uses). While SITE_URL is missing or is not an https
 // address, no sitemap and no address-based tags are produced: a wrong address is worse than none.
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { parsePostFile } from '../shared/posts.js';
 import { isSlug } from '../shared/validation.js';
 
 /** Pages that always exist (the same list as the navigation; a test keeps them in step). */
@@ -43,14 +42,9 @@ export function siteUrlFromEnv(env) {
   return env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}` : '';
 }
 
-/** Every public path: fixed pages, one per published project and post, and /blog when it has posts. */
-export function collectPaths({ projectSlugs = [], postSlugs = [] }) {
-  return [
-    ...STATIC_PATHS,
-    ...(postSlugs.length > 0 ? ['/blog'] : []),
-    ...projectSlugs.map((slug) => `/projects/${slug}`),
-    ...postSlugs.map((slug) => `/blog/${slug}`),
-  ];
+/** Every public path: the fixed pages and one per published project. */
+export function collectPaths({ projectSlugs = [] }) {
+  return [...STATIC_PATHS, ...projectSlugs.map((slug) => `/projects/${slug}`)];
 }
 
 const escapeXml = (text) =>
@@ -110,25 +104,14 @@ export function buildHeadTags(siteUrl, siteConfig) {
   return tags.map((tag) => `    ${tag}`).join('\n');
 }
 
-/** Published project slugs and post slugs, read straight from the content files. */
+/** Published project slugs, read straight from the content files. */
 export function readContentSlugs(sharedDir) {
   const projects = JSON.parse(readFileSync(join(sharedDir, 'data/projects.json'), 'utf8'));
   const projectSlugs = (projects.projects ?? [])
     .filter((project) => project && project.published !== false && isSlug(project.slug))
     .map((project) => project.slug);
 
-  const postsDir = join(sharedDir, 'data/posts');
-  const postSlugs = existsSync(postsDir)
-    ? readdirSync(postsDir)
-        .filter((name) => name.endsWith('.md'))
-        .map((name) =>
-          parsePostFile({ path: name, raw: readFileSync(join(postsDir, name), 'utf8') }),
-        )
-        .filter(Boolean)
-        .map((post) => post.slug)
-    : [];
-
-  return { projectSlugs: [...new Set(projectSlugs)], postSlugs: [...new Set(postSlugs)] };
+  return { projectSlugs: [...new Set(projectSlugs)] };
 }
 
 /** Vite plugin: adds the tags to index.html and writes robots.txt and sitemap.xml into dist. */

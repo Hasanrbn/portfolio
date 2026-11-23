@@ -1,7 +1,6 @@
-import { readdir, readFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parsePostFile } from '@portfolio/shared/posts.js';
 import {
   certificatesFileSchema,
   educationFileSchema,
@@ -28,38 +27,6 @@ async function readJson(dir, name) {
   }
 }
 
-async function readPosts(dir) {
-  let names;
-  try {
-    names = (await readdir(path.join(dir, 'posts'))).filter((name) => name.endsWith('.md')).sort();
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      return [];
-    }
-    throw error;
-  }
-
-  const posts = [];
-  const seen = new Map();
-  for (const name of names) {
-    const raw = await readFile(path.join(dir, 'posts', name), 'utf8');
-    const post = parsePostFile({ path: `posts/${name}`, raw });
-    if (!post) {
-      throw new Error(
-        `Invalid content:\n- posts/${name}: needs a title, some text, a real publishedAt (YYYY-MM-DD) and a URL-safe slug`,
-      );
-    }
-    if (seen.has(post.slug)) {
-      throw new Error(
-        `Invalid content:\n- posts/${name}: slug "${post.slug}" is already used by ${seen.get(post.slug)}`,
-      );
-    }
-    seen.set(post.slug, name);
-    posts.push(post);
-  }
-  return posts;
-}
-
 /** Fails when a list uses the same public id twice (the database would refuse it anyway). */
 function assertUnique(name, entries, key) {
   const seen = new Set();
@@ -74,11 +41,11 @@ function assertUnique(name, entries, key) {
 }
 
 /**
- * Reads and validates everything in shared/data: the JSON files and the markdown articles.
+ * Reads and validates everything in shared/data: the JSON files.
  * Returns plain, cleaned objects; nothing is written anywhere.
  */
 export async function loadContent(dir = DEFAULT_DATA_DIR) {
-  const [skills, projects, experiences, education, certificates, posts] = await Promise.all([
+  const [skills, projects, experiences, education, certificates] = await Promise.all([
     readJson(dir, 'skills.json').then((data) =>
       parseContentFile('skills.json', skillsFileSchema, data),
     ),
@@ -94,7 +61,6 @@ export async function loadContent(dir = DEFAULT_DATA_DIR) {
     readJson(dir, 'certificates.json').then((data) =>
       parseContentFile('certificates.json', certificatesFileSchema, data),
     ),
-    readPosts(dir),
   ]);
 
   const skillList = skills.categories.flatMap((category) =>
@@ -112,6 +78,5 @@ export async function loadContent(dir = DEFAULT_DATA_DIR) {
     experiences: experiences.experiences,
     education: education.education,
     certificates: certificates.certificates,
-    posts,
   };
 }

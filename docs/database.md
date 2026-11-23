@@ -20,8 +20,8 @@ with a clear message if not. It never changes the schema by itself.
 
 ## What the database is for
 
-The site's content (skills, projects, experience, education, certificates, blog posts) lives in files in
-`shared/data` and `shared/posts`, under version control, and the pages read those files directly. The database
+The site's content (skills, projects, experience, education, certificates) lives in files in
+`shared/data`, under version control, and the pages read those files directly. The database
 holds one thing the files cannot: what visitors send.
 
 | Table          | Holds                                                 |

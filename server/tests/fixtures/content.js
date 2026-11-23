@@ -170,54 +170,6 @@ export const certificates = {
   ],
 };
 
-const post = (header, body) =>
-  `---\n${Object.entries(header)
-    .map(([key, value]) => `${key}: ${value}`)
-    .join('\n')}\n---\n\n${body}\n`;
-
-export const postFiles = [
-  {
-    path: 'posts/first-post.md',
-    raw: post(
-      {
-        title: 'First Post',
-        excerpt: 'The very first one.',
-        category: 'Engineering',
-        tags: 'React, Node',
-        publishedAt: '2025-03-01',
-      },
-      'Some words here about databases.',
-    ),
-  },
-  {
-    path: 'posts/second-post.md',
-    raw: post(
-      {
-        title: 'Second Post',
-        category: 'Engineering',
-        tags: 'node, Testing',
-        publishedAt: '2025-04-10',
-        updatedAt: '2025-05-01',
-        coverImage: '/images/cover.png',
-        coverAlt: 'A cover',
-      },
-      `${'word '.repeat(450)}end`,
-    ),
-  },
-  {
-    path: 'posts/third-post.md',
-    raw: post(
-      {
-        title: 'Third Post',
-        category: 'Life',
-        publishedAt: '2025-04-11',
-        coverImage: 'https://example.org/c.png',
-      },
-      'Short.',
-    ),
-  },
-];
-
 /** The same content as plain objects, by file name, for writing a temporary data folder. */
 export const dataFiles = {
   'skills.json': skills,

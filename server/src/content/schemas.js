@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { isHttpsUrl, isMonth, isSlug, isUsableAddress } from '@portfolio/shared/validation.js';
 
 /**
- * Strict rules for the content files in shared/data (and the articles in shared/posts). The
+ * Strict rules for the content files in shared/data. The
  * site itself quietly skips a bad entry so a page never breaks; these rules do the opposite
  * and stop on the first bad file, naming the file and the field ("projects[0].repoUrl: ..."),
  * so the author fixes the data instead of losing an entry silently. `npm run content:check`

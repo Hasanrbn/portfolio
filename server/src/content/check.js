@@ -7,7 +7,7 @@ try {
   console.log(
     `Content is valid: ${content.skills.length} skills, ${content.projects.length} projects, ` +
       `${content.experiences.length} experience entries, ${content.education.length} education ` +
-      `entries, ${content.certificates.length} certificates, ${content.posts.length} posts.`,
+      `entries, ${content.certificates.length} certificates.`,
   );
 } catch (error) {
   console.error(error.message);
