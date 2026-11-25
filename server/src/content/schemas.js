@@ -97,6 +97,18 @@ export const projectsFileSchema = z.object({
         year: year.nullable().default(null),
         thumbnail: picture.nullable().default(null),
         screenshots: z.array(picture).default([]),
+        // Two pictures of the same size shown on a slider, e.g. an old and a new design.
+        comparison: z
+          .object({
+            before: picture,
+            after: picture,
+            beforeLabel: textOrEmpty(60),
+            afterLabel: textOrEmpty(60),
+            caption: textOrEmpty(300),
+          })
+          .strict()
+          .nullable()
+          .default(null),
         repoUrl: httpsUrl,
         demoUrl: httpsUrl,
         technologies: z.array(text(100)).default([]),

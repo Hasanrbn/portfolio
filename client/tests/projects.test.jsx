@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import projectsData from '@portfolio/shared/data/projects.json';
@@ -180,6 +180,198 @@ describe('projects section', () => {
   });
 });
 
+describe('project index and facts', () => {
+  it('numbers the case studies and links to each one from an index', async () => {
+    getProjects.mockImplementation(async () => TWO());
+    renderProjects();
+    await within(section()).findByRole('article', { name: 'Shop' });
+
+    const index = within(section()).getByRole('navigation', { name: 'Project index' });
+    const links = within(index).getAllByRole('link');
+    expect(links.map((link) => link.getAttribute('href'))).toEqual([
+      '/#project-project-1',
+      '/#project-project-2',
+    ]);
+    expect(index).toHaveTextContent('Shop');
+    expect(index).toHaveTextContent('Chat');
+  });
+
+  it('has no index for a single project', async () => {
+    getProjects.mockImplementation(async () => ONE());
+    renderProjects();
+    await within(section()).findByRole('article', { name: 'Portfolio Website' });
+
+    expect(within(section()).queryByRole('navigation', { name: 'Project index' })).toBeNull();
+  });
+
+  it('lists category, year and status as facts', async () => {
+    getProjects.mockImplementation(async () => ONE());
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Portfolio Website' });
+
+    const terms = [...article.querySelectorAll('dt')].map((node) => node.textContent);
+    expect(terms).toEqual(['Category', 'Year', 'Status']);
+  });
+});
+
+describe('image viewer', () => {
+  const withPictures = () =>
+    makeProjects([
+      {
+        title: 'Gallery',
+        thumbnail: { url: '/cover.png', alt: 'Cover picture', caption: 'The cover' },
+        screenshots: [
+          { url: '/one.png', alt: 'First screen', caption: 'Screen one' },
+          { url: '/two.png', alt: 'Second screen', caption: '' },
+        ],
+      },
+    ]);
+
+  beforeEach(() => {
+    getProjects.mockImplementation(async () => withPictures());
+  });
+
+  async function openFirst() {
+    const user = userEvent.setup();
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Gallery' });
+    const opener = within(article).getByRole('button', { name: 'Enlarge: Cover picture' });
+    await user.click(opener);
+    return { user, article, opener };
+  }
+
+  it('opens the cover in a viewer that says which picture of how many it shows', async () => {
+    await openFirst();
+    const viewer = screen.getByRole('dialog', { name: 'Image viewer' });
+
+    expect(within(viewer).getByRole('img', { name: 'Cover picture' })).toBeInTheDocument();
+    expect(viewer).toHaveTextContent('The cover');
+    expect(viewer).toHaveTextContent('1 / 3');
+    expect(within(viewer).getByRole('button', { name: 'Previous image' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+  });
+
+  it('moves between pictures with the buttons and the arrow keys, and stops at the ends', async () => {
+    const { user } = await openFirst();
+    const viewer = screen.getByRole('dialog', { name: 'Image viewer' });
+
+    await user.click(within(viewer).getByRole('button', { name: 'Next image' }));
+    expect(within(viewer).getByRole('img', { name: 'First screen' })).toBeInTheDocument();
+    expect(viewer).toHaveTextContent('2 / 3');
+
+    await user.keyboard('{ArrowRight}');
+    expect(within(viewer).getByRole('img', { name: 'Second screen' })).toBeInTheDocument();
+    expect(within(viewer).getByRole('button', { name: 'Next image' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+
+    await user.keyboard('{ArrowRight}{ArrowLeft}{ArrowLeft}');
+    expect(viewer).toHaveTextContent('1 / 3');
+  });
+
+  it('opens a screenshot at its own place in the list', async () => {
+    const user = userEvent.setup();
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Gallery' });
+
+    await user.click(within(article).getByRole('button', { name: 'Enlarge: Second screen' }));
+
+    expect(screen.getByRole('dialog')).toHaveTextContent('3 / 3');
+  });
+
+  it('closes with the close button and gives the page back', async () => {
+    const { user } = await openFirst();
+    expect(document.documentElement.style.overflow).toBe('hidden');
+
+    await user.click(screen.getByRole('button', { name: 'Close viewer' }));
+
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.documentElement.style.overflow).toBe('');
+  });
+
+  it('closes on a click outside the picture but not on the picture itself', async () => {
+    const { user } = await openFirst();
+    const viewer = screen.getByRole('dialog');
+
+    await user.click(within(viewer).getByRole('img', { name: 'Cover picture' }));
+    expect(screen.queryByRole('dialog')).not.toBeNull();
+
+    await user.click(viewer);
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('shows no buttons to move when there is a single picture', async () => {
+    getProjects.mockImplementation(async () =>
+      makeProjects([{ title: 'Solo', thumbnail: { url: '/solo.png', alt: 'Only one' } }]),
+    );
+    const user = userEvent.setup();
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Solo' });
+
+    await user.click(within(article).getByRole('button', { name: 'Enlarge: Only one' }));
+
+    const viewer = screen.getByRole('dialog');
+    expect(within(viewer).queryByRole('button', { name: /previous|next/i })).toBeNull();
+    expect(viewer).not.toHaveTextContent('1 / 1');
+  });
+});
+
+describe('before and after slider', () => {
+  const withComparison = () =>
+    makeProjects([
+      {
+        title: 'Redesign',
+        comparison: {
+          before: { url: '/old.png', alt: 'The old design', width: 1200, height: 750 },
+          after: { url: '/new.png', alt: 'The new design', width: 1200, height: 750 },
+          beforeLabel: 'v1',
+          afterLabel: 'v2',
+          caption: 'Old and new.',
+        },
+      },
+    ]);
+
+  it('shows both pictures with a slider that starts in the middle', async () => {
+    getProjects.mockImplementation(async () => withComparison());
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Redesign' });
+
+    expect(
+      within(article).getByRole('heading', { level: 4, name: 'Before & after' }),
+    ).toBeInTheDocument();
+    expect(within(article).getByRole('img', { name: 'The old design' })).toBeInTheDocument();
+    expect(within(article).getByRole('img', { name: 'The new design' })).toBeInTheDocument();
+    expect(within(article).getByText('Old and new.')).toBeInTheDocument();
+    const slider = within(article).getByRole('slider', { name: /v1 on the left, v2 on the right/ });
+    expect(slider).toHaveValue('50');
+  });
+
+  it('moves with the keyboard and describes where the divider is', async () => {
+    getProjects.mockImplementation(async () => withComparison());
+    renderProjects();
+    const slider = await within(section()).findByRole('slider');
+
+    // jsdom does not move a range input with the keyboard, so the change is sent directly.
+    fireEvent.change(slider, { target: { value: '0' } });
+    expect(slider).toHaveAttribute('aria-valuetext', 'Showing only v2');
+    fireEvent.change(slider, { target: { value: '100' } });
+    expect(slider).toHaveAttribute('aria-valuetext', 'Showing only v1');
+    fireEvent.change(slider, { target: { value: '99' } });
+    expect(slider).toHaveAttribute('aria-valuetext', 'Divider at 99 percent');
+  });
+
+  it('is left out when a project has no comparison', async () => {
+    getProjects.mockImplementation(async () => ONE());
+    renderProjects();
+    await within(section()).findByRole('article', { name: 'Portfolio Website' });
+
+    expect(within(section()).queryByRole('slider')).toBeNull();
+  });
+});
+
 describe('projects section states', () => {
   beforeEach(() => {
     getProjects.mockImplementation(async () => ONE());
@@ -212,6 +404,31 @@ describe('projects section states', () => {
     renderProjects();
 
     expect(await screen.findByRole('heading', { name: 'No projects yet' })).toBeInTheDocument();
+  });
+});
+
+describe('comparison data', () => {
+  const picture = (url) => ({ url, alt: url, width: 10, height: 10 });
+
+  it('keeps a comparison with both pictures and fills in default labels', () => {
+    const [project] = makeProjects([
+      { comparison: { before: picture('/a.png'), after: picture('/b.png') } },
+    ]);
+
+    expect(project.comparison).toMatchObject({ beforeLabel: 'Before', afterLabel: 'After' });
+  });
+
+  it.each([
+    ['no after picture', { before: picture('/a.png') }],
+    [
+      'a picture address that is not allowed',
+      { before: picture('//evil.example'), after: picture('/b.png') },
+    ],
+    ['nothing', null],
+  ])('drops a comparison with %s', (_name, comparison) => {
+    const [project] = makeProjects([{ comparison }]);
+
+    expect(project.comparison).toBeNull();
   });
 });
 

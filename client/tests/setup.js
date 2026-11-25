@@ -21,6 +21,14 @@ if (hasDom) {
   window.scrollTo = vi.fn();
   // Nor does it scroll elements into view; the menu uses this to reach a section.
   Element.prototype.scrollIntoView = vi.fn();
+  // Nor does it implement <dialog> modals, which the image viewer uses.
+  HTMLDialogElement.prototype.showModal = function showModal() {
+    this.setAttribute('open', '');
+  };
+  HTMLDialogElement.prototype.close = function close() {
+    this.removeAttribute('open');
+    this.dispatchEvent(new Event('close'));
+  };
 }
 
 afterEach(() => {
