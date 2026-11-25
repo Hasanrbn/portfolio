@@ -26,10 +26,10 @@ export default function Hero({
         <p className={styles.intro}>{intro}</p>
 
         <div className={styles.actions}>
-          <LinkButton to="/projects" size="lg">
+          <LinkButton to="/#projects" size="lg">
             View My Projects
           </LinkButton>
-          <LinkButton to="/contact" variant="secondary" size="lg">
+          <LinkButton to="/#contact" variant="secondary" size="lg">
             Contact Me
           </LinkButton>
           {resume && (

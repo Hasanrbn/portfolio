@@ -4,7 +4,7 @@ import useReveal from '../../hooks/useReveal.js';
 import styles from './EducationItem.module.css';
 
 /** One education entry. Relevant subjects and achievements are shown only when there are some. */
-export default function EducationItem({ education, headingAs: Heading = 'h2' }) {
+export default function EducationItem({ education, headingAs: Heading = 'h3' }) {
   const revealRef = useReveal();
   const { startYear, endYear } = education;
 

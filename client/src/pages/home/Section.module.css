@@ -1,0 +1,8 @@
+/* Shared by the sections that list entries (Education). */
+.cards {
+  display: grid;
+  gap: var(--space-6);
+  max-width: 48rem;
+  padding: 0;
+  list-style: none;
+}

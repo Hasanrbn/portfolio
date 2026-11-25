@@ -1,10 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import certificatesData from '@portfolio/shared/data/certificates.json';
-import App from '../src/app/App.jsx';
-import ThemeProvider from '../src/app/ThemeProvider.jsx';
 import CertificateCard from '../src/components/sections/CertificateCard.jsx';
 import {
   filterCertificates,
@@ -13,6 +10,7 @@ import {
   isPdfAddress,
   normalizeCertificates,
 } from '../src/services/certificatesService.js';
+import { getSection, renderSite } from './helpers/renderSite.jsx';
 
 vi.mock('../src/services/certificatesService.js', async (importOriginal) => {
   const actual = await importOriginal();
@@ -56,32 +54,24 @@ const THREE = () =>
     }),
   ]);
 
-function renderPage(path = '/certificates') {
-  return render(
-    <ThemeProvider>
-      <MemoryRouter initialEntries={[path]}>
-        <App />
-      </MemoryRouter>
-    </ThemeProvider>,
-  );
-}
+const renderPage = () => renderSite('/');
 
-const main = () => screen.getByRole('main');
+const main = () => getSection('Certificates');
 const titles = () =>
   within(main())
-    .queryAllByRole('heading', { level: 2 })
+    .queryAllByRole('heading', { level: 3 })
     .map((heading) => heading.textContent);
 
 beforeEach(() => {
   getCertificates.mockReset().mockImplementation(realGetCertificates);
 });
 
-describe('certificates page', () => {
+describe('certificates section', () => {
   it('shows an honest empty state while no certificate has been added', async () => {
     getCertificates.mockResolvedValue([]);
     renderPage();
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Certificates' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Certificates' })).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: 'No certificates yet' })).toBeInTheDocument();
     expect(screen.queryByRole('search')).toBeNull();
   });
@@ -90,9 +80,9 @@ describe('certificates page', () => {
     getCertificates.mockResolvedValue([]);
     renderPage();
 
-    expect(screen.getByRole('status')).toHaveTextContent('Loading certificates');
+    expect(within(main()).getByRole('status')).toHaveTextContent('Loading certificates');
     await screen.findByRole('heading', { name: 'No certificates yet' });
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(within(main()).queryByRole('status')).toBeNull();
   });
 
   it('shows a friendly error and recovers on Try again', async () => {
@@ -113,7 +103,7 @@ describe('certificates page', () => {
     getCertificates.mockResolvedValue(make([entry({})]));
     renderPage();
 
-    expect(await screen.findByRole('heading', { level: 2, name: 'Web Basics' })).toBeVisible();
+    expect(await screen.findByRole('heading', { level: 3, name: 'Web Basics' })).toBeVisible();
     expect(screen.queryByRole('search')).toBeNull();
   });
 });
@@ -125,16 +115,16 @@ describe('filtering', () => {
 
   it('lists everything newest first, with filters and a count', async () => {
     renderPage();
-    await screen.findByRole('heading', { level: 2, name: 'Cloud Basics' });
+    await screen.findByRole('heading', { level: 3, name: 'Cloud Basics' });
 
     expect(titles()).toEqual(['Cloud Basics', 'React Course', 'JS Course']);
     expect(screen.getByRole('search', { name: 'Filter certificates' })).toBeInTheDocument();
-    expect(screen.getByRole('status')).toHaveTextContent('3 certificates');
+    expect(within(main()).getByRole('status')).toHaveTextContent('3 certificates');
   });
 
   it('offers only options that exist: issuers and categories sorted, years newest first', async () => {
     renderPage();
-    await screen.findByRole('heading', { level: 2, name: 'Cloud Basics' });
+    await screen.findByRole('heading', { level: 3, name: 'Cloud Basics' });
 
     const names = (label) =>
       within(screen.getByRole('combobox', { name: label }))
@@ -148,11 +138,11 @@ describe('filtering', () => {
   it('filters by issuer, year and category together', async () => {
     const user = userEvent.setup();
     renderPage();
-    await screen.findByRole('heading', { level: 2, name: 'Cloud Basics' });
+    await screen.findByRole('heading', { level: 3, name: 'Cloud Basics' });
 
     await user.selectOptions(screen.getByRole('combobox', { name: 'Issuer' }), 'Example Academy');
     expect(titles()).toEqual(['React Course', 'JS Course']);
-    expect(screen.getByRole('status')).toHaveTextContent('Showing 2 of 3 certificates');
+    expect(within(main()).getByRole('status')).toHaveTextContent('Showing 2 of 3 certificates');
 
     await user.selectOptions(screen.getByRole('combobox', { name: 'Year' }), '2025');
     expect(titles()).toEqual(['React Course']);
@@ -161,19 +151,10 @@ describe('filtering', () => {
     expect(titles()).toEqual(['React Course']);
   });
 
-  it('starts from the filters in the address and ignores unknown values', async () => {
-    renderPage('/certificates?year=2024&category=Nothing');
-    await screen.findByRole('heading', { level: 2, name: 'JS Course' });
-
-    expect(titles()).toEqual(['JS Course']);
-    expect(screen.getByRole('combobox', { name: 'Year' })).toHaveValue('2024');
-    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue('');
-  });
-
   it('explains when nothing matches and clears the filters from there', async () => {
     const user = userEvent.setup();
     renderPage();
-    await screen.findByRole('heading', { level: 2, name: 'Cloud Basics' });
+    await screen.findByRole('heading', { level: 3, name: 'Cloud Basics' });
 
     await user.selectOptions(screen.getByRole('combobox', { name: 'Issuer' }), 'Acme');
     await user.selectOptions(screen.getByRole('combobox', { name: 'Year' }), '2024');
@@ -196,7 +177,7 @@ describe('CertificateCard', () => {
   it('shows title, issuer, date, category and credential ID', () => {
     card({ category: 'Web', credentialId: 'ABC-123' });
 
-    expect(screen.getByRole('heading', { level: 2, name: 'Web Basics' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 3, name: 'Web Basics' })).toBeInTheDocument();
     expect(screen.getByText('Example Academy')).toBeInTheDocument();
     expect(screen.getByText('Mar 2025')).toHaveAttribute('datetime', '2025-03');
     expect(screen.getByText('Web')).toBeInTheDocument();

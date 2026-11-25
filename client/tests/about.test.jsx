@@ -1,38 +1,30 @@
 import { render, screen, within } from '@testing-library/react';
-import { MemoryRouter } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import siteConfig from '@portfolio/shared/siteConfig.json';
 import aboutData from '@portfolio/shared/data/about.json';
-import App from '../src/app/App.jsx';
-import ThemeProvider from '../src/app/ThemeProvider.jsx';
 import TextSection from '../src/components/sections/TextSection.jsx';
+import { getSection, renderSite } from './helpers/renderSite.jsx';
 
-function renderAbout() {
-  return render(
-    <ThemeProvider>
-      <MemoryRouter initialEntries={['/about']}>
-        <App />
-      </MemoryRouter>
-    </ThemeProvider>,
-  );
-}
+const renderAbout = () => renderSite('/');
 
-describe('about page', () => {
-  it('has one h1 and introduces the person', () => {
+describe('about section', () => {
+  it('has a heading of its own and introduces the person', () => {
     renderAbout();
-    const main = screen.getByRole('main');
+    const about = getSection('About me');
 
-    expect(within(main).getByRole('heading', { level: 1, name: 'About me' })).toBeInTheDocument();
-    expect(main).toHaveTextContent(siteConfig.intro);
-    expect(main).toHaveTextContent(`${siteConfig.role} · ${siteConfig.location}`);
+    expect(within(about).getByRole('heading', { level: 2, name: 'About me' })).toBeInTheDocument();
+    expect(about).toHaveTextContent(siteConfig.intro);
+    expect(about).toHaveTextContent(`${siteConfig.role} · ${siteConfig.location}`);
   });
 
   it('lists the personal highlights from the data file', () => {
     renderAbout();
-    const section = screen.getByRole('region', { name: 'Personal highlights' });
+    const highlights = within(getSection('About me')).getByRole('region', {
+      name: 'Personal highlights',
+    });
 
     expect(
-      within(section)
+      within(highlights)
         .getAllByRole('listitem')
         .map((item) => item.textContent),
     ).toEqual(aboutData.highlights);
@@ -42,24 +34,24 @@ describe('about page', () => {
     renderAbout();
 
     for (const section of aboutData.sections) {
-      const region = screen.getByRole('region', { name: section.title });
+      const region = within(getSection('About me')).getByRole('region', { name: section.title });
       section.items.forEach((item) => expect(region).toHaveTextContent(item));
     }
   });
 
   it('keeps heading levels in order', () => {
     renderAbout();
-    const levels = within(screen.getByRole('main'))
+    const levels = within(getSection('About me'))
       .getAllByRole('heading')
       .map((heading) => Number(heading.tagName[1]));
 
-    expect(levels[0]).toBe(1);
-    expect(levels.slice(1).every((level) => level === 2)).toBe(true);
+    expect(levels[0]).toBe(2);
+    expect(levels.slice(1).every((level) => level === 3)).toBe(true);
   });
 
   it('shows the profile picture only when one is set in the site config', () => {
     renderAbout();
-    const pictures = within(screen.getByRole('main')).queryAllByRole('img');
+    const pictures = within(getSection('About me')).queryAllByRole('img');
 
     if (siteConfig.avatar) {
       expect(pictures).toHaveLength(1);

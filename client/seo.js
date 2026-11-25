@@ -4,19 +4,12 @@
 // address, no sitemap and no address-based tags are produced: a wrong address is worse than none.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { isSlug } from '../shared/validation.js';
 
-/** Pages that always exist (the same list as the navigation; a test keeps them in step). */
-export const STATIC_PATHS = [
-  '/',
-  '/about',
-  '/skills',
-  '/projects',
-  '/experience',
-  '/education',
-  '/certificates',
-  '/contact',
-];
+/**
+ * Public paths. The site is a single page (the menu scrolls to sections), so the home page is
+ * the only address worth listing. Old page addresses redirect to it.
+ */
+export const STATIC_PATHS = ['/'];
 
 /** The site's origin ("https://example.com") from SITE_URL, or null when it cannot be trusted. */
 export function normalizeSiteUrl(value) {
@@ -40,11 +33,6 @@ export function siteUrlFromEnv(env) {
     return env.SITE_URL;
   }
   return env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}` : '';
-}
-
-/** Every public path: the fixed pages and one per published project. */
-export function collectPaths({ projectSlugs = [] }) {
-  return [...STATIC_PATHS, ...projectSlugs.map((slug) => `/projects/${slug}`)];
 }
 
 const escapeXml = (text) =>
@@ -104,16 +92,6 @@ export function buildHeadTags(siteUrl, siteConfig) {
   return tags.map((tag) => `    ${tag}`).join('\n');
 }
 
-/** Published project slugs, read straight from the content files. */
-export function readContentSlugs(sharedDir) {
-  const projects = JSON.parse(readFileSync(join(sharedDir, 'data/projects.json'), 'utf8'));
-  const projectSlugs = (projects.projects ?? [])
-    .filter((project) => project && project.published !== false && isSlug(project.slug))
-    .map((project) => project.slug);
-
-  return { projectSlugs: [...new Set(projectSlugs)] };
-}
-
 /** Vite plugin: adds the tags to index.html and writes robots.txt and sitemap.xml into dist. */
 export function seoPlugin({ siteUrl, sharedDir }) {
   const base = normalizeSiteUrl(siteUrl);
@@ -136,7 +114,7 @@ export function seoPlugin({ siteUrl, sharedDir }) {
       this.emitFile({
         type: 'asset',
         fileName: 'sitemap.xml',
-        source: buildSitemap(base, collectPaths(readContentSlugs(sharedDir))),
+        source: buildSitemap(base, STATIC_PATHS),
       });
     },
   };

@@ -19,6 +19,8 @@ if (hasDom) {
   window.matchMedia = createMatchMedia(false);
   // jsdom does not implement scrolling; navigation code calls it, so make it a no-op.
   window.scrollTo = vi.fn();
+  // Nor does it scroll elements into view; the menu uses this to reach a section.
+  Element.prototype.scrollIntoView = vi.fn();
 }
 
 afterEach(() => {
