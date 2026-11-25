@@ -6,4 +6,7 @@
 
 .main {
   flex: 1;
+  /* The hero glow is wider than the page; clipping (not scrolling) keeps it from adding a scrollbar. */
+  position: relative;
+  overflow-x: clip;
 }

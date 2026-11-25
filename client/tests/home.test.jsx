@@ -86,10 +86,17 @@ describe('home page', () => {
 
 describe('Hero', () => {
   it('shows initials as a decorative monogram when there is no picture', () => {
-    const { container } = renderHero();
+    renderHero();
 
     expect(screen.queryByRole('img')).toBeNull();
-    expect(container.querySelector('[aria-hidden="true"]')).toHaveTextContent('AL');
+    expect(screen.getByText('AL').closest('[aria-hidden="true"]')).not.toBeNull();
+  });
+
+  it('keeps the script greeting and its doodle arrow out of the reading order', () => {
+    renderHero();
+
+    expect(screen.getByText(/Hello, I’m/).closest('[aria-hidden="true"]')).not.toBeNull();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Ada Lovelace');
   });
 
   it('shows the picture with a text alternative when one is set', () => {

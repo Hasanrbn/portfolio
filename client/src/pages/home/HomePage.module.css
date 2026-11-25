@@ -1,5 +1,28 @@
 /* The opening block: the hero, then the core technologies. */
 .opening {
+  position: relative;
+  isolation: isolate;
   display: grid;
   gap: var(--space-16);
+}
+
+/*
+ * A soft pool of accent light behind the hero, plus a smaller one off to the side. Pure CSS
+ * gradients (no image, no blur filter), so it is cheap to paint and does not move.
+ */
+.opening::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -6rem -30vw auto;
+  height: 42rem;
+  pointer-events: none;
+  opacity: var(--glow-opacity);
+  background:
+    radial-gradient(40% 55% at 28% 42%, var(--color-accent), transparent 70%),
+    radial-gradient(
+      28% 40% at 78% 30%,
+      color-mix(in srgb, var(--color-accent) 45%, transparent),
+      transparent 70%
+    );
 }
