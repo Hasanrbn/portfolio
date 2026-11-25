@@ -4,14 +4,14 @@
       "slug": "portfolio-website",
       "title": "Portfolio Website",
       "summary": "The website you are looking at: a full-stack portfolio with a React front end and an Express API, built step by step with automated tests, accessibility checks and CI.",
-      "description": "A personal portfolio built as a real full-stack application instead of a static page.\n\nThe front end is a React single-page app with its own design system, light and dark themes and an accessible page frame. The server is an Express application that validates its configuration on start and answers with one consistent JSON format.",
+      "description": "A personal portfolio built as a real full-stack application instead of a static page.\n\nThe front end is a React single-page app: one long page whose menu scrolls to each section, with its own design system, dark and light themes and an accessible page frame. The server is an Express application that validates its configuration on start and answers with one consistent JSON format.",
       "problem": "A portfolio should show engineering ability, not only list it. A static page of links cannot show how its author handles structure, testing, accessibility or security.",
       "solution": "Build the portfolio itself as the proof: a monorepo with a React client, an Express server and shared data, checked on every push by automated formatting, linting, tests and a production build.",
       "features": [
-        "Light, dark and system themes, applied before the first paint so the page never flashes",
-        "Keyboard-friendly layout: skip link, a menu that works without a mouse, and focus moved to each new page's heading",
+        "Dark-first design with light and system themes, applied before the first paint so the page never flashes",
+        "Keyboard-friendly navigation: a skip link, a menu that works without a mouse, and focus moved to the heading of the section you jump to",
         "Colour contrast of every design token checked against WCAG AA by automated tests",
-        "Page content (skills, projects, experience, blog) lives in files in the repository and is checked by a script, so the site needs no CMS and no login",
+        "Page content (skills, projects, experience, certificates) lives in files in the repository and is checked by a script, so the site needs no CMS and no login",
         "A contact form checked in the browser and again on the server, with a hidden trap field, a limit per visitor and no personal data in the logs; messages are stored in PostgreSQL",
         "Continuous integration that runs the format check, lint, tests and build on every push"
       ],
@@ -36,12 +36,18 @@
           }
         ]
       },
-      "challenges": "",
+      "challenges": "Turning a multi-page site into one long page without losing what pages give for free. Old addresses such as /projects/<slug> redirect to the matching section, the menu marks the section on screen, and a jump to a section waits for content that is still loading so it lands in the right place.",
       "lessons": "",
       "category": "Full-Stack",
       "status": "in_progress",
       "year": 2026,
-      "thumbnail": null,
+      "thumbnail": {
+        "url": "/images/portfolio/v2-dark.webp",
+        "alt": "The hero of the redesigned portfolio in the dark theme: a script greeting, the name in very large type, the role, a short introduction, buttons and a lime glow behind the text.",
+        "caption": "",
+        "width": 1200,
+        "height": 750
+      },
       "repoUrl": "https://github.com/Hasanrbn/portfolio",
       "demoUrl": "",
       "technologies": [
@@ -55,20 +61,54 @@
         "PostgreSQL",
         "Vercel"
       ],
-      "screenshots": [],
+      "screenshots": [
+        {
+          "url": "/images/portfolio/v2-light.webp",
+          "alt": "The same hero in the light theme, on warm paper with a soft lime glow.",
+          "caption": "The light theme. Dark is the default; light and system are one click away.",
+          "width": 1200,
+          "height": 750
+        },
+        {
+          "url": "/images/portfolio/v2-mobile.webp",
+          "alt": "The hero on a phone: the profile picture, greeting, name, role and the two main buttons stacked in one column.",
+          "caption": "The same page on a phone.",
+          "width": 585,
+          "height": 1266
+        }
+      ],
       "featured": true,
       "published": true,
-      "sortOrder": 1
+      "sortOrder": 1,
+      "comparison": {
+        "before": {
+          "url": "/images/portfolio/v1-light.webp",
+          "alt": "The first version of the portfolio: a light page with a teal accent, the name and role, and a short introduction.",
+          "caption": "",
+          "width": 1200,
+          "height": 750
+        },
+        "after": {
+          "url": "/images/portfolio/v2-dark.webp",
+          "alt": "The redesigned portfolio: a dark page with a lime accent, the name in very large type and a soft glow.",
+          "caption": "",
+          "width": 1200,
+          "height": 750
+        },
+        "beforeLabel": "v1 · Light, teal",
+        "afterLabel": "v2 · Dark, lime",
+        "caption": "The first version of this site next to the current redesign. Drag the handle, or use the arrow keys."
+      }
     },
     {
       "slug": "sistem-manajemen-inventaris-baterai-listrik",
-      "title": "Sistem Manajemen Inventaris Baterai Listrik",
-      "summary": "Aplikasi web manajemen inventaris barang bertema baterai listrik, dibangun untuk mata kuliah Rekayasa Perangkat Lunak.",
-      "description": "Aplikasi berbasis web bertema manajemen inventaris barang, dibuat dengan JavaScript (Node.js dan Express.js), EJS, HTML, CSS, dan MySQL. Kodenya disusun dengan memisahkan route, controller, service, dan database agar lebih mudah dikembangkan dan dipelihara.\n\nProyek mata kuliah Rekayasa Perangkat Lunak.",
+      "title": "Electric Battery Inventory Management System",
+      "summary": "A web inventory management app with an electric-battery theme, built for a Software Engineering course.",
+      "description": "A web application for managing inventory, built with JavaScript (Node.js and Express.js), EJS, HTML, CSS and MySQL. The code separates routes, controllers, services and the database so the project is easier to extend and maintain.\n\nA course project for Software Engineering.",
       "problem": "",
       "solution": "",
       "features": [
-        "Kode terorganisir dalam route, controller, service, dan database yang terpisah"
+        "Code organised into separate routes, controllers, services and database layers"
       ],
       "architecture": null,
       "challenges": "",
@@ -87,12 +127,16 @@
     },
     {
       "slug": "sistem-informasi-perawatan-kecantikan",
-      "title": "Sistem Informasi Perawatan & Kecantikan",
-      "summary": "Aplikasi web bertema perawatan dan kecantikan, dibangun untuk mata kuliah Pemrograman Web.",
-      "description": "Aplikasi berbasis web bertema perawatan dan kecantikan, dibuat dengan PHP, MySQL, dan Bootstrap.\n\nProyek mata kuliah Pemrograman Web.",
+      "title": "Beauty & Wellness Information System",
+      "summary": "A web application for a beauty and wellness clinic, built for a Web Programming course.",
+      "description": "A web application for a beauty and wellness clinic (Lipalas Beauty Clinic), built with PHP, MySQL and Bootstrap. Visitors browse the treatments and send appointment requests, and the clinic follows them up in an admin dashboard.\n\nA course project for Web Programming.",
       "problem": "",
       "solution": "",
-      "features": [],
+      "features": [
+        "Treatment list grouped into Face, Body and Consultation, each with a duration, a price and an expandable description",
+        "Customers send an appointment request and follow its status, which stays pending until the clinic confirms it",
+        "Admin dashboard with booking totals, a status filter and search, and the option to change a booking's status or date, or delete it"
+      ],
       "architecture": null,
       "challenges": "",
       "lessons": "",
@@ -101,7 +145,7 @@
       "year": 2025,
       "thumbnail": {
         "url": "/images/kecantikan/cover.webp",
-        "alt": "Beranda situs Lipalas Beauty Clinic: judul \"Rawat diri, tanpa terburu-buru\", tombol lihat perawatan dan buat janji temu, jam buka, dan foto ruang perawatan dalam bingkai berbentuk kelopak.",
+        "alt": "The home page of Lipalas Beauty Clinic: the headline \"Rawat diri, tanpa terburu-buru\" (take care of yourself, without rushing), buttons to see the treatments and book an appointment, opening hours, and a photo of the treatment room in a petal-shaped frame.",
         "caption": "",
         "width": 1200,
         "height": 750
@@ -109,28 +153,28 @@
       "screenshots": [
         {
           "url": "/images/kecantikan/layanan.webp",
-          "alt": "Daftar perawatan bergaya menu, dikelompokkan menjadi Wajah, Tubuh, dan Konsultasi, dengan durasi, harga contoh, dan satu perawatan yang dibuka.",
-          "caption": "Daftar perawatan. Tiap item bisa dibuka untuk membaca penjelasannya. Harga dan durasi adalah data contoh.",
+          "alt": "A menu-style list of treatments grouped into Face, Body and Consultation, with durations, sample prices and one treatment expanded.",
+          "caption": "The treatment list. Each item opens to show its description. Prices and durations are sample data.",
           "width": 1200,
           "height": 921
         },
         {
           "url": "/images/kecantikan/booking.webp",
-          "alt": "Halaman pelanggan dengan form permintaan janji temu, kartu ringkasan perawatan, dan riwayat permintaan beserta statusnya.",
-          "caption": "Pelanggan mengirim permintaan janji temu dan memantau statusnya. Permintaan berstatus menunggu konfirmasi sampai klinik mengonfirmasi.",
+          "alt": "The customer page with an appointment request form, a treatment summary card and the history of requests with their status.",
+          "caption": "A customer sends an appointment request and follows its status. A request stays pending until the clinic confirms it.",
           "width": 1200,
           "height": 1288
         },
         {
           "url": "/images/kecantikan/admin.webp",
-          "alt": "Dashboard admin berisi ringkasan jumlah booking, filter status, pencarian, dan tabel booking dengan tombol ubah dan hapus.",
-          "caption": "Admin melihat ringkasan, menyaring dan mencari booking, lalu mengubah status atau tanggalnya.",
+          "alt": "The admin dashboard with booking totals, a status filter, a search box and a table of bookings with edit and delete buttons.",
+          "caption": "The admin sees the totals, filters and searches the bookings, then changes a booking's status or date.",
           "width": 1200,
           "height": 1167
         }
       ],
       "repoUrl": "https://github.com/Hasanrbn/WebKecantikan-Lipalas",
-      "demoUrl": "",
+      "demoUrl": "https://lipalas.vercel.app/",
       "technologies": ["PHP", "MySQL", "Bootstrap"],
       "featured": false,
       "published": true,
@@ -138,9 +182,9 @@
     },
     {
       "slug": "sistem-informasi-film",
-      "title": "Sistem Informasi Film",
-      "summary": "Sistem informasi film berbasis web, proyek personal.",
-      "description": "Sistem informasi film berbasis web, dibuat dengan HTML, CSS, JavaScript, MySQL, dan Bootstrap.\n\nProyek personal.",
+      "title": "Movie Information System",
+      "summary": "A web-based movie information system, a personal project.",
+      "description": "A web-based movie information system built with HTML, CSS, JavaScript, MySQL and Bootstrap.\n\nA personal project.",
       "problem": "",
       "solution": "",
       "features": [],
@@ -161,18 +205,18 @@
     },
     {
       "slug": "web-rekomendasi-travel-jogja",
-      "title": "Web Rekomendasi Travel Jogja",
-      "summary": "Aplikasi web sistem pendukung keputusan yang merangking destinasi wisata di Yogyakarta dengan metode SAW, proyek kelompok untuk praktikum SCPK.",
-      "description": "Aplikasi web sistem pendukung keputusan untuk merekomendasikan destinasi wisata di Yogyakarta, dibuat dengan Python dan Streamlit. Data 436 destinasi dibaca dari berkas CSV, lalu diurutkan dengan metode Simple Additive Weighting (SAW) berdasarkan lima kriteria: rating, harga tiket, jarak dari pusat kota, kategori wisata, dan popularitas. Pengguna mengatur bobot tiap kriteria, menyaring jenis wisata dan harga tiket maksimum, lalu melihat tahap perhitungan, peringkat, grafik, dan peta.\n\nSemua nilai kriteria diturunkan dari isi dataset: jarak dihitung dari koordinat dengan rumus haversine, kategori dari rata-rata rating per jenis wisata, dan popularitas dari pengelompokan rating.\n\nProyek kelompok untuk praktikum SCPK.",
-      "problem": "",
-      "solution": "",
+      "title": "Travel Jogja Recommendation Web",
+      "summary": "A decision-support web app that ranks tourist destinations in Yogyakarta with the SAW method, a group project for the SCPK practicum.",
+      "description": "A decision-support web application that recommends tourist destinations in Yogyakarta, built with Python and Streamlit. The data of 436 destinations is read from a CSV file and ranked with the Simple Additive Weighting (SAW) method on five criteria: rating, ticket price, distance from the city centre, type of attraction and popularity. Users set the weight of each criterion, filter by type of attraction and maximum ticket price, then explore the calculation steps, the ranking, charts and a map.\n\nEvery criterion value is derived from the dataset itself: distance is calculated from the coordinates with the haversine formula, the type score from the average rating per type of attraction, and popularity from grouping the ratings.\n\nA group project for the SCPK practicum.",
+      "problem": "With hundreds of destinations, choosing is hard when rating, ticket price, distance, type and popularity all matter, and matter differently to each traveller.",
+      "solution": "Score every destination with Simple Additive Weighting, let the user decide how much each criterion counts, and show every step of the calculation so the ranking can be checked rather than trusted blindly.",
       "features": [
-        "Bobot kelima kriteria dapat diatur pengguna dan harus berjumlah 100",
-        "Penyaringan berdasarkan jenis wisata dan harga tiket maksimum",
-        "Tahap perhitungan SAW ditampilkan: matriks keputusan, normalisasi, dan bobot",
-        "Tabel peringkat dengan tiga destinasi teratas disorot",
-        "Visualisasi data dengan Matplotlib",
-        "Peta interaktif destinasi dengan Folium"
+        "The weights of the five criteria are set by the user and must add up to 100",
+        "Filtering by type of attraction and maximum ticket price",
+        "The SAW steps are shown: decision matrix, normalisation and weights",
+        "A ranking table with the top three destinations highlighted",
+        "Data visualisation with Matplotlib",
+        "An interactive map of the destinations with Folium"
       ],
       "architecture": null,
       "challenges": "",
@@ -182,7 +226,7 @@
       "year": 2026,
       "thumbnail": {
         "url": "/images/travel-jogja/cover.webp",
-        "alt": "Halaman beranda aplikasi SPK Wisata Jogja: judul, ringkasan angka dataset (436 destinasi, 13 jenis wisata), cara kerja, dan tabel kriteria.",
+        "alt": "The home page of the SPK Wisata Jogja app: the title, dataset figures (436 destinations, 13 types of attraction), how it works and a table of the criteria.",
         "caption": "",
         "width": 1065,
         "height": 599
@@ -190,36 +234,36 @@
       "screenshots": [
         {
           "url": "/images/travel-jogja/bobot.webp",
-          "alt": "Halaman Hitung SPK dengan lima penggeser bobot kriteria yang totalnya 100.",
-          "caption": "Pengguna mengatur bobot lima kriteria. Total harus 100 sebelum perhitungan dijalankan.",
+          "alt": "The Hitung SPK page with five sliders for the criteria weights, which add up to 100.",
+          "caption": "The user sets the weights of the five criteria. They must add up to 100 before the calculation runs.",
           "width": 1065,
           "height": 410
         },
         {
           "url": "/images/travel-jogja/matriks.webp",
-          "alt": "Matriks keputusan sepuluh destinasi pertama dengan lima kriteria, serta dua tahap lain yang dapat dibuka.",
-          "caption": "Tahap perhitungan SAW ditampilkan satu per satu, dimulai dari matriks keputusan.",
+          "alt": "The decision matrix of the first ten destinations with five criteria, and two more calculation steps that can be opened.",
+          "caption": "The SAW steps are shown one at a time, starting with the decision matrix.",
           "width": 1065,
           "height": 630
         },
         {
           "url": "/images/travel-jogja/peringkat.webp",
-          "alt": "Tabel destinasi teratas dengan skor SAW, rating, tiket, dan jarak, di bawahnya tiga rekomendasi terbaik.",
-          "caption": "Tabel peringkat dengan tiga rekomendasi teratas.",
+          "alt": "A table of the top destinations with SAW score, rating, ticket price and distance, with the three best recommendations below it.",
+          "caption": "The ranking table with the top three recommendations.",
           "width": 1065,
           "height": 881
         },
         {
           "url": "/images/travel-jogja/visualisasi.webp",
-          "alt": "Diagram batang sepuluh destinasi dengan skor SAW tertinggi.",
-          "caption": "Grafik sepuluh skor SAW tertinggi dari hasil perhitungan terakhir.",
+          "alt": "A bar chart of the ten destinations with the highest SAW score.",
+          "caption": "A chart of the ten highest SAW scores from the latest calculation.",
           "width": 1065,
           "height": 550
         },
         {
           "url": "/images/travel-jogja/peta.webp",
-          "alt": "Peta Yogyakarta berisi penanda destinasi hasil perhitungan SAW dengan legenda jenis wisata.",
-          "caption": "Peta interaktif. Destinasi hasil perhitungan bisa ditampilkan terpisah dari seluruh dataset.",
+          "alt": "A map of Yogyakarta with markers for the destinations from the SAW calculation and a legend of attraction types.",
+          "caption": "The interactive map. The destinations from the calculation can be shown apart from the whole dataset.",
           "width": 1065,
           "height": 870
         }

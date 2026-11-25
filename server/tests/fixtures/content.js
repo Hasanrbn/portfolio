@@ -58,6 +58,13 @@ export const projects = {
         { url: 'https://example.org/one.png', alt: 'First view', caption: '' },
         { url: '/images/two.png', alt: '', caption: 'Second view', width: 400, height: 300 },
       ],
+      comparison: {
+        before: { url: '/images/old.png', alt: 'Old design', caption: '' },
+        after: { url: '/images/new.png', alt: 'New design', caption: '' },
+        beforeLabel: 'v1',
+        afterLabel: 'v2',
+        caption: 'The redesign.',
+      },
       repoUrl: 'https://github.com/example/full',
       demoUrl: 'https://full.example.org',
       technologies: ['React', 'Vite', 'node.js'],

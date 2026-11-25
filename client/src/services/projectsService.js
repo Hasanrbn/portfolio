@@ -29,6 +29,21 @@ function normalizeArchitecture(architecture) {
   return description || layers.length > 0 ? { description, layers } : null;
 }
 
+function normalizeComparison(comparison, title) {
+  const before = normalizePicture(comparison?.before, title, (name) => `Before: ${name}`);
+  const after = normalizePicture(comparison?.after, title, (name) => `After: ${name}`);
+  if (!before || !after) {
+    return null;
+  }
+  return {
+    before,
+    after,
+    beforeLabel: text(comparison.beforeLabel) || 'Before',
+    afterLabel: text(comparison.afterLabel) || 'After',
+    caption: text(comparison.caption),
+  };
+}
+
 function normalizeProject(project) {
   const title = text(project.title);
 
@@ -50,6 +65,7 @@ function normalizeProject(project) {
     screenshots: (Array.isArray(project.screenshots) ? project.screenshots : [])
       .map((shot) => normalizePicture(shot, title, (name) => `Screenshot of ${name}`))
       .filter(Boolean),
+    comparison: normalizeComparison(project.comparison, title),
     repoUrl: getHttpsUrl(project.repoUrl),
     demoUrl: getHttpsUrl(project.demoUrl),
     technologies: textList(project.technologies),

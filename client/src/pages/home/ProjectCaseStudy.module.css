@@ -1,20 +1,37 @@
-.title {
-  margin-top: var(--space-3);
-  font-size: var(--text-2xl);
-  overflow-wrap: anywhere;
+.study {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-10);
 }
 
-.meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3);
-  color: var(--color-text-muted);
+/* ---------- Header ---------- */
+
+.head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  max-width: 56rem;
+}
+
+.number {
+  color: var(--color-accent-text);
+  font-family: var(--font-script);
+  font-size: var(--text-script);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.title {
+  font-size: clamp(2rem, 1.2rem + 3.4vw, 3.75rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .lead {
   max-width: 44rem;
-  margin-top: var(--space-4);
   color: var(--color-text-muted);
   font-size: var(--text-lg);
 }
@@ -23,36 +40,152 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
-  margin-top: var(--space-6);
+  margin-top: var(--space-2);
 }
 
+/* ---------- Cover ---------- */
+
 .cover {
+  position: relative;
+  isolation: isolate;
+}
+
+/* A pool of accent light behind the cover, like the one behind the hero. */
+.cover::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -12% -6%;
+  opacity: calc(var(--glow-opacity) * 0.7);
+  background: radial-gradient(closest-side, var(--color-accent), transparent);
+  pointer-events: none;
+}
+
+.zoom {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: zoom-in;
+  line-height: 0;
+}
+
+.zoom img {
   display: block;
   width: 100%;
   height: auto;
-  margin-top: var(--space-8);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
 }
+
+.zoomIcon {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: color-mix(in srgb, var(--color-bg) 82%, transparent);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text);
+  opacity: 0;
+  backdrop-filter: blur(6px);
+  transition: opacity var(--duration-base) var(--ease);
+}
+
+.zoom:hover .zoomIcon,
+.zoom:focus-visible .zoomIcon {
+  opacity: 1;
+}
+
+/* A touch screen has no hover, so the hint stays visible there. */
+@media (hover: none) {
+  .zoomIcon {
+    opacity: 1;
+  }
+}
+
+/* ---------- Facts ---------- */
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--space-6);
+  padding-block: var(--space-6);
+  border-block: 1px solid var(--color-border);
+}
+
+.facts dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.facts dd {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+/* ---------- Written parts ---------- */
 
 .sections {
   display: grid;
-  gap: var(--space-12);
-  margin-top: var(--space-12);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-10);
 }
 
-.heading {
-  margin-bottom: var(--space-4);
+.block {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+.blockTitle {
   font-size: var(--text-xl);
 }
 
-.prose {
+.blockBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
   max-width: 44rem;
-  margin-bottom: var(--space-6);
 }
 
-.prose + .prose {
-  margin-top: calc(-1 * var(--space-2));
+@media (min-width: 52rem) {
+  .block {
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+
+  /* The title stays in view while its text scrolls past. */
+  .blockTitle {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-6));
+    align-self: start;
+    color: var(--color-accent-text);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+}
+
+.list {
+  display: grid;
+  gap: var(--space-2);
+  padding-left: var(--space-6);
+  list-style: disc;
+}
+
+.list li::marker {
+  color: var(--color-accent-text);
 }
 
 .tags {
@@ -63,23 +196,44 @@
   list-style: none;
 }
 
+/* ---------- Screenshots and comparison ---------- */
+
+.wide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
+}
+
+.wideTitle {
+  color: var(--color-accent-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .shots {
   display: grid;
-  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  gap: var(--space-8) var(--space-6);
+  align-items: start;
   padding: 0;
   list-style: none;
 }
 
-.figure img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+/* A phone-sized picture would be very tall at full width, so it stays narrow. */
+.portrait {
+  max-width: 18rem;
+  margin-inline: auto;
+}
+
+.figure {
+  margin: 0;
 }
 
 .figure figcaption {
-  margin-top: var(--space-2);
+  margin-top: var(--space-3);
   color: var(--color-text-muted);
   font-size: var(--text-sm);
 }

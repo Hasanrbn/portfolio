@@ -30,9 +30,27 @@ describe('loadContent', () => {
       repoUrl: null,
       thumbnail: null,
       architecture: null,
+      comparison: null,
       features: [],
       published: true,
     });
+    const full = data.projects.find((project) => project.slug === 'full-project');
+    expect(full.comparison).toMatchObject({ beforeLabel: 'v1', afterLabel: 'v2' });
+  });
+
+  it('refuses a comparison that has only one picture', async () => {
+    const half = {
+      projects: [
+        {
+          slug: 'p',
+          title: 'P',
+          summary: 'S',
+          comparison: { before: { url: '/images/old.png', alt: 'Old', caption: '' } },
+        },
+      ],
+    };
+
+    await expect(load({ files: { 'projects.json': half } })).rejects.toThrow(/comparison\.after/);
   });
 
   it('treats an empty link as "not given"', async () => {

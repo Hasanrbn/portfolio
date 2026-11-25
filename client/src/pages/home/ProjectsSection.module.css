@@ -1,5 +1,46 @@
+.index {
+  margin-bottom: var(--space-16);
+}
+
+.indexList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.indexLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding-inline: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text);
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background var(--duration-base) var(--ease),
+    border-color var(--duration-base) var(--ease);
+}
+
+.indexLink:hover {
+  background: var(--color-accent-subtle);
+  border-color: var(--color-accent-text);
+}
+
+.indexNumber {
+  color: var(--color-accent-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
 .list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-24);
   padding: 0;
   list-style: none;
