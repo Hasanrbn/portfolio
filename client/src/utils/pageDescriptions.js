@@ -4,7 +4,7 @@ const { name, role, location } = siteConfig;
 
 /**
  * What search results show under each page's title. Written from the site's own settings, so it
- * never claims more than the site says elsewhere. Project and article pages use their own text.
+ * never claims more than the site says elsewhere. Project pages use their own text.
  */
 export const PAGE_DESCRIPTIONS = {
   home: `Portfolio of ${name}, a ${role} based in ${location}: projects, skills, experience and contact details.`,
@@ -14,6 +14,5 @@ export const PAGE_DESCRIPTIONS = {
   experience: `Organisation and work experience of ${name}.`,
   education: `Where ${name} has studied.`,
   certificates: `Courses and certificates completed by ${name}.`,
-  blog: `Articles written by ${name}.`,
   contact: `Get in touch with ${name} by sending a message.`,
 };

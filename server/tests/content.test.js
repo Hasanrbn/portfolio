@@ -33,11 +33,6 @@ describe('loadContent', () => {
       features: [],
       published: true,
     });
-    expect(data.posts.map((post) => post.slug)).toEqual([
-      'first-post',
-      'second-post',
-      'third-post',
-    ]);
   });
 
   it('treats an empty link as "not given"', async () => {
@@ -139,22 +134,5 @@ describe('loadContent', () => {
     await expect(load({ files: { 'education.json': null } })).rejects.toThrow(
       /Cannot read content file education\.json/,
     );
-  });
-
-  it('refuses a post file that cannot be published, and repeated post slugs', async () => {
-    await expect(
-      load({ posts: { 'broken.md': '---\ntitle: No date\n---\n\nText' } }),
-    ).rejects.toThrow(/posts\/broken\.md/);
-
-    const one = '---\ntitle: One\nslug: same\npublishedAt: 2025-01-01\n---\n\nText';
-    await expect(load({ posts: { 'a.md': one, 'b.md': one } })).rejects.toThrow(
-      /slug "same" is already used by a\.md/,
-    );
-  });
-
-  it('works with no posts folder content', async () => {
-    const data = await load({ posts: {} });
-
-    expect(data.posts).toEqual([]);
   });
 });

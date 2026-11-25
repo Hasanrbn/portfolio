@@ -56,17 +56,16 @@ describe('siteUrlFromEnv', () => {
 });
 
 describe('sitemap paths', () => {
-  it('covers every navigation page except an empty blog', () => {
-    const navPaths = NAV_ITEMS.map((item) => item.to).filter((path) => path !== '/blog');
+  it('covers every navigation page', () => {
+    const navPaths = NAV_ITEMS.map((item) => item.to);
 
     expect([...STATIC_PATHS].sort()).toEqual([...navPaths].sort());
-    expect(collectPaths({})).not.toContain('/blog');
   });
 
-  it('adds the blog, projects and posts that exist', () => {
-    const paths = collectPaths({ projectSlugs: ['one'], postSlugs: ['hello'] });
+  it('adds the projects that exist', () => {
+    const paths = collectPaths({ projectSlugs: ['one'] });
 
-    expect(paths).toEqual(expect.arrayContaining(['/blog', '/projects/one', '/blog/hello']));
+    expect(paths).toEqual(expect.arrayContaining(['/projects/one']));
   });
 
   it('reads the published projects of the shipped data and no draft', () => {

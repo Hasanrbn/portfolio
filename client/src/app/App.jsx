@@ -3,8 +3,6 @@ import { Route, Routes } from 'react-router';
 import SiteLayout from './SiteLayout.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
 import AboutPage from '../pages/public/AboutPage.jsx';
-import BlogPage from '../pages/public/BlogPage.jsx';
-import BlogPostPage from '../pages/public/BlogPostPage.jsx';
 import CertificatesPage from '../pages/public/CertificatesPage.jsx';
 import ContactPage from '../pages/public/ContactPage.jsx';
 import EducationPage from '../pages/public/EducationPage.jsx';
@@ -27,7 +25,6 @@ const BUILT_PAGES = [
   { to: '/experience', element: <ExperiencePage /> },
   { to: '/education', element: <EducationPage /> },
   { to: '/certificates', element: <CertificatesPage /> },
-  { to: '/blog', element: <BlogPage /> },
   { to: '/contact', element: <ContactPage /> },
 ];
 
@@ -40,7 +37,6 @@ export default function App() {
           <Route key={page.to} path={page.to} element={page.element} />
         ))}
         <Route path="projects/:slug" element={<ProjectDetailPage />} />
-        <Route path="blog/:slug" element={<BlogPostPage />} />
         {DesignPage && (
           <Route
             path="design"

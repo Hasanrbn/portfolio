@@ -2,11 +2,11 @@
 
 Personal portfolio: a React site whose content lives in files in this repository, plus a small Express API and PostgreSQL database for one purpose: the contact form.
 
-> **Status:** Phases 1 to 12 are done; the project direction was simplified afterwards (see "Decisions" below). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience, Education, Certificates, Blog and Contact pages. The design system can be reviewed at `/design` while developing. See `docs/portfolio-plan.md` for the full roadmap.
+> **Status:** Phases 1 to 12 are done; the project direction was simplified afterwards (see "Decisions" below). The site has its frame (header, menu, footer), a home page, About, Skills, Projects (list, filters, detail), Experience, Education, Certificates and Contact pages. The design system can be reviewed at `/design` while developing. See `docs/portfolio-plan.md` for the full roadmap.
 
 ## Features
 
-Pages: home, about, skills, projects with detail pages, experience, education, certificates, blog, contact form, and a "Download CV" button that opens your CV as a PDF (there is no separate resume page).
+Pages: home, about, skills, projects with detail pages, experience, education, certificates, contact form, and a "Download CV" button that opens your CV as a PDF (there is no separate resume page).
 
 Built so far:
 
@@ -24,7 +24,6 @@ Built so far:
 - Projects page: cards with status, category, year, technologies and GitHub / live demo links; search, category and technology filters (shown from two projects on, kept in the address so a filtered view can be shared); a detail page per project at `/projects/<slug>` with overview, problem, solution, features, technology stack, an architecture diagram, challenges, lessons learned and screenshots. Sections without content are not shown
 - Experience page: a timeline (newest first) of roles, internships, academic or personal projects, with dates, type, description, responsibilities and technologies. Education page: institution, programme, years, relevant subjects and achievements. Both show an honest empty state until real entries are added, and nothing is invented
 - Certificates page: a gallery with the title, issuer, date, category, credential ID, a preview (image or PDF symbol), a link to the file and a link to the issuer's verification page. Filters by issuer, year and category (shown from two certificates on, kept in the address). Empty until real certificates are added; nothing is invented
-- Blog: articles written as markdown files, with a list (search, category and tag filters, six per page, kept in the address) and an article page with date, reading time, a table of contents for longer articles, related articles, share buttons and a safe markdown renderer (raw HTML is never rendered, unsafe links and pictures are dropped). Empty until you add an article
 - Contact: a form (name, email, subject, message) at `/contact`, checked in the browser for quick feedback and again on the server, which is the check that counts. Errors appear next to each field and keyboard focus moves to the first one; success ("Your message has been sent.") and failure ("Something went wrong.") are announced to screen readers; what the visitor typed is kept when sending fails. Spam protection: a hidden trap field, a limit of five messages per hour per visitor, length limits and no line breaks in single-line fields. Messages are saved on the server, and optionally emailed to you (see below). Profile links appear beside the form once real ones are set
 - Backend structure: layered server (routes, controllers, services, repositories), one envelope for all answers, a central error handler (generic 500 in every environment, fixed messages for framework errors), structured JSON logging with a request id and no personal data in the log, zod request validation middleware, a reusable rate limiter, and a clean shutdown on SIGTERM/SIGINT or a fatal error
 - CI: format check, lint, tests and build on every push and pull request
@@ -48,7 +47,7 @@ The server is built in layers: `routes` (URLs and middleware) → `controllers` 
 ## Decisions
 
 - **No accounts, no admin page.** Visitors open the site and see everything; nobody signs in. A login would protect nothing here, because the site has no data that anyone but its owner edits.
-- **Content lives in files** (`shared/data`, `shared/posts`), under version control: every change is reviewed, tested (`npm run content:check`) and can be undone with Git. Changing a text means a commit and a deploy.
+- **Content lives in files** (`shared/data`), under version control: every change is reviewed, tested (`npm run content:check`) and can be undone with Git. Changing a text means a commit and a deploy.
 - **The backend exists for the contact form only.** Messages are stored in PostgreSQL (so a failed email never loses one) and announced by email. Read and clean them up with `npm run messages` and `npm run messages:prune`.
 - An authentication system (sessions, CSRF, password hashing, an admin CLI) was built in a separate branch and deliberately not merged; it is kept in the Git history as `phase-13-authentication`.
 
@@ -201,34 +200,6 @@ These pages read JSON files in `shared/data/`. Edit the file and the page update
 - `certificates.json`: `{ "certificates": [] }`. Each entry: `id` (unique), `title`, `issuer`, `issuedDate` (`"YYYY-MM"`), `category`, `credentialId` and `credentialUrl` (`https` only), `file` (`{ "url", "alt" }`), `visible` and `sortOrder`. Put the image or PDF in `client/public/certificates/` and use a path such as `/certificates/web-basics.pdf`; a `.pdf` file is shown as a PDF symbol and opens in a new tab, anything else is shown as a picture. Give each picture an `alt` that describes it (without one, a generic text naming the certificate and issuer is used). Add only certificates you actually earned, and keep personal details such as a home address out of the files, because they are public.
 
 Anything that is empty is not shown, so a page never displays a placeholder. Run `npm run content:check` after editing.
-
-### Writing blog articles
-
-Each article is one markdown file in `shared/data/posts/`. The file name is the address: `shared/data/posts/my-first-post.md` becomes `/blog/my-first-post` (lowercase letters, digits and hyphens). Start the file with a header between two `---` lines:
-
-```markdown
----
-title: My first post
-excerpt: One or two sentences shown in the list.
-category: Web
-tags: React, Vite
-publishedAt: 2026-10-05
-updatedAt: 2026-10-12
-coverImage: /images/my-first-post.png
-coverAlt: Describe the picture for people who cannot see it
----
-
-## A section
-
-Text with **bold**, `code`, lists and [links](https://example.org).
-```
-
-- Required: `title` and `publishedAt` (`YYYY-MM-DD`). Files without them, with a repeated address or with an empty text are skipped. `updatedAt`, `excerpt`, `category`, `tags` (separated by commas), `coverImage` (a path in `client/public` or an `https` address), `coverAlt` and `slug` (to override the file name) are optional.
-- The header supports plain `key: value` lines only. Put quotes around a value if you like.
-- In the text, `#` is shown as a second-level heading, because the article title is the page's only top-level heading. `##` and `###` headings make the table of contents, which appears from three headings on.
-- Reading time is worked out from the word count (200 words a minute).
-- Everything in `shared/data/posts/` is published when the site is built. Keep unfinished writing in another folder, for example `shared/data/drafts/`, which the site does not read.
-- Raw HTML in an article is ignored, `javascript:` links are removed, plain `http://` links are shown as text and `https://` links open in a new tab. Tables and strikethrough (GitHub-style markdown) are not supported.
 
 ## Screenshots
 
