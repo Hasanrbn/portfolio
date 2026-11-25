@@ -12,8 +12,16 @@
   margin-bottom: var(--space-12);
 }
 
+/* A quiet rule above each section keeps the long page easy to scan. */
+.section {
+  border-top: 1px solid var(--color-border);
+}
+
 .title {
-  font-size: var(--text-3xl);
+  font-size: var(--text-title);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1;
 }
 
 .title:focus {

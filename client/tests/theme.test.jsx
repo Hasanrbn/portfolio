@@ -44,7 +44,17 @@ afterEach(() => {
 });
 
 describe('theme switching', () => {
-  it('follows the operating system by default', () => {
+  it('starts dark for a first-time visitor, whatever the operating system prefers', () => {
+    mockSystemTheme(false);
+
+    renderToggle();
+
+    expect(currentTheme()).toBe('dark');
+    expect(option('Dark')).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('follows the operating system once System is chosen', () => {
+    window.localStorage.setItem(THEME_STORAGE_KEY, 'system');
     mockSystemTheme(true);
 
     renderToggle();
@@ -69,8 +79,8 @@ describe('theme switching', () => {
 
     renderToggle();
 
-    expect(currentTheme()).toBe('light');
-    expect(option('System')).toHaveAttribute('aria-pressed', 'true');
+    expect(currentTheme()).toBe('dark');
+    expect(option('Dark')).toHaveAttribute('aria-pressed', 'true');
   });
 
   it('applies and remembers the chosen theme', async () => {
@@ -92,6 +102,7 @@ describe('theme switching', () => {
   });
 
   it('tracks operating system changes while set to System', () => {
+    window.localStorage.setItem(THEME_STORAGE_KEY, 'system');
     const system = mockSystemTheme(false);
     renderToggle();
     expect(currentTheme()).toBe('light');

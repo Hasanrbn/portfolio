@@ -14,39 +14,48 @@
 :root {
   color-scheme: light;
 
-  /* Surfaces and text */
-  --color-bg: #fafaf9;
-  --color-surface: #ffffff;
-  --color-surface-subtle: #f5f5f4;
-  --color-border: #e7e5e4;
-  --color-input-border: #78716c;
-  --color-text: #1c1917;
-  --color-text-muted: #57534e;
+  /* Surfaces and text: warm paper, near-black ink */
+  --color-bg: #f5f4ee;
+  --color-surface: #fdfdfa;
+  --color-surface-subtle: #ebeae1;
+  --color-border: #dad8cb;
+  --color-input-border: #75736a;
+  --color-text: #171714;
+  --color-text-muted: #54534a;
 
-  /* Accent (single brand hue: teal) */
-  --color-accent: #0f766e;
-  --color-accent-hover: #115e59;
-  --color-on-accent: #ffffff;
-  --color-accent-subtle: #f0fdfa;
-  --color-accent-text: #0f766e;
-  --color-focus: #0f766e;
+  /*
+   * Accent: lime. As a fill (buttons) it is the same lime in both themes with dark text on it.
+   * As text it would be unreadable on paper, so --color-accent-text is a deep olive here.
+   */
+  --color-accent: #c8f26b;
+  --color-accent-hover: #b8e04f;
+  --color-on-accent: #14180a;
+  --color-accent-subtle: #e6f3bf;
+  --color-accent-text: #3d5c0e;
+  --color-focus: #4d7c0f;
 
   /* Status */
-  --color-success-text: #15803d;
+  --color-success-text: #166534;
   --color-success-subtle: #f0fdf4;
-  --color-warning-text: #b45309;
+  --color-warning-text: #92400e;
   --color-warning-subtle: #fffbeb;
   --color-danger-text: #b91c1c;
   --color-danger-subtle: #fef2f2;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgb(28 25 23 / 0.06), 0 1px 3px rgb(28 25 23 / 0.08);
-  --shadow-md: 0 4px 12px rgb(28 25 23 / 0.08), 0 2px 4px rgb(28 25 23 / 0.06);
+  --shadow-sm: 0 1px 2px rgb(23 23 20 / 0.06), 0 1px 3px rgb(23 23 20 / 0.08);
+  --shadow-md: 0 4px 12px rgb(23 23 20 / 0.08), 0 2px 4px rgb(23 23 20 / 0.06);
+
+  /* Atmosphere: the soft glow behind the hero and the film grain over the page */
+  --glow-opacity: 0.55;
+  --grain-opacity: 0.05;
 
   /* Typography */
   --font-sans:
     'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
     sans-serif;
+  --font-display: 'Bricolage Grotesque Variable', var(--font-sans);
+  --font-script: 'Caveat Variable', 'Segoe Script', 'Bradley Hand', cursive;
   --font-mono:
     'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
     monospace;
@@ -59,6 +68,10 @@
   --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
   --text-3xl: clamp(1.875rem, 1.5rem + 1.8vw, 2.75rem);
   --text-4xl: clamp(2.25rem, 1.6rem + 3.2vw, 3.75rem);
+  /* Section titles and the name in the hero: large on purpose. */
+  --text-title: clamp(2.5rem, 1.5rem + 4.6vw, 5rem);
+  --text-display: clamp(2.75rem, 1.2rem + 7vw, 6.5rem);
+  --text-script: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem);
 
   --leading-tight: 1.2;
   --leading-snug: 1.4;
@@ -76,8 +89,8 @@
   --space-24: 6rem;
 
   /* Shape */
-  --radius-sm: 0.5rem;
-  --radius-md: 0.875rem;
+  --radius-sm: 0.625rem;
+  --radius-md: 1.125rem;
   --radius-full: 999px;
 
   /* Layout */
@@ -94,20 +107,20 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --color-bg: #0c0a09;
-  --color-surface: #1c1917;
-  --color-surface-subtle: #292524;
-  --color-border: #44403c;
-  --color-input-border: #78716c;
-  --color-text: #fafaf9;
-  --color-text-muted: #a8a29e;
+  --color-bg: #0b0b0a;
+  --color-surface: #131311;
+  --color-surface-subtle: #1c1c19;
+  --color-border: #2b2b27;
+  --color-input-border: #77766c;
+  --color-text: #f2f1ea;
+  --color-text-muted: #a5a499;
 
-  --color-accent: #2dd4bf;
-  --color-accent-hover: #5eead4;
-  --color-on-accent: #042f2e;
-  --color-accent-subtle: #134e4a;
-  --color-accent-text: #2dd4bf;
-  --color-focus: #5eead4;
+  --color-accent: #c8f26b;
+  --color-accent-hover: #dcfa94;
+  --color-on-accent: #10140a;
+  --color-accent-subtle: #202a0e;
+  --color-accent-text: #c8f26b;
+  --color-focus: #c8f26b;
 
   --color-success-text: #4ade80;
   --color-success-subtle: #052e16;
@@ -118,4 +131,7 @@
 
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.5);
   --shadow-md: 0 4px 12px rgb(0 0 0 / 0.5), 0 2px 4px rgb(0 0 0 / 0.4);
+
+  --glow-opacity: 0.2;
+  --grain-opacity: 0.07;
 }

@@ -31,16 +31,17 @@
         try {
           var stored = localStorage.getItem('theme-preference');
           if (stored === 'light' || stored === 'dark') theme = stored;
+          else if (stored === 'system') {
+            theme =
+              window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          }
         } catch (error) {
-          // Storage can be blocked (private mode); fall through to the system preference.
+          // Storage can be blocked (private mode); fall through to the default.
         }
-        if (!theme) {
-          theme =
-            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-              ? 'dark'
-              : 'light';
-        }
-        document.documentElement.dataset.theme = theme;
+        // Nothing chosen yet: the site is designed dark first (utils/theme.js DEFAULT_PREFERENCE).
+        document.documentElement.dataset.theme = theme || 'dark';
       })();
     </script>
   </head>
