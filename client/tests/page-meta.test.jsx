@@ -36,17 +36,18 @@ describe('PageTitle', () => {
 });
 
 describe('pages', () => {
-  it.each([
-    ['/', PAGE_DESCRIPTIONS.home],
-    ['/about', PAGE_DESCRIPTIONS.about],
-    ['/projects', PAGE_DESCRIPTIONS.projects],
-    ['/contact', PAGE_DESCRIPTIONS.contact],
-  ])('%s has its own description and can be indexed', (path, description) => {
-    renderAt(path);
+  it('describes the home page, which is the whole site, and can be indexed', () => {
+    renderAt('/');
 
-    expect(meta('description')).toHaveAttribute('content', description);
+    expect(meta('description')).toHaveAttribute('content', PAGE_DESCRIPTIONS.home);
     expect(meta('robots')).toBeNull();
     expect(document.head.querySelectorAll('meta[name="description"]')).toHaveLength(1);
+  });
+
+  it('describes the home page for an old address that now redirects to it', () => {
+    renderAt('/projects');
+
+    expect(meta('description')).toHaveAttribute('content', PAGE_DESCRIPTIONS.home);
   });
 
   it('keeps a page that does not exist out of search results', () => {

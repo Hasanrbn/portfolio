@@ -1,5 +1,4 @@
-import PageTitle from '../../components/layout/PageTitle.jsx';
-import { PAGE_DESCRIPTIONS } from '../../utils/pageDescriptions.js';
+import Section from '../../components/layout/Section.jsx';
 import SkillGroup from '../../components/sections/SkillGroup.jsx';
 import EmptyState from '../../components/ui/EmptyState.jsx';
 import ErrorState from '../../components/ui/ErrorState.jsx';
@@ -7,7 +6,7 @@ import Skeleton from '../../components/ui/Skeleton.jsx';
 import useAsync from '../../hooks/useAsync.js';
 import { getSkillGroups } from '../../services/skillsService.js';
 import { SKILL_LEVELS } from '../../utils/skillLevels.js';
-import styles from './SkillsPage.module.css';
+import styles from './SkillsSection.module.css';
 
 function LoadingSkills() {
   return (
@@ -32,9 +31,9 @@ function LoadingSkills() {
 function LevelGuide() {
   return (
     <section aria-labelledby="levels-heading" className={styles.levels}>
-      <h2 id="levels-heading" className={styles.levelsHeading}>
+      <h3 id="levels-heading" className={styles.levelsHeading}>
         What the levels mean
-      </h2>
+      </h3>
       <dl className={styles.levelList}>
         {Object.values(SKILL_LEVELS).map((level) => (
           <div key={level.label}>
@@ -47,16 +46,16 @@ function LevelGuide() {
   );
 }
 
-export default function SkillsPage() {
+export default function SkillsSection() {
   const { status, data: groups, retry } = useAsync(getSkillGroups);
   const hasLevels = groups?.some((group) => group.skills.some((skill) => skill.level)) ?? false;
 
   return (
-    <>
-      <PageTitle title="Skills" description={PAGE_DESCRIPTIONS.skills} />
-      <h1>Skills</h1>
-      <p className={styles.lead}>The technologies and tools I work with, grouped by area.</p>
-
+    <Section
+      id="skills"
+      title="Skills"
+      lead="The technologies and tools I work with, grouped by area."
+    >
       <div className={styles.body}>
         {status === 'loading' && <LoadingSkills />}
 
@@ -84,6 +83,6 @@ export default function SkillsPage() {
           </div>
         )}
       </div>
-    </>
+    </Section>
   );
 }

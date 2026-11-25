@@ -1,12 +1,10 @@
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import siteConfig from '@portfolio/shared/siteConfig.json';
-import App from '../src/app/App.jsx';
-import ThemeProvider from '../src/app/ThemeProvider.jsx';
 import ContactForm from '../src/components/sections/ContactForm.jsx';
 import { usePlaceholderProfile } from './helpers/profileConfig.js';
+import { getSection, renderSite } from './helpers/renderSite.jsx';
 
 const valid = {
   name: 'Ada Lovelace',
@@ -307,39 +305,32 @@ describe('ContactForm', () => {
   });
 });
 
-describe('contact page', () => {
+describe('contact section', () => {
   usePlaceholderProfile();
 
-  function renderContact() {
-    return render(
-      <ThemeProvider>
-        <MemoryRouter initialEntries={['/contact']}>
-          <App />
-        </MemoryRouter>
-      </ThemeProvider>,
-    );
-  }
+  const renderContact = () => renderSite('/');
 
-  it('is a real page with one h1, the form, and no longer a placeholder', () => {
+  it('is a section with its own heading and the form, no longer a placeholder', () => {
     renderContact();
-    const main = screen.getByRole('main');
+    const contact = getSection('Contact');
 
-    expect(within(main).getByRole('heading', { level: 1, name: 'Contact' })).toBeInTheDocument();
-    expect(within(main).queryByText('Coming soon')).toBeNull();
+    expect(within(contact).getByRole('heading', { level: 2, name: 'Contact' })).toBeInTheDocument();
+    expect(within(contact).queryByText('Coming soon')).toBeNull();
     expect(
-      within(screen.getByRole('region', { name: 'Send a message' })).getByLabelText(/^Message/),
+      within(within(contact).getByRole('region', { name: 'Send a message' })).getByLabelText(
+        /^Message/,
+      ),
     ).toBeInTheDocument();
-    expect(document.title).toBe(`Contact | ${siteConfig.name}`);
   });
 
   it('keeps heading levels in order', () => {
     renderContact();
-    const levels = within(screen.getByRole('main'))
+    const levels = within(getSection('Contact'))
       .getAllByRole('heading')
       .map((heading) => Number(heading.tagName[1]));
 
-    expect(levels[0]).toBe(1);
-    expect(levels.slice(1).every((level) => level === 2)).toBe(true);
+    expect(levels[0]).toBe(2);
+    expect(levels.slice(1).every((level) => level === 3)).toBe(true);
   });
 
   it('shows no "other ways" while only placeholder links are configured', () => {
@@ -347,7 +338,6 @@ describe('contact page', () => {
 
     expect(screen.queryByRole('region', { name: 'Other ways to reach me' })).toBeNull();
   });
-
   it('lists real profile links as soon as they are configured', () => {
     siteConfig.email = 'hello@portfolio.dev';
     siteConfig.social = { github: 'https://github.com/someone', linkedin: 'LINKEDIN_URL' };

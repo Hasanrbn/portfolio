@@ -23,7 +23,7 @@ export default function Footer() {
         </div>
 
         <nav aria-label="Footer">
-          <h2 className={styles.caption}>Pages</h2>
+          <h2 className={styles.caption}>Sections</h2>
           {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
           <ul role="list" className={styles.links}>
             {navItems.map((item) => (

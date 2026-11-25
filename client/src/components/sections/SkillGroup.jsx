@@ -26,10 +26,10 @@ export default function SkillGroup({ group }) {
 
   return (
     <section ref={revealRef} aria-labelledby={headingId}>
-      <h2 id={headingId} className={styles.heading}>
+      <h3 id={headingId} className={styles.heading}>
         <Icon name={CATEGORY_ICONS[group.id] ?? 'layers'} size={24} />
         {group.label}
-      </h2>
+      </h3>
       {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
       <ul role="list" className={styles.list}>
         {group.skills.map((skill) => {

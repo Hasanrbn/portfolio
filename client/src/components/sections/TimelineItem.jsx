@@ -7,7 +7,7 @@ import { splitParagraphs } from '../../utils/text.js';
 import styles from './TimelineItem.module.css';
 
 /** One entry of the experience timeline. Everything except position and organization is optional. */
-export default function TimelineItem({ experience, headingAs: Heading = 'h2' }) {
+export default function TimelineItem({ experience, headingAs: Heading = 'h3' }) {
   const revealRef = useReveal();
   const { startDate, endDate } = experience;
 

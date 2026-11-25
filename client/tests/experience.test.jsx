@@ -1,14 +1,12 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import educationData from '@portfolio/shared/data/education.json';
 import experiencesData from '@portfolio/shared/data/experiences.json';
-import App from '../src/app/App.jsx';
-import ThemeProvider from '../src/app/ThemeProvider.jsx';
 import AsyncView from '../src/components/ui/AsyncView.jsx';
 import { getEducation, normalizeEducationList } from '../src/services/educationService.js';
 import { getExperiences, normalizeExperiences } from '../src/services/experienceService.js';
+import { getSection, renderSite } from './helpers/renderSite.jsx';
 import { formatMonth, isMonth } from '../src/utils/dates.js';
 
 vi.mock('../src/services/experienceService.js', async (importOriginal) => {
@@ -23,15 +21,7 @@ vi.mock('../src/services/educationService.js', async (importOriginal) => {
 const realGetExperiences = getExperiences.getMockImplementation();
 const realGetEducation = getEducation.getMockImplementation();
 
-function renderAt(path) {
-  return render(
-    <ThemeProvider>
-      <MemoryRouter initialEntries={[path]}>
-        <App />
-      </MemoryRouter>
-    </ThemeProvider>,
-  );
-}
+const renderAt = () => renderSite('/');
 
 const experience = (overrides) => ({
   id: 'x',
@@ -53,25 +43,26 @@ beforeEach(() => {
   getEducation.mockReset().mockImplementation(realGetEducation);
 });
 
-describe('experience page', () => {
+describe('experience section', () => {
   it('shows an honest empty state while no experience has been added', async () => {
     getExperiences.mockResolvedValue([]);
-    renderAt('/experience');
+    renderAt();
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Experience' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Experience' })).toBeInTheDocument();
     expect(
       await screen.findByRole('heading', { name: 'No experience listed yet' }),
     ).toBeInTheDocument();
-    expect(within(screen.getByRole('main')).queryByRole('list')).toBeNull();
+    expect(within(getSection('Experience')).queryByRole('list')).toBeNull();
   });
 
   it('announces loading before the content', async () => {
     getExperiences.mockResolvedValue([]);
-    renderAt('/experience');
+    renderAt();
 
-    expect(screen.getByRole('status')).toHaveTextContent('Loading experience');
+    const section = getSection('Experience');
+    expect(within(section).getByRole('status')).toHaveTextContent('Loading experience');
     await screen.findByRole('heading', { name: 'No experience listed yet' });
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(within(section).queryByRole('status')).toBeNull();
   });
 
   it('shows a timeline, newest first, with dates, type and details', async () => {
@@ -99,14 +90,14 @@ describe('experience page', () => {
         ],
       }),
     );
-    renderAt('/experience');
+    renderAt();
 
-    const mainHeadings = await within(screen.getByRole('main')).findAllByRole('heading', {
-      level: 2,
+    const mainHeadings = await within(getSection('Experience')).findAllByRole('heading', {
+      level: 3,
     });
     expect(mainHeadings.map((heading) => heading.textContent)).toEqual(['Developer', 'Intern']);
 
-    const [current, past] = screen.getAllByRole('article');
+    const [current, past] = within(getSection('Experience')).getAllByRole('article');
     expect(current).toHaveTextContent('Mar 2025 – Present');
     expect(current).toHaveTextContent('New Org');
     expect(current).toHaveTextContent('Personal project');
@@ -129,7 +120,7 @@ describe('experience page', () => {
     getExperiences
       .mockRejectedValueOnce(new Error('secret internal detail'))
       .mockResolvedValueOnce([]);
-    renderAt('/experience');
+    renderAt();
 
     const alert = await screen.findByRole('alert');
     expect(alert).not.toHaveTextContent('secret internal detail');
@@ -139,12 +130,12 @@ describe('experience page', () => {
   });
 });
 
-describe('education page', () => {
+describe('education section', () => {
   it('shows an honest empty state while no education has been added', async () => {
     getEducation.mockResolvedValue([]);
-    renderAt('/education');
+    renderAt();
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Education' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Education' })).toBeInTheDocument();
     expect(
       await screen.findByRole('heading', { name: 'No education listed yet' }),
     ).toBeInTheDocument();
@@ -169,14 +160,14 @@ describe('education page', () => {
         ],
       }),
     );
-    renderAt('/education');
+    renderAt();
 
-    const headings = await within(screen.getByRole('main')).findAllByRole('heading', { level: 2 });
+    const headings = await within(getSection('Education')).findAllByRole('heading', { level: 3 });
     expect(headings.map((heading) => heading.textContent)).toEqual(['Computer Science', 'Diploma']);
 
-    const [current, finished] = screen
+    const [current, finished] = within(getSection('Education'))
       .getAllByRole('listitem')
-      .filter((item) => item.querySelector('h2'));
+      .filter((item) => item.querySelector('h3'));
     expect(current).toHaveTextContent('2022 – Present');
     expect(current).toHaveTextContent('Uni');
     expect(within(current).getByRole('list', { name: 'Relevant subjects' })).toHaveTextContent(
@@ -193,7 +184,7 @@ describe('education page', () => {
   it('shows a friendly error and recovers on Try again', async () => {
     const user = userEvent.setup();
     getEducation.mockRejectedValueOnce(new Error('boom')).mockResolvedValueOnce([]);
-    renderAt('/education');
+    renderAt();
 
     await screen.findByRole('alert');
     await user.click(screen.getByRole('button', { name: 'Try again' }));

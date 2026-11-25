@@ -11,7 +11,7 @@ import styles from './CertificateCard.module.css';
  */
 export default function CertificateCard({
   certificate,
-  headingAs: Heading = 'h2',
+  headingAs: Heading = 'h3',
   revealDelay = 0,
 }) {
   const revealRef = useReveal({ delay: revealDelay });

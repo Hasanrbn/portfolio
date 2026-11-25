@@ -2,8 +2,13 @@ import { useId } from 'react';
 import useReveal from '../../hooks/useReveal.js';
 import styles from './TextSection.module.css';
 
-/** A titled block of text: paragraphs, a bullet list, or both (used by the About and project pages). Renders nothing when empty. */
-export default function TextSection({ title, paragraphs = [], items = [] }) {
+/** A titled block of text: paragraphs, a bullet list, or both (used by the About section and the projects). Renders nothing when empty. */
+export default function TextSection({
+  title,
+  paragraphs = [],
+  items = [],
+  headingAs: Heading = 'h3',
+}) {
   const headingId = useId();
   const revealRef = useReveal();
   const texts = paragraphs.filter((text) => typeof text === 'string' && text.trim() !== '');
@@ -15,9 +20,9 @@ export default function TextSection({ title, paragraphs = [], items = [] }) {
 
   return (
     <section ref={revealRef} aria-labelledby={headingId} className={styles.section}>
-      <h2 id={headingId} className={styles.heading}>
+      <Heading id={headingId} className={styles.heading}>
         {title}
-      </h2>
+      </Heading>
       {texts.map((text) => (
         <p key={text}>{text}</p>
       ))}

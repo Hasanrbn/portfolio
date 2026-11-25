@@ -7,7 +7,7 @@ export default function ErrorState({
   title = 'Something went wrong.',
   description = 'Please try again in a moment.',
   onRetry,
-  headingAs: Heading = 'h2',
+  headingAs: Heading = 'h3',
   className,
 }) {
   return (
