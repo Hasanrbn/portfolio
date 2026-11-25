@@ -1,0 +1,28 @@
+/*
+ * When the menu scrolls to a section the page keeps `scroll-padding-top` (base.css) free for
+ * the sticky header. The section has padding of its own on top, so it may slide a little
+ * under that space and the title lands comfortably below the header.
+ */
+.section {
+  scroll-margin-top: calc(-1 * var(--space-8));
+  padding-block: var(--space-16);
+}
+
+.head {
+  margin-bottom: var(--space-12);
+}
+
+.title {
+  font-size: var(--text-3xl);
+}
+
+.title:focus {
+  outline: none;
+}
+
+.lead {
+  max-width: 40rem;
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--text-lg);
+}

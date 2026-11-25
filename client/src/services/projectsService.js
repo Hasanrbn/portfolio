@@ -76,41 +76,10 @@ export function normalizeProjects(data) {
     .sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
-/** Projects matching a search text, a category and a technology (all optional, all must match). */
-export function filterProjects(projects, { q = '', category = '', tech = '' } = {}) {
-  const query = q.trim().toLowerCase();
-
-  return projects.filter((project) => {
-    if (category && project.category !== category) return false;
-    if (tech && !project.technologies.includes(tech)) return false;
-    if (!query) return true;
-    return [project.title, project.summary, ...project.technologies].some((value) =>
-      value.toLowerCase().includes(query),
-    );
-  });
-}
-
-/** The categories and technologies that appear in the projects, sorted, for the filter menus. */
-export function getFilterOptions(projects) {
-  const unique = (values) =>
-    [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, 'en'));
-
-  return {
-    categories: unique(projects.map((project) => project.category)),
-    technologies: unique(projects.flatMap((project) => project.technologies)),
-  };
-}
-
 /**
  * Async on purpose: the pages already show loading and error states, so where the data comes
  * from can change without touching them. Today it is the bundled file in shared/data.
  */
 export async function getProjects() {
   return normalizeProjects(projectsData);
-}
-
-/** One project by slug, or null when there is no such project. */
-export async function getProjectBySlug(slug) {
-  const projects = await getProjects();
-  return projects.find((project) => project.slug === slug) ?? null;
 }

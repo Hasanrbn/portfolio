@@ -1,31 +1,17 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import projectsData from '@portfolio/shared/data/projects.json';
-import App from '../src/app/App.jsx';
-import ThemeProvider from '../src/app/ThemeProvider.jsx';
 import ArchitectureDiagram from '../src/components/sections/ArchitectureDiagram.jsx';
-import ProjectCard from '../src/components/sections/ProjectCard.jsx';
-import {
-  filterProjects,
-  getFilterOptions,
-  getProjectBySlug,
-  getProjects,
-  normalizeProjects,
-} from '../src/services/projectsService.js';
+import { getProjects, normalizeProjects } from '../src/services/projectsService.js';
+import { getSection, renderSite } from './helpers/renderSite.jsx';
 
 vi.mock('../src/services/projectsService.js', async (importOriginal) => {
   const actual = await importOriginal();
-  return {
-    ...actual,
-    getProjects: vi.fn(actual.getProjects),
-    getProjectBySlug: vi.fn(actual.getProjectBySlug),
-  };
+  return { ...actual, getProjects: vi.fn(actual.getProjects) };
 });
 
 const realGetProjects = getProjects.getMockImplementation();
-const realGetProjectBySlug = getProjectBySlug.getMockImplementation();
 
 function makeProjects(entries) {
   return normalizeProjects({
@@ -47,201 +33,69 @@ const ONE = () =>
       category: 'Full-Stack',
       status: 'in_progress',
       year: 2026,
+      description: 'What it is.',
+      problem: 'The problem.',
+      solution: 'The solution.',
+      features: ['Fast'],
+      technologies: ['React'],
+      architecture: {
+        description: 'Layers.',
+        layers: [
+          { name: 'Frontend', detail: 'React' },
+          { name: 'API', detail: 'Express' },
+          { name: 'Backend', detail: 'Node' },
+          { name: 'Database', detail: 'PostgreSQL' },
+        ],
+      },
     },
   ]);
 
-const THREE = () =>
+const TWO = () =>
   makeProjects([
-    { title: 'Shop', category: 'Web', technologies: ['React', 'Express'], sortOrder: 1 },
-    { title: 'Chat', category: 'Web', technologies: ['Node.js'], sortOrder: 2 },
-    { title: 'Scanner', category: 'Tools', technologies: ['Linux', 'React'], sortOrder: 3 },
+    { title: 'Shop', sortOrder: 1 },
+    { title: 'Chat', sortOrder: 2 },
   ]);
 
-function renderAt(path) {
-  return render(
-    <ThemeProvider>
-      <MemoryRouter initialEntries={[path]}>
-        <App />
-      </MemoryRouter>
-    </ThemeProvider>,
-  );
-}
-
-const main = () => screen.getByRole('main');
-const cardTitles = () =>
-  within(main())
-    .queryAllByRole('listitem')
-    .flatMap((item) => within(item).queryAllByRole('heading', { level: 2 }))
-    .map((heading) => heading.textContent);
+const renderProjects = () => renderSite('/');
+const section = () => getSection('Projects');
+const study = (name) => within(section()).getByRole('article', { name });
 
 beforeEach(() => {
   getProjects.mockReset().mockImplementation(realGetProjects);
-  getProjectBySlug.mockReset().mockImplementation(realGetProjectBySlug);
 });
 
-describe('projects page with a single project', () => {
+describe('projects section', () => {
   beforeEach(() => {
     getProjects.mockImplementation(async () => ONE());
   });
 
-  it('lists the project with a link to its page, and no filters for a single project', async () => {
-    renderAt('/projects');
+  it('has its own heading and tells each project as an article under an h3', async () => {
+    renderProjects();
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Projects' })).toBeInTheDocument();
-    const link = await screen.findByRole('link', { name: 'Portfolio Website' });
-    expect(link).toHaveAttribute('href', '/projects/portfolio-website');
-    expect(screen.queryByRole('search')).toBeNull();
+    expect(screen.getByRole('heading', { level: 2, name: 'Projects' })).toBeInTheDocument();
+    const article = await within(section()).findByRole('article', { name: 'Portfolio Website' });
+    expect(within(article).getByRole('heading', { level: 3 })).toHaveTextContent(
+      'Portfolio Website',
+    );
+    expect(article).toHaveAttribute('id', 'project-portfolio-website');
   });
 
   it('shows status, category and year as text, and no links that are not set', async () => {
-    renderAt('/projects');
-    await screen.findByRole('link', { name: 'Portfolio Website' });
-    const card = screen.getByRole('heading', { level: 2, name: 'Portfolio Website' }).closest('li');
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Portfolio Website' });
 
-    expect(card).toHaveTextContent('In progress');
-    expect(card).toHaveTextContent('Full-Stack');
-    expect(card).toHaveTextContent('2026');
-    expect(within(card).queryByRole('link', { name: /github|live demo/i })).toBeNull();
-  });
-});
-
-describe('projects page states', () => {
-  beforeEach(() => {
-    getProjects.mockImplementation(async () => ONE());
+    expect(article).toHaveTextContent('In progress');
+    expect(article).toHaveTextContent('Full-Stack');
+    expect(article).toHaveTextContent('2026');
+    expect(within(article).queryByRole('link', { name: /github|live demo/i })).toBeNull();
   });
 
-  it('announces loading, then shows the projects', async () => {
-    renderAt('/projects');
+  it('shows the written parts in order, under h4 headings, and leaves out the empty ones', async () => {
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Portfolio Website' });
 
-    expect(screen.getByRole('status')).toHaveTextContent('Loading projects');
-    await screen.findByRole('link', { name: 'Portfolio Website' });
-    expect(screen.queryByRole('status')).toBeNull();
-  });
-
-  it('shows a friendly error and recovers on Try again', async () => {
-    const user = userEvent.setup();
-    getProjects.mockRejectedValueOnce(new Error('secret internal detail'));
-    renderAt('/projects');
-
-    const alert = await screen.findByRole('alert');
-    expect(alert).not.toHaveTextContent('secret internal detail');
-    await user.click(screen.getByRole('button', { name: 'Try again' }));
-
-    expect(await screen.findByRole('link', { name: 'Portfolio Website' })).toBeInTheDocument();
-  });
-
-  it('shows an empty state when there are no projects', async () => {
-    getProjects.mockResolvedValue([]);
-    renderAt('/projects');
-
-    expect(await screen.findByRole('heading', { name: 'No projects yet' })).toBeInTheDocument();
-  });
-});
-
-describe('filtering', () => {
-  beforeEach(() => {
-    getProjects.mockImplementation(async () => THREE());
-  });
-
-  it('shows the filters and every project when there are several', async () => {
-    renderAt('/projects');
-    await screen.findByRole('link', { name: 'Shop' });
-
-    expect(screen.getByRole('search', { name: 'Filter projects' })).toBeInTheDocument();
-    expect(cardTitles()).toEqual(['Shop', 'Chat', 'Scanner']);
-    expect(screen.getByRole('status', { name: '' })).toHaveTextContent('3 projects');
-  });
-
-  it('narrows the list as you type and says how many are shown', async () => {
-    const user = userEvent.setup();
-    renderAt('/projects');
-    await screen.findByRole('link', { name: 'Shop' });
-
-    await user.type(screen.getByRole('searchbox', { name: 'Search' }), 'react');
-
-    expect(cardTitles()).toEqual(['Shop', 'Scanner']);
-    expect(screen.getByRole('status')).toHaveTextContent('Showing 2 of 3 projects');
-  });
-
-  it('filters by category and by technology together', async () => {
-    const user = userEvent.setup();
-    renderAt('/projects');
-    await screen.findByRole('link', { name: 'Shop' });
-
-    await user.selectOptions(screen.getByRole('combobox', { name: 'Category' }), 'Web');
-    expect(cardTitles()).toEqual(['Shop', 'Chat']);
-
-    await user.selectOptions(screen.getByRole('combobox', { name: 'Technology' }), 'React');
-    expect(cardTitles()).toEqual(['Shop']);
-  });
-
-  it('offers only categories and technologies that exist, sorted', async () => {
-    renderAt('/projects');
-    await screen.findByRole('link', { name: 'Shop' });
-
-    const names = (label) =>
-      within(screen.getByRole('combobox', { name: label }))
-        .getAllByRole('option')
-        .map((option) => option.textContent);
-    expect(names('Category')).toEqual(['All categories', 'Tools', 'Web']);
-    expect(names('Technology')).toEqual([
-      'All technologies',
-      'Express',
-      'Linux',
-      'Node.js',
-      'React',
-    ]);
-  });
-
-  it('starts from the filters in the address, so a filtered view can be shared', async () => {
-    renderAt('/projects?tech=Linux');
-    await screen.findByRole('link', { name: 'Scanner' });
-
-    expect(cardTitles()).toEqual(['Scanner']);
-    expect(screen.getByRole('combobox', { name: 'Technology' })).toHaveValue('Linux');
-  });
-
-  it('ignores a category or technology that does not exist', async () => {
-    renderAt('/projects?category=Nope&tech=Nothing');
-    await screen.findByRole('link', { name: 'Shop' });
-
-    expect(cardTitles()).toEqual(['Shop', 'Chat', 'Scanner']);
-  });
-
-  it('explains when nothing matches and clears the filters from there', async () => {
-    const user = userEvent.setup();
-    renderAt('/projects');
-    await screen.findByRole('link', { name: 'Shop' });
-
-    await user.type(screen.getByRole('searchbox', { name: 'Search' }), 'zzz');
-    expect(screen.getByRole('heading', { name: 'No projects match' })).toBeInTheDocument();
-
-    const empty = screen.getByRole('heading', { name: 'No projects match' }).parentElement;
-    await user.click(within(empty).getByRole('button', { name: 'Clear filters' }));
-
-    expect(cardTitles()).toEqual(['Shop', 'Chat', 'Scanner']);
-    expect(screen.getByRole('searchbox', { name: 'Search' })).toHaveValue('');
-  });
-
-  it('does not reload the page when Enter is pressed in the search box', async () => {
-    const user = userEvent.setup();
-    renderAt('/projects');
-    await screen.findByRole('link', { name: 'Shop' });
-
-    await user.type(screen.getByRole('searchbox', { name: 'Search' }), 'chat{Enter}');
-
-    expect(cardTitles()).toEqual(['Chat']);
-  });
-});
-
-describe('project detail page', () => {
-  it('shows the written sections in order and leaves out the empty ones', async () => {
-    renderAt('/projects/portfolio-website');
-
-    await screen.findByRole('heading', { level: 2, name: 'Overview' });
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Portfolio Website');
-    const headings = within(main())
-      .getAllByRole('heading', { level: 2 })
+    const headings = within(article)
+      .getAllByRole('heading', { level: 4 })
       .map((heading) => heading.textContent);
     expect(headings).toEqual([
       'Overview',
@@ -254,49 +108,32 @@ describe('project detail page', () => {
   });
 
   it('shows the architecture as Frontend, API, Backend, Database in order', async () => {
-    renderAt('/projects/portfolio-website');
+    renderProjects();
 
-    const diagram = await screen.findByRole('list', { name: /layers/i });
+    const diagram = await within(section()).findByRole('list', { name: /layers/i });
     const names = within(diagram)
       .getAllByRole('listitem')
       .map((item) => item.querySelector('strong').textContent);
     expect(names).toEqual(['Frontend', 'API', 'Backend', 'Database']);
   });
 
-  it('shows the title as the browser tab title', async () => {
-    renderAt('/projects/portfolio-website');
-    await screen.findByRole('heading', { level: 2, name: 'Overview' });
+  it('shows every project one after another, in order, with no filters', async () => {
+    getProjects.mockImplementation(async () => TWO());
+    renderProjects();
 
-    expect(document.title).toMatch(/^Portfolio Website \|/);
+    await within(section()).findByRole('article', { name: 'Shop' });
+    const titles = within(section())
+      .getAllByRole('article')
+      .map((article) => within(article).getByRole('heading', { level: 3 }).textContent);
+    expect(titles).toEqual(['Shop', 'Chat']);
+    expect(within(section()).queryByRole('search')).toBeNull();
   });
 
-  it('says so, with a way back, when there is no project at the address', async () => {
-    renderAt('/projects/does-not-exist');
-
-    expect(
-      await screen.findByRole('heading', { level: 1, name: 'Project not found' }),
-    ).toBeVisible();
-    expect(screen.getByRole('link', { name: 'Back to Projects' })).toHaveAttribute(
-      'href',
-      '/projects',
-    );
-  });
-
-  it('opens from the list and moves focus to the heading', async () => {
-    const user = userEvent.setup();
-    renderAt('/projects');
-
-    await user.click(await screen.findByRole('link', { name: 'Portfolio Website' }));
-
-    const heading = await screen.findByRole('heading', { level: 1, name: 'Portfolio Website' });
-    expect(heading).toHaveFocus();
-    expect(screen.getByRole('link', { name: 'All projects' })).toHaveAttribute('href', '/projects');
-  });
-
-  it('shows links, picture, screenshots and extra sections when a project has them', async () => {
-    getProjectBySlug.mockResolvedValue(
+  it('shows links, picture, screenshots and extra parts when a project has them', async () => {
+    getProjects.mockImplementation(async () =>
       makeProjects([
         {
+          title: 'Full',
           repoUrl: 'https://github.com/someone/repo',
           demoUrl: 'https://demo.example.org',
           thumbnail: { url: '/cover.png', alt: 'Home screen' },
@@ -304,96 +141,77 @@ describe('project detail page', () => {
           challenges: 'Hard part one.\n\nHard part two.',
           lessons: 'A lesson.',
         },
-      ])[0],
+      ]),
     );
-    renderAt('/projects/project-1');
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Full' });
 
-    const repo = await screen.findByRole('link', { name: /GitHub repository/ });
+    const repo = within(article).getByRole('link', { name: /GitHub repository/ });
     expect(repo).toHaveAttribute('href', 'https://github.com/someone/repo');
     expect(repo).toHaveAttribute('rel', 'noopener noreferrer');
-    expect(screen.getByRole('link', { name: /Live demo/ })).toHaveAttribute(
+    expect(within(article).getByRole('link', { name: /Live demo/ })).toHaveAttribute(
       'href',
       'https://demo.example.org',
     );
-    expect(screen.getByRole('img', { name: 'Home screen' })).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Login form' })).toBeInTheDocument();
-    expect(screen.getByText('Signing in')).toBeInTheDocument();
-    expect(screen.getByText('Hard part two.')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 2, name: 'Lessons learned' })).toBeInTheDocument();
+    expect(within(article).getByRole('img', { name: 'Home screen' })).toBeInTheDocument();
+    expect(within(article).getByRole('img', { name: 'Login form' })).toBeInTheDocument();
+    expect(within(article).getByText('Signing in')).toBeInTheDocument();
+    expect(within(article).getByText('Hard part two.')).toBeInTheDocument();
+    expect(
+      within(article).getByRole('heading', { level: 4, name: 'Lessons learned' }),
+    ).toBeInTheDocument();
+  });
+
+  it('names the sub-headings of different projects apart (no repeated ids)', async () => {
+    getProjects.mockImplementation(async () =>
+      makeProjects([
+        { title: 'A', technologies: ['React'], screenshots: [{ url: '/a.png', alt: 'A shot' }] },
+        { title: 'B', technologies: ['Vite'], screenshots: [{ url: '/b.png', alt: 'B shot' }] },
+      ]),
+    );
+    renderProjects();
+    await within(section()).findByRole('article', { name: 'B' });
+
+    const ids = [...section().querySelectorAll('[id]')].map((element) => element.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(
+      within(study('A')).getByRole('region', { name: 'Technology stack' }),
+    ).toBeInTheDocument();
+  });
+});
+
+describe('projects section states', () => {
+  beforeEach(() => {
+    getProjects.mockImplementation(async () => ONE());
+  });
+
+  it('announces loading, then shows the projects', async () => {
+    renderProjects();
+
+    expect(within(section()).getByRole('status')).toHaveTextContent('Loading projects');
+    await within(section()).findByRole('article', { name: 'Portfolio Website' });
+    expect(within(section()).queryByRole('status')).toBeNull();
   });
 
   it('shows a friendly error and recovers on Try again', async () => {
     const user = userEvent.setup();
-    getProjectBySlug.mockRejectedValueOnce(new Error('secret internal detail'));
-    renderAt('/projects/portfolio-website');
+    getProjects.mockRejectedValueOnce(new Error('secret internal detail'));
+    renderProjects();
 
     const alert = await screen.findByRole('alert');
     expect(alert).not.toHaveTextContent('secret internal detail');
     await user.click(screen.getByRole('button', { name: 'Try again' }));
 
-    expect(await screen.findByRole('heading', { level: 2, name: 'Overview' })).toBeInTheDocument();
-  });
-});
-
-describe('ProjectCard', () => {
-  const render1 = (entry) =>
-    render(
-      <MemoryRouter>
-        <ul>
-          <ProjectCard project={makeProjects([entry])[0]} />
-        </ul>
-      </MemoryRouter>,
-    );
-
-  it('keeps the GitHub and demo links separate from the card link, and names them', () => {
-    render1({
-      repoUrl: 'https://github.com/someone/repo',
-      demoUrl: 'https://demo.example.org',
-    });
-
     expect(
-      screen.getByRole('link', { name: 'GitHub repository of Project 1 (opens in a new tab)' }),
-    ).toHaveAttribute('target', '_blank');
-    expect(
-      screen.getByRole('link', { name: 'Live demo of Project 1 (opens in a new tab)' }),
-    ).toHaveAttribute('rel', 'noopener noreferrer');
-    expect(screen.getByRole('link', { name: 'Project 1' })).toHaveAttribute(
-      'href',
-      '/projects/project-1',
-    );
+      await within(section()).findByRole('article', { name: 'Portfolio Website' }),
+    ).toBeInTheDocument();
   });
 
-  it('describes a picture with its alt text, or a default that names the project', () => {
-    render1({ thumbnail: { url: '/cover.png' } });
+  it('shows an empty state when there are no projects', async () => {
+    getProjects.mockResolvedValue([]);
+    renderProjects();
 
-    expect(screen.getByRole('img', { name: 'Preview of Project 1' })).toHaveAttribute(
-      'loading',
-      'lazy',
-    );
-  });
-
-  describe('hover glow', () => {
-    const cardOf = () => screen.getByRole('link', { name: 'Project 1' }).closest('li');
-
-    it('follows the mouse inside the card', () => {
-      render1({});
-
-      fireEvent.pointerMove(cardOf(), { pointerType: 'mouse', clientX: 40, clientY: 25 });
-
-      // jsdom lays nothing out, so the card sits at 0,0 and the values equal the mouse position.
-      expect(cardOf().style.getPropertyValue('--glow-x')).toBe('40px');
-      expect(cardOf().style.getPropertyValue('--glow-y')).toBe('25px');
-    });
-
-    it('ignores touch and pen, which have no hover', () => {
-      render1({});
-
-      fireEvent.pointerMove(cardOf(), { pointerType: 'touch', clientX: 40, clientY: 25 });
-      fireEvent.pointerMove(cardOf(), { pointerType: 'pen', clientX: 40, clientY: 25 });
-
-      expect(cardOf().style.getPropertyValue('--glow-x')).toBe('');
-      expect(cardOf().style.getPropertyValue('--glow-y')).toBe('');
-    });
+    expect(await screen.findByRole('heading', { name: 'No projects yet' })).toBeInTheDocument();
   });
 });
 
@@ -464,31 +282,6 @@ describe('normalizeProjects', () => {
 
   it('accepts every project in the shipped data file', () => {
     expect(normalizeProjects(projectsData)).toHaveLength(projectsData.projects.length);
-  });
-});
-
-describe('filterProjects and getFilterOptions', () => {
-  it('matches text against title, summary and technologies, ignoring case', () => {
-    const projects = THREE();
-
-    expect(filterProjects(projects, { q: 'SHOP' }).map((p) => p.title)).toEqual(['Shop']);
-    expect(filterProjects(projects, { q: 'summary 2' }).map((p) => p.title)).toEqual(['Chat']);
-    expect(filterProjects(projects, { q: 'linux' }).map((p) => p.title)).toEqual(['Scanner']);
-    expect(filterProjects(projects, { q: '   ' })).toHaveLength(3);
-    expect(filterProjects(projects)).toHaveLength(3);
-  });
-
-  it('requires every given filter to match', () => {
-    const projects = THREE();
-
-    expect(filterProjects(projects, { category: 'Web', tech: 'Linux' })).toEqual([]);
-  });
-
-  it('lists each category and technology once, sorted', () => {
-    expect(getFilterOptions(THREE())).toEqual({
-      categories: ['Tools', 'Web'],
-      technologies: ['Express', 'Linux', 'Node.js', 'React'],
-    });
   });
 });
 

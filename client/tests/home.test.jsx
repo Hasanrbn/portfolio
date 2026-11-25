@@ -2,21 +2,15 @@ import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import siteConfig from '@portfolio/shared/siteConfig.json';
-import App from '../src/app/App.jsx';
-import ThemeProvider from '../src/app/ThemeProvider.jsx';
 import Hero from '../src/components/sections/Hero.jsx';
 import HighlightStrip from '../src/components/sections/HighlightStrip.jsx';
 import { usePlaceholderProfile } from './helpers/profileConfig.js';
+import { renderSite } from './helpers/renderSite.jsx';
 
-function renderHome() {
-  return render(
-    <ThemeProvider>
-      <MemoryRouter initialEntries={['/']}>
-        <App />
-      </MemoryRouter>
-    </ThemeProvider>,
-  );
-}
+const renderHome = () => renderSite('/');
+
+// The opening block of the page, without the sections below it.
+const opening = () => document.getElementById('home');
 
 const HERO_BASICS = { name: 'Ada Lovelace', role: 'Engineer', intro: 'Hello there.' };
 
@@ -33,14 +27,14 @@ describe('home page', () => {
 
   it('introduces the person with name, role and introduction', () => {
     renderHome();
-    const main = screen.getByRole('main');
+    const home = opening();
 
-    expect(within(main).getByRole('heading', { level: 1 })).toHaveTextContent(siteConfig.name);
-    expect(main).toHaveTextContent(siteConfig.role);
-    expect(main).toHaveTextContent(siteConfig.intro);
+    expect(within(home).getByRole('heading', { level: 1 })).toHaveTextContent(siteConfig.name);
+    expect(home).toHaveTextContent(siteConfig.role);
+    expect(home).toHaveTextContent(siteConfig.intro);
   });
 
-  it('has exactly one h1 and no heading level skipped', () => {
+  it('has exactly one h1 on the whole page and no heading level skipped', () => {
     renderHome();
     const levels = within(screen.getByRole('main'))
       .getAllByRole('heading')
@@ -53,27 +47,27 @@ describe('home page', () => {
     });
   });
 
-  it('leads to the projects and contact pages', () => {
+  it('leads to the projects and contact sections', () => {
     renderHome();
-    const main = screen.getByRole('main');
+    const home = opening();
 
-    expect(within(main).getByRole('link', { name: 'View My Projects' })).toHaveAttribute(
+    expect(within(home).getByRole('link', { name: 'View My Projects' })).toHaveAttribute(
       'href',
-      '/projects',
+      '/#projects',
     );
-    within(main)
+    within(home)
       .getAllByRole('link', { name: 'Contact Me' })
-      .forEach((link) => expect(link).toHaveAttribute('href', '/contact'));
+      .forEach((link) => expect(link).toHaveAttribute('href', '/#contact'));
   });
 
   it('leaves out the CV, picture, availability and profile links while they are placeholders', () => {
     renderHome();
-    const main = screen.getByRole('main');
+    const home = opening();
 
-    expect(within(main).queryByRole('link', { name: /download cv/i })).toBeNull();
-    expect(within(main).queryByRole('img')).toBeNull();
-    expect(within(main).queryByRole('link', { name: /github|linkedin|email/i })).toBeNull();
-    expect(within(main).queryByText(/available|open to/i)).toBeNull();
+    expect(within(home).queryByRole('link', { name: /download cv/i })).toBeNull();
+    expect(within(home).queryByRole('img')).toBeNull();
+    expect(within(home).queryByRole('link', { name: /github|linkedin|email/i })).toBeNull();
+    expect(within(home).queryByText(/available|open to/i)).toBeNull();
   });
 
   it('lists the core technologies from the config', () => {

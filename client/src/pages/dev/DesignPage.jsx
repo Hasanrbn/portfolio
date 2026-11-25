@@ -118,7 +118,7 @@ export default function DesignPage() {
   }
 
   return (
-    <>
+    <div className="container section">
       <PageTitle title="Design system" noIndex />
       <header className={styles.header}>
         <h1>Design system</h1>
@@ -296,7 +296,7 @@ export default function DesignPage() {
           headingAs="h3"
           title="No projects yet"
           description="Projects will appear here once they are added."
-          action={<LinkButton to="/">Back to Home</LinkButton>}
+          action={<LinkButton to="/#home">Back to Home</LinkButton>}
         />
         <ErrorState
           headingAs="h3"
@@ -308,6 +308,6 @@ export default function DesignPage() {
           }
         />
       </section>
-    </>
+    </div>
   );
 }

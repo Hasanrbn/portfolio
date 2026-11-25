@@ -94,7 +94,7 @@
   background: var(--color-surface-subtle);
 }
 
-.link[aria-current='page'] {
+.link[aria-current='location'] {
   background: var(--color-accent-subtle);
   color: var(--color-accent-text);
 }

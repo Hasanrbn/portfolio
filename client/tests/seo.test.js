@@ -10,9 +10,7 @@ import {
   buildHeadTags,
   buildRobots,
   buildSitemap,
-  collectPaths,
   normalizeSiteUrl,
-  readContentSlugs,
   seoPlugin,
   siteUrlFromEnv,
 } from '../seo.js';
@@ -56,23 +54,12 @@ describe('siteUrlFromEnv', () => {
 });
 
 describe('sitemap paths', () => {
-  it('covers every navigation page', () => {
-    const navPaths = NAV_ITEMS.map((item) => item.to);
-
-    expect([...STATIC_PATHS].sort()).toEqual([...navPaths].sort());
+  it('lists only the home page: the site is one page and old addresses redirect to it', () => {
+    expect(STATIC_PATHS).toEqual(['/']);
   });
 
-  it('adds the projects that exist', () => {
-    const paths = collectPaths({ projectSlugs: ['one'] });
-
-    expect(paths).toEqual(expect.arrayContaining(['/projects/one']));
-  });
-
-  it('reads the published projects of the shipped data and no draft', () => {
-    const { projectSlugs } = readContentSlugs(SHARED_DIR);
-
-    expect(projectSlugs).toContain('portfolio-website');
-    expect(new Set(projectSlugs).size).toBe(projectSlugs.length);
+  it('has a section for every navigation item behind that one address', () => {
+    expect(NAV_ITEMS.every((item) => item.to.startsWith('/#'))).toBe(true);
   });
 });
 
@@ -140,7 +127,8 @@ describe('seoPlugin', () => {
     const { plugin, files, warn } = emitted('https://example.com');
 
     expect(Object.keys(files).sort()).toEqual(['robots.txt', 'sitemap.xml']);
-    expect(files['sitemap.xml']).toContain('https://example.com/projects/portfolio-website');
+    expect(files['sitemap.xml']).toContain('<loc>https://example.com/</loc>');
+    expect(files['sitemap.xml']).not.toContain('/projects/');
     expect(plugin.transformIndexHtml(indexHtml)).toContain('og:url');
     expect(warn).not.toHaveBeenCalled();
   });
@@ -167,13 +155,8 @@ describe('static head of index.html', () => {
 });
 
 describe('page descriptions', () => {
-  it('are present, readable lengths and different from each other', () => {
-    const values = Object.values(PAGE_DESCRIPTIONS);
-
-    expect(new Set(values).size).toBe(values.length);
-    for (const text of values) {
-      expect(text.length).toBeGreaterThan(20);
-      expect(text.length).toBeLessThanOrEqual(160);
-    }
+  it('has a readable home description', () => {
+    expect(PAGE_DESCRIPTIONS.home.length).toBeGreaterThan(20);
+    expect(PAGE_DESCRIPTIONS.home.length).toBeLessThanOrEqual(160);
   });
 });

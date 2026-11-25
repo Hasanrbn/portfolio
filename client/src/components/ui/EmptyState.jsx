@@ -9,7 +9,7 @@ export default function EmptyState({
   title,
   description,
   action,
-  headingAs: Heading = 'h2',
+  headingAs: Heading = 'h3',
   className,
 }) {
   return (

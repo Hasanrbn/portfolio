@@ -1,13 +1,11 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import skillsData from '@portfolio/shared/data/skills.json';
-import App from '../src/app/App.jsx';
-import ThemeProvider from '../src/app/ThemeProvider.jsx';
 import SkillGroup from '../src/components/sections/SkillGroup.jsx';
 import { getSkillGroups, normalizeSkillGroups, withIcons } from '../src/services/skillsService.js';
 import { SKILL_ICON_PATHS } from '../src/utils/skillIcons.js';
+import { getSection, renderSite } from './helpers/renderSite.jsx';
 
 vi.mock('../src/services/skillsService.js', async (importOriginal) => {
   const actual = await importOriginal();
@@ -16,40 +14,33 @@ vi.mock('../src/services/skillsService.js', async (importOriginal) => {
 
 const realGetSkillGroups = getSkillGroups.getMockImplementation();
 
-function renderSkillsPage() {
-  return render(
-    <ThemeProvider>
-      <MemoryRouter initialEntries={['/skills']}>
-        <App />
-      </MemoryRouter>
-    </ThemeProvider>,
-  );
-}
+const renderSkillsPage = () => renderSite('/');
 
 beforeEach(() => {
   getSkillGroups.mockReset();
   getSkillGroups.mockImplementation(realGetSkillGroups);
 });
 
-describe('skills page', () => {
-  it('shows every group under the page heading, in order', async () => {
+describe('skills section', () => {
+  it('shows every group under the section heading, in order', async () => {
     renderSkillsPage();
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Skills' })).toBeInTheDocument();
-    await screen.findByRole('heading', { level: 2, name: 'Frontend' });
+    expect(screen.getByRole('heading', { level: 2, name: 'Skills' })).toBeInTheDocument();
+    await screen.findByRole('heading', { level: 3, name: 'Frontend' });
 
-    const headings = within(screen.getByRole('main'))
-      .getAllByRole('heading', { level: 2 })
+    const headings = within(getSection('Skills'))
+      .getAllByRole('heading', { level: 3 })
+      .filter((node) => node.textContent !== 'What the levels mean')
       .map((node) => node.textContent);
     expect(headings).toEqual(skillsData.categories.map((category) => category.label));
   });
 
   it('lists every skill from the data file inside its group', async () => {
     renderSkillsPage();
-    await screen.findByRole('heading', { level: 2, name: 'Frontend' });
+    await screen.findByRole('heading', { level: 3, name: 'Frontend' });
 
     for (const category of skillsData.categories) {
-      const group = screen.getByRole('region', { name: category.label });
+      const group = within(getSection('Skills')).getByRole('region', { name: category.label });
       const names = within(group)
         .getAllByRole('listitem')
         .map((item) => item.textContent);
@@ -59,27 +50,28 @@ describe('skills page', () => {
 
   it('shows logos once the skills have loaded', async () => {
     renderSkillsPage();
-    await screen.findByRole('heading', { level: 2, name: 'Frontend' });
+    await screen.findByRole('heading', { level: 3, name: 'Frontend' });
 
-    const items = within(screen.getByRole('main')).getAllByRole('listitem');
+    const items = within(getSection('Skills')).getAllByRole('listitem');
     expect(items.some((item) => item.querySelector('svg'))).toBe(true);
   });
 
   it('claims no level and shows no level guide while none is set', async () => {
     renderSkillsPage();
-    await screen.findByRole('heading', { level: 2, name: 'Frontend' });
+    await screen.findByRole('heading', { level: 3, name: 'Frontend' });
 
-    expect(screen.queryByText(/familiar|intermediate|advanced/i)).toBeNull();
-    expect(screen.queryByText('What the levels mean')).toBeNull();
-    expect(document.body.textContent).not.toMatch(/\d+\s?%/);
+    const skills = getSection('Skills');
+    expect(within(skills).queryByText(/familiar|intermediate|advanced/i)).toBeNull();
+    expect(within(skills).queryByText('What the levels mean')).toBeNull();
+    expect(skills.textContent).not.toMatch(/\d+\s?%/);
   });
 
   it('announces loading and then replaces it with the skills', async () => {
     renderSkillsPage();
 
-    expect(screen.getByRole('status')).toHaveTextContent('Loading skills');
-    await screen.findByRole('heading', { level: 2, name: 'Frontend' });
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(within(getSection('Skills')).getByRole('status')).toHaveTextContent('Loading skills');
+    await screen.findByRole('heading', { level: 3, name: 'Frontend' });
+    expect(within(getSection('Skills')).queryByRole('status')).toBeNull();
   });
 
   it('shows a friendly error and loads again after Try again', async () => {
@@ -87,14 +79,14 @@ describe('skills page', () => {
     getSkillGroups.mockRejectedValueOnce(new Error('secret internal detail'));
     renderSkillsPage();
 
-    const alert = await screen.findByRole('alert');
+    const alert = await within(getSection('Skills')).findByRole('alert');
     expect(alert).toHaveTextContent('Skills could not be loaded.');
     expect(alert).not.toHaveTextContent('secret internal detail');
 
     await user.click(screen.getByRole('button', { name: 'Try again' }));
 
-    await screen.findByRole('heading', { level: 2, name: 'Frontend' });
-    expect(screen.queryByRole('alert')).toBeNull();
+    await screen.findByRole('heading', { level: 3, name: 'Frontend' });
+    expect(within(getSection('Skills')).queryByRole('alert')).toBeNull();
   });
 
   it('shows an empty state when there are no skills', async () => {
