@@ -23,6 +23,7 @@ const ICON_PATHS = {
   close: <path d="M18 6 6 18M6 6l12 12" />,
   'chevron-left': <path d="m15 18-6-6 6-6" />,
   'chevron-right': <path d="m9 18 6-6-6-6" />,
+  'arrow-up': <path d="m5 12 7-7 7 7M12 19V5" />,
   maximize: <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />,
   mail: (
     <>
