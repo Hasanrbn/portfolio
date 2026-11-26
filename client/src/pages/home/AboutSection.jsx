@@ -1,6 +1,7 @@
 import siteConfig from '@portfolio/shared/siteConfig.json';
 import aboutData from '@portfolio/shared/data/about.json';
 import Section from '../../components/layout/Section.jsx';
+import ArmillarySphere from '../../components/sections/ArmillarySphere.jsx';
 import Avatar from '../../components/sections/Avatar.jsx';
 import Tag from '../../components/ui/Tag.jsx';
 import useReveal from '../../hooks/useReveal.js';
@@ -62,7 +63,9 @@ export default function AboutSection() {
             <p key={text}>{text}</p>
           ))}
         </div>
-        <Avatar name={siteConfig.name} src={avatarSrc} className={styles.avatar} />
+        <ArmillarySphere className={styles.sphere}>
+          <Avatar name={siteConfig.name} src={avatarSrc} />
+        </ArmillarySphere>
       </div>
 
       <div className={styles.cards}>

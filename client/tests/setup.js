@@ -21,6 +21,8 @@ if (hasDom) {
   window.scrollTo = vi.fn();
   // Nor does it scroll elements into view; the menu uses this to reach a section.
   Element.prototype.scrollIntoView = vi.fn();
+  // Nor does it draw on a canvas; say so quietly instead of logging an error on every call.
+  HTMLCanvasElement.prototype.getContext = () => null;
   // Nor does it implement <dialog> modals, which the image viewer uses.
   HTMLDialogElement.prototype.showModal = function showModal() {
     this.setAttribute('open', '');

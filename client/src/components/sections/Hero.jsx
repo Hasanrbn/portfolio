@@ -1,22 +1,14 @@
 import Badge from '../ui/Badge.jsx';
 import LinkButton from '../ui/LinkButton.jsx';
-import Avatar from './Avatar.jsx';
 import SocialLinks from './SocialLinks.jsx';
 import styles from './Hero.module.css';
 
 /**
  * Opening block of the home page and the page's only h1.
- * Everything optional (availability, picture, CV, profile links) is left out when it is empty.
+ * Everything optional (availability, CV, profile links) is left out when it is empty.
+ * There is no picture here yet: a half-body photo is planned for the right-hand side.
  */
-export default function Hero({
-  name,
-  role,
-  intro,
-  availability,
-  avatarSrc,
-  resume,
-  socialLinks = [],
-}) {
+export default function Hero({ name, role, intro, availability, resume, socialLinks = [] }) {
   return (
     <div className={styles.hero}>
       <div className={styles.content}>
@@ -59,8 +51,6 @@ export default function Hero({
 
         <SocialLinks links={socialLinks} />
       </div>
-
-      <Avatar name={name} src={avatarSrc} className={styles.avatar} />
     </div>
   );
 }

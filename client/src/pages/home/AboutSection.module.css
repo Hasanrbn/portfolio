@@ -40,9 +40,9 @@
   text-wrap: balance;
 }
 
-.avatar {
-  --avatar-size: 7rem;
+.sphere {
   order: -1;
+  justify-self: center;
 }
 
 .cards {
@@ -95,8 +95,7 @@
     gap: var(--space-12);
   }
 
-  .avatar {
-    --avatar-size: 12rem;
+  .sphere {
     order: 0;
   }
 }
