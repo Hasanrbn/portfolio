@@ -11,6 +11,7 @@ import ContactSection from './ContactSection.jsx';
 import EducationSection from './EducationSection.jsx';
 import ExperienceSection from './ExperienceSection.jsx';
 import ProjectsSection from './ProjectsSection.jsx';
+import HeroPortrait from './HeroPortrait.jsx';
 import SkillsSection from './SkillsSection.jsx';
 import styles from './HomePage.module.css';
 
@@ -27,16 +28,19 @@ export default function HomePage() {
   return (
     <>
       <PageTitle description={PAGE_DESCRIPTIONS.home} />
-      <div id="home" className={`container section ${styles.opening}`}>
-        <Hero
-          name={siteConfig.name}
-          role={siteConfig.role}
-          intro={siteConfig.intro}
-          availability={siteConfig.availability}
-          resume={resume}
-          socialLinks={socialLinks}
-        />
-        <HighlightStrip technologies={siteConfig.highlights} />
+      <div className={styles.stage}>
+        <div id="home" className={`container section ${styles.opening}`}>
+          <Hero
+            name={siteConfig.name}
+            role={siteConfig.role}
+            intro={siteConfig.intro}
+            availability={siteConfig.availability}
+            resume={resume}
+            socialLinks={socialLinks}
+          />
+          <HighlightStrip technologies={siteConfig.highlights} />
+        </div>
+        <HeroPortrait name={siteConfig.name} />
       </div>
       <AboutSection />
       <SkillsSection />

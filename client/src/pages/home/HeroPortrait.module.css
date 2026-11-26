@@ -1,0 +1,101 @@
+/*
+ * On a phone the portrait sits under the intro, bottom right. From wide screens up it hangs on
+ * the right-hand edge of the screen beside the name, standing on the line that ends the opening.
+ */
+.portrait {
+  --portrait-height: min(24rem, 78vw);
+
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  margin-left: auto;
+  height: var(--portrait-height);
+  aspect-ratio: 614 / 1200;
+}
+
+/* The suit is almost the colour of the page, so a pool of accent light behind it draws its outline. */
+.portrait::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 8% -30% 0 -20%;
+  opacity: calc(var(--glow-opacity) * 0.8);
+  background: radial-gradient(closest-side, var(--color-accent), transparent);
+  pointer-events: none;
+}
+
+.pose {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: right bottom;
+  transform-origin: right bottom;
+  transition:
+    opacity 350ms var(--ease),
+    transform 550ms var(--ease);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.wave {
+  opacity: 0;
+  transform: translate(7%, 3%) scale(0.95);
+}
+
+.portrait[data-waving='true'] .peek {
+  opacity: 0;
+  transform: translate(-4%, 1%) scale(1.02);
+}
+
+.portrait[data-waving='true'] .wave {
+  opacity: 1;
+  transform: none;
+}
+
+@media (min-width: 40rem) {
+  .portrait {
+    --portrait-height: min(30rem, 62vw);
+  }
+}
+
+@media (min-width: 64rem) {
+  .portrait {
+    --portrait-height: min(78vh, 46vw, 46rem);
+
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+}
+
+/* The portrait slides in from the edge of the screen when the page opens. */
+@media (prefers-reduced-motion: no-preference) {
+  .portrait {
+    animation: peek-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) 250ms both;
+  }
+}
+
+@keyframes peek-in {
+  from {
+    transform: translateX(105%);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+/* With reduced motion the poses only cross-fade; nothing slides or scales. */
+@media (prefers-reduced-motion: reduce) {
+  .pose {
+    transition: opacity 150ms linear;
+  }
+
+  .wave,
+  .portrait[data-waving='true'] .peek,
+  .portrait[data-waving='true'] .wave {
+    transform: none;
+  }
+}
