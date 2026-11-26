@@ -1,3 +1,9 @@
+/* The opening block plus the portrait, which hangs on the right-hand edge of the screen. */
+.stage {
+  position: relative;
+  overflow-x: clip;
+}
+
 /* The opening block: the hero, then the core technologies. */
 .opening {
   position: relative;

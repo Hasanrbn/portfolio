@@ -34,6 +34,18 @@ describe('home page', () => {
     expect(home).toHaveTextContent(siteConfig.intro);
   });
 
+  it('shows one portrait beside the opening block, outside the heading structure', () => {
+    renderHome();
+
+    expect(screen.getByRole('img', { name: new RegExp(siteConfig.name) })).toHaveAttribute(
+      'src',
+      '/images/profile/peek.webp',
+    );
+    expect(opening()).not.toContainElement(
+      screen.getByRole('img', { name: new RegExp(siteConfig.name) }),
+    );
+  });
+
   it('has exactly one h1 on the whole page and no heading level skipped', () => {
     renderHome();
     const levels = within(screen.getByRole('main'))
@@ -92,7 +104,7 @@ describe('Hero', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Ada Lovelace');
   });
 
-  it('has no picture yet; a half-body photo is planned for later', () => {
+  it('leaves the picture to the page: the portrait hangs on the screen edge, not in the text', () => {
     renderHero();
 
     expect(screen.queryByRole('img')).toBeNull();
