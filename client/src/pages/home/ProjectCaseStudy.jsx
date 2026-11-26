@@ -14,12 +14,12 @@ import styles from './ProjectCaseStudy.module.css';
 /** A titled part of the case study: the title on the left on wide screens, the text beside it. */
 function Block({ id, title, children }) {
   return (
-    <section aria-labelledby={id} className={styles.block}>
+    <div role="group" aria-labelledby={id} className={styles.block}>
       <h4 id={id} className={styles.blockTitle}>
         {title}
       </h4>
       <div className={styles.blockBody}>{children}</div>
-    </section>
+    </div>
   );
 }
 
@@ -186,7 +186,7 @@ export default function ProjectCaseStudy({ project, number }) {
         )}
 
         {screenshots.length > 0 && (
-          <section aria-labelledby={`${id}-screenshots`} className={styles.wide}>
+          <div role="group" aria-labelledby={`${id}-screenshots`} className={styles.wide}>
             <h4 id={`${id}-screenshots`} className={styles.wideTitle}>
               Screenshots
             </h4>
@@ -206,16 +206,16 @@ export default function ProjectCaseStudy({ project, number }) {
                 </li>
               ))}
             </ul>
-          </section>
+          </div>
         )}
 
         {comparison && (
-          <section aria-labelledby={`${id}-comparison`} className={styles.wide}>
+          <div role="group" aria-labelledby={`${id}-comparison`} className={styles.wide}>
             <h4 id={`${id}-comparison`} className={styles.wideTitle}>
               Before &amp; after
             </h4>
             <BeforeAfter {...comparison} />
-          </section>
+          </div>
         )}
       </div>
 

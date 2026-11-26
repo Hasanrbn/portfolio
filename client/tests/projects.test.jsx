@@ -174,9 +174,7 @@ describe('projects section', () => {
 
     const ids = [...section().querySelectorAll('[id]')].map((element) => element.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(
-      within(study('A')).getByRole('region', { name: 'Technology stack' }),
-    ).toBeInTheDocument();
+    expect(within(study('A')).getByRole('group', { name: 'Technology stack' })).toBeInTheDocument();
   });
 });
 

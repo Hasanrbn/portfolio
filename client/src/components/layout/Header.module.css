@@ -139,3 +139,32 @@
     font-size: var(--text-sm);
   }
 }
+
+/* A thin line under the header that fills as the page is scrolled. Pure decoration, drawn only
+   where the browser can tie an animation to scrolling and the visitor has not asked for less
+   motion; everywhere else it is simply absent. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .header::after {
+      content: '';
+      position: absolute;
+      inset: auto 0 -1px;
+      height: 2px;
+      background: var(--color-accent);
+      transform-origin: left;
+      animation: scroll-progress linear both;
+      animation-timeline: scroll(root block);
+      pointer-events: none;
+    }
+  }
+}
+
+@keyframes scroll-progress {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
