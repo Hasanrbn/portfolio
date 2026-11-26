@@ -83,11 +83,18 @@ describe('sitemap.xml and robots.txt', () => {
 describe('head tags for link previews and search engines', () => {
   const tags = buildHeadTags('https://example.com', siteConfig);
 
-  it('points the preview at the site and the profile picture with absolute addresses', () => {
+  it('points the preview at the site and the preview card with absolute addresses', () => {
     expect(tags).toContain('og:url" content="https://example.com/"');
-    if (siteConfig.avatar) {
-      expect(tags).toContain(`og:image" content="https://example.com${siteConfig.avatar}"`);
-    }
+    expect(tags).toContain('og:image" content="https://example.com/og-image.jpg"');
+    expect(tags).toContain('twitter:card" content="summary_large_image"');
+  });
+
+  it('ships the preview card at the size the tags promise', () => {
+    const file = readFileSync(new URL('../public/og-image.jpg', import.meta.url));
+    expect(file.length).toBeGreaterThan(0);
+    expect(file.length).toBeLessThan(300 * 1024);
+    expect(tags).toContain('og:image:width" content="1200"');
+    expect(tags).toContain('og:image:height" content="630"');
   });
 
   it('describes the person with public facts only', () => {

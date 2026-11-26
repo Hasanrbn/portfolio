@@ -61,18 +61,22 @@ export function buildRobots(siteUrl) {
 /** JSON can sit inside a <script> tag safely only when "<" cannot close the tag early. */
 const safeJson = (value) => JSON.stringify(value).replaceAll('<', '\\u003c');
 
+/** Where the link-preview picture lives in client/public. */
+export const OG_IMAGE_PATH = '/og-image.jpg';
+
 /** Tags that need the site address: the page address and picture for link previews, and the person. */
 export function buildHeadTags(siteUrl, siteConfig) {
   const tags = [`<meta property="og:url" content="${escapeXml(`${siteUrl}/`)}" />`];
 
-  if (siteConfig.avatar && siteConfig.avatar.startsWith('/')) {
-    const image = escapeXml(siteUrl + siteConfig.avatar);
-    tags.push(
-      `<meta property="og:image" content="${image}" />`,
-      `<meta property="og:image:alt" content="${escapeXml(siteConfig.name)}" />`,
-      '<meta name="twitter:card" content="summary" />',
-    );
-  }
+  // The link-preview picture is a designed card (scripts/og-image.html), not the avatar.
+  const image = escapeXml(siteUrl + OG_IMAGE_PATH);
+  tags.push(
+    `<meta property="og:image" content="${image}" />`,
+    '<meta property="og:image:width" content="1200" />',
+    '<meta property="og:image:height" content="630" />',
+    `<meta property="og:image:alt" content="${escapeXml(`${siteConfig.name} | ${siteConfig.role}`)}" />`,
+    '<meta name="twitter:card" content="summary_large_image" />',
+  );
 
   // Only facts that are already public on the site; no email address or phone number.
   const sameAs = Object.values(siteConfig.social ?? {}).filter((link) =>
