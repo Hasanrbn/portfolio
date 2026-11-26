@@ -1,10 +1,12 @@
 .page {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-12);
 }
 
 .intro {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-8);
   align-items: start;
 }
@@ -13,7 +15,7 @@
   display: grid;
   justify-items: start;
   gap: var(--space-4);
-  max-width: 44rem;
+  max-width: 46rem;
 }
 
 .text p + p {
@@ -22,13 +24,20 @@
 
 .meta {
   color: var(--color-accent-text);
-  font-size: var(--text-lg);
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
+/* The one-sentence summary reads as a statement, then the details follow in normal text. */
 .lead {
-  color: var(--color-text-muted);
-  font-size: var(--text-lg);
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-wrap: balance;
 }
 
 .avatar {
@@ -36,12 +45,43 @@
   order: -1;
 }
 
-.heading {
-  margin-bottom: var(--space-4);
-  font-size: var(--text-2xl);
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: var(--space-6);
 }
 
-.highlights {
+.card {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.cardTitle {
+  color: var(--color-accent-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.list {
+  display: grid;
+  gap: var(--space-2);
+  padding-left: var(--space-6);
+  list-style: disc;
+}
+
+.list li::marker {
+  color: var(--color-accent-text);
+}
+
+.tags {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
@@ -51,7 +91,7 @@
 
 @media (min-width: 48rem) {
   .intro {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: var(--space-12);
   }
 

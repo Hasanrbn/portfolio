@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Link } from 'react-router';
 import siteConfig from '@portfolio/shared/siteConfig.json';
 import SocialLinks from '../sections/SocialLinks.jsx';
+import Icon from '../ui/Icon.jsx';
 import { getNavItems } from '../../app/siteNavigation.js';
 import { classNames } from '../../utils/classNames.js';
 import { getSocialLinks } from '../../utils/socialLinks.js';
@@ -49,6 +50,10 @@ export default function Footer() {
           © {year} {siteConfig.name}
         </p>
         <p>Built with React, Vite and Express.</p>
+        <Link to="/#home" className={styles.top}>
+          Back to top
+          <Icon name="arrow-up" size={16} />
+        </Link>
       </div>
     </footer>
   );

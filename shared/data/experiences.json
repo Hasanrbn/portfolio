@@ -2,17 +2,17 @@
   "experiences": [
     {
       "id": "panitia-fti-cup-2025",
-      "position": "Staf Divisi Perlengkapan",
-      "organization": "Panitia FTI CUP 2025 – Fakultas Teknik Industri UPN “Veteran” Yogyakarta",
+      "position": "Equipment Division Staff",
+      "organization": "FTI CUP 2025 Committee – Faculty of Industrial Engineering, UPN “Veteran” Yogyakarta",
       "type": "organization",
       "startDate": "2025-09",
       "endDate": "2025-09",
-      "description": "Staf Divisi Perlengkapan pada kepanitiaan FTI CUP 2025, kompetisi olahraga dan e-sports yang diikuti mahasiswa Fakultas Teknik Industri. Kompetisi ini dibuka dan dijalankan pada 14 dan 27 September 2025.",
+      "description": "Equipment Division staff for the FTI CUP 2025 committee, a sports and e-sports competition for students of the Faculty of Industrial Engineering. The competition opened and ran on 14 and 27 September 2025.",
       "responsibilities": [
-        "Menyiapkan dan memenuhi kebutuhan perlengkapan untuk mendukung persiapan serta kelancaran pelaksanaan FTI CUP 2025.",
-        "Melakukan pendataan, pemeriksaan, dan pengelolaan inventaris perlengkapan guna memastikan ketersediaan serta kesiapan peralatan sebelum acara berlangsung.",
-        "Bertanggung jawab atas distribusi dan pemasangan perlengkapan sesuai kebutuhan teknis selama pelaksanaan kompetisi.",
-        "Mengelola pengumpulan dan pengembalian perlengkapan setelah acara serta memastikan barang yang digunakan tertata dengan baik."
+        "Prepared and met the equipment needs that supported the preparation and smooth running of FTI CUP 2025.",
+        "Recorded, checked and managed the equipment inventory to make sure items were available and ready before the event started.",
+        "Responsible for distributing and setting up equipment according to technical needs during the competition.",
+        "Managed the collection and return of equipment after the event and made sure the items used were stored properly."
       ],
       "technologies": [],
       "sortOrder": 1,
@@ -20,17 +20,17 @@
     },
     {
       "id": "bem-fti-seni-olahraga",
-      "position": "Staf Bidang Seni & Olahraga",
-      "organization": "Badan Eksekutif Mahasiswa Fakultas Teknik Industri (BEM FTI) UPN “Veteran” Yogyakarta",
+      "position": "Arts & Sports Division Staff",
+      "organization": "Student Executive Board of the Faculty of Industrial Engineering (BEM FTI), UPN “Veteran” Yogyakarta",
       "type": "organization",
       "startDate": "2025-05",
       "endDate": "2025-11",
       "description": "",
       "responsibilities": [
-        "Berkontribusi dalam persiapan dan pelaksanaan rangkaian pertandingan FTI CUP 2025 pada cabang olahraga dan e-sports, guna mendukung kelancaran acara.",
-        "Mendukung koordinasi teknis pelaksanaan acara serta penyesuaian alur kegiatan sesuai dengan kebutuhan di lapangan.",
-        "Membantu memastikan rangkaian kegiatan berjalan sesuai jadwal dan susunan acara yang telah direncanakan.",
-        "Berkolaborasi dengan panitia lintas divisi dalam menangani kebutuhan operasional selama pelaksanaan kompetisi."
+        "Contributed to the preparation and running of the FTI CUP 2025 matches in sports and e-sports, to help the event run smoothly.",
+        "Supported the technical coordination of the event and adjusted the flow of activities to what was needed on the ground.",
+        "Helped make sure the activities ran according to the planned schedule and rundown.",
+        "Collaborated with committee members from other divisions to handle operational needs during the competition."
       ],
       "technologies": [],
       "sortOrder": 2,

@@ -1,3 +1,53 @@
+.finale {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-16);
+}
+
+/* A pool of accent light behind the closing line, like the one behind the hero. */
+.finale::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -4rem -30vw -4rem -10vw;
+  opacity: var(--glow-opacity);
+  background: radial-gradient(35% 60% at 30% 50%, var(--color-accent), transparent 70%);
+  pointer-events: none;
+}
+
+.thanks {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  color: var(--color-accent-text);
+  font-family: var(--font-script);
+  font-size: var(--text-script);
+  font-weight: 600;
+  line-height: 1;
+  rotate: -3deg;
+}
+
+.doodle {
+  width: 2.5rem;
+  height: auto;
+  margin-top: 0.6em;
+}
+
+.together {
+  font-size: var(--text-display);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+.accent {
+  color: var(--color-accent-text);
+}
+
 .layout,
 .layoutSingle {
   display: grid;
