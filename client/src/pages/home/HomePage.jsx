@@ -3,7 +3,7 @@ import PageTitle from '../../components/layout/PageTitle.jsx';
 import { PAGE_DESCRIPTIONS } from '../../utils/pageDescriptions.js';
 import HighlightStrip from '../../components/sections/HighlightStrip.jsx';
 import Hero from '../../components/sections/Hero.jsx';
-import { getAvatarSource, getResumeLink } from '../../utils/profile.js';
+import { getResumeLink } from '../../utils/profile.js';
 import { getSocialLinks } from '../../utils/socialLinks.js';
 import AboutSection from './AboutSection.jsx';
 import CertificatesSection from './CertificatesSection.jsx';
@@ -22,7 +22,6 @@ export default function HomePage() {
   // Read when the page renders (not when the file loads), so edits to the profile are always
   // reflected and tests can set their own profile.
   const socialLinks = getSocialLinks(siteConfig);
-  const avatarSrc = getAvatarSource(siteConfig.avatar);
   const resume = getResumeLink(siteConfig.resumeUrl);
 
   return (
@@ -34,7 +33,6 @@ export default function HomePage() {
           role={siteConfig.role}
           intro={siteConfig.intro}
           availability={siteConfig.availability}
-          avatarSrc={avatarSrc}
           resume={resume}
           socialLinks={socialLinks}
         />

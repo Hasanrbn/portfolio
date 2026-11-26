@@ -85,13 +85,6 @@ describe('home page', () => {
 });
 
 describe('Hero', () => {
-  it('shows initials as a decorative monogram when there is no picture', () => {
-    renderHero();
-
-    expect(screen.queryByRole('img')).toBeNull();
-    expect(screen.getByText('AL').closest('[aria-hidden="true"]')).not.toBeNull();
-  });
-
   it('keeps the script greeting and its doodle arrow out of the reading order', () => {
     renderHero();
 
@@ -99,10 +92,10 @@ describe('Hero', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Ada Lovelace');
   });
 
-  it('shows the picture with a text alternative when one is set', () => {
-    renderHero({ avatarSrc: '/me.jpg' });
+  it('has no picture yet; a half-body photo is planned for later', () => {
+    renderHero();
 
-    expect(screen.getByRole('img', { name: 'Ada Lovelace' })).toHaveAttribute('src', '/me.jpg');
+    expect(screen.queryByRole('img')).toBeNull();
   });
 
   it('shows the availability status only when it is set', () => {
