@@ -1,68 +1,58 @@
-import { useState } from 'react';
+import BrowserFrame from './BrowserFrame.jsx';
+import ZoomImage from './ZoomImage.jsx';
 import styles from './BeforeAfter.module.css';
 
+/** A hand-drawn style curve that points from "before" to "after". Decoration only. */
+function Arrow() {
+  return (
+    <svg className={styles.arrow} viewBox="0 0 120 70" fill="none" aria-hidden="true">
+      <path
+        d="M6 58C22 20 58 6 100 26"
+        stroke="currentColor"
+        strokeWidth="5"
+        strokeLinecap="round"
+      />
+      <path
+        d="m84 16 18 11-12 16"
+        stroke="currentColor"
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function Side({ kind, label, picture, onOpen }) {
+  return (
+    <div className={`${styles.side} ${styles[kind]}`}>
+      <span className={styles.pill}>{label}</span>
+      <BrowserFrame>
+        <ZoomImage picture={picture} onOpen={() => onOpen(kind)} />
+      </BrowserFrame>
+    </div>
+  );
+}
+
 /**
- * Two pictures of the same size on top of each other with a divider the visitor can move:
- * left of the divider is "before", right of it is "after". The control is a real range input
- * stretched over the pictures (invisible), so dragging with a mouse or finger, the arrow keys
- * and screen readers all work with no extra script. Both pictures keep their text alternative.
+ * The old and the new version side by side (stacked on a phone), each in a browser window with a
+ * label, like a before-and-after board. Nothing to drag: both stay in full view, and each opens
+ * in the picture viewer through `onOpen('before' | 'after')`.
  */
-export default function BeforeAfter({ before, after, beforeLabel, afterLabel, caption }) {
-  const [position, setPosition] = useState(50);
-
-  let valueText = `Divider at ${position} percent`;
-  if (position === 0) valueText = `Showing only ${afterLabel}`;
-  if (position === 100) valueText = `Showing only ${beforeLabel}`;
-
+export default function BeforeAfter({
+  before,
+  after,
+  beforeLabel,
+  afterLabel,
+  caption,
+  onOpen = () => {},
+}) {
   return (
     <figure className={styles.figure}>
-      <div
-        className={styles.frame}
-        style={{
-          '--position': `${position}%`,
-          aspectRatio: `${before.width ?? 16} / ${before.height ?? 9}`,
-        }}
-      >
-        <img className={styles.image} src={before.url} alt={before.alt} loading="lazy" />
-        <img
-          className={`${styles.image} ${styles.after}`}
-          src={after.url}
-          alt={after.alt}
-          loading="lazy"
-        />
-        <span className={`${styles.tag} ${styles.tagBefore}`} aria-hidden="true">
-          {beforeLabel}
-        </span>
-        <span className={`${styles.tag} ${styles.tagAfter}`} aria-hidden="true">
-          {afterLabel}
-        </span>
-        <input
-          type="range"
-          min="0"
-          max="100"
-          step="1"
-          value={position}
-          onChange={(event) => setPosition(Number(event.target.value))}
-          className={styles.range}
-          aria-label={`Compare: ${beforeLabel} on the left, ${afterLabel} on the right`}
-          aria-valuetext={valueText}
-        />
-        <span className={styles.handle} aria-hidden="true">
-          <span className={styles.grip}>
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m9 7-5 5 5 5M15 7l5 5-5 5" />
-            </svg>
-          </span>
-        </span>
+      <div className={styles.pair}>
+        <Side kind="before" label={beforeLabel} picture={before} onOpen={onOpen} />
+        <Arrow />
+        <Side kind="after" label={afterLabel} picture={after} onOpen={onOpen} />
       </div>
       {caption && <figcaption className={styles.caption}>{caption}</figcaption>}
     </figure>

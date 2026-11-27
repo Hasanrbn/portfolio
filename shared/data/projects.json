@@ -42,8 +42,8 @@
       "status": "in_progress",
       "year": 2026,
       "thumbnail": {
-        "url": "/images/portfolio/v2-dark.webp",
-        "alt": "The hero of the redesigned portfolio in the dark theme: a script greeting, the name in very large type, the role, a short introduction, buttons and a lime glow behind the text.",
+        "url": "/images/portfolio/v3-hero-dark.webp",
+        "alt": "The home screen of the portfolio in the dark theme: a script greeting, the name in very large type, the role, a short introduction, buttons, and a half-body portrait peeking in from the right edge.",
         "caption": "",
         "width": 1200,
         "height": 750
@@ -63,15 +63,50 @@
       ],
       "screenshots": [
         {
-          "url": "/images/portfolio/v2-light.webp",
-          "alt": "The same hero in the light theme, on warm paper with a soft lime glow.",
+          "url": "/images/portfolio/v3-about.webp",
+          "alt": "The About section: a short biography beside the profile photo, which sits inside a thin lime armillary sphere.",
+          "caption": "About. The photo sits inside an armillary sphere whose rings follow the cursor like a physical object.",
+          "width": 1200,
+          "height": 750
+        },
+        {
+          "url": "/images/portfolio/v3-skills.webp",
+          "alt": "The Skills section: technologies grouped into Frontend, Backend, Database and Tools, each as a small card with its icon.",
+          "caption": "Skills, grouped by area.",
+          "width": 1200,
+          "height": 750
+        },
+        {
+          "url": "/images/portfolio/v3-experience.webp",
+          "alt": "The Experience section: a timeline of roles and organisations, newest first.",
+          "caption": "Experience, as a timeline.",
+          "width": 1200,
+          "height": 750
+        },
+        {
+          "url": "/images/portfolio/v3-certificates.webp",
+          "alt": "The Certificates section: a grid of certificate cards.",
+          "caption": "Certificates.",
+          "width": 1200,
+          "height": 750
+        },
+        {
+          "url": "/images/portfolio/v3-contact.webp",
+          "alt": "The Contact section: a large closing line, \"Let's work together\", above a contact form and links to GitHub, LinkedIn and email.",
+          "caption": "Contact, with a form checked in the browser and again on the server.",
+          "width": 1200,
+          "height": 750
+        },
+        {
+          "url": "/images/portfolio/v3-hero-light.webp",
+          "alt": "The same home screen in the light theme, on warm paper with a soft lime glow.",
           "caption": "The light theme. Dark is the default; light and system are one click away.",
           "width": 1200,
           "height": 750
         },
         {
-          "url": "/images/portfolio/v2-mobile.webp",
-          "alt": "The hero on a phone: the profile picture, greeting, name, role and the two main buttons stacked in one column.",
+          "url": "/images/portfolio/v3-mobile.webp",
+          "alt": "The home screen on a phone: greeting, name, role, introduction and the main buttons stacked in one column.",
           "caption": "The same page on a phone.",
           "width": 585,
           "height": 1266
@@ -89,15 +124,15 @@
           "height": 750
         },
         "after": {
-          "url": "/images/portfolio/v2-dark.webp",
-          "alt": "The redesigned portfolio: a dark page with a lime accent, the name in very large type and a soft glow.",
+          "url": "/images/portfolio/v3-hero-dark.webp",
+          "alt": "The current portfolio: a dark page with a lime accent, the name in very large type, a soft glow and a half-body portrait at the right edge.",
           "caption": "",
           "width": 1200,
           "height": 750
         },
         "beforeLabel": "v1 · Light, teal",
-        "afterLabel": "v2 · Dark, lime",
-        "caption": "The first version of this site next to the current redesign. Drag the handle, or use the arrow keys."
+        "afterLabel": "Now · Dark, lime",
+        "caption": "The first version of this site next to how it looks today."
       }
     },
     {

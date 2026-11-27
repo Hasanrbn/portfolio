@@ -4,13 +4,26 @@
   gap: var(--space-10);
 }
 
-/* ---------- Header ---------- */
+/* ---------- Intro: the words beside the cover on a laptop ---------- */
+
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-12);
+  align-items: center;
+}
 
 .head {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
   max-width: 56rem;
+}
+
+@media (min-width: 64rem) {
+  .intro[data-cover] {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
 }
 
 .number {
@@ -48,6 +61,7 @@
 .cover {
   position: relative;
   isolation: isolate;
+  padding-bottom: var(--space-4);
 }
 
 /* A pool of accent light behind the cover, like the one behind the hero. */
@@ -61,60 +75,23 @@
   pointer-events: none;
 }
 
-.zoom {
-  position: relative;
-  display: block;
-  width: 100%;
-  padding: 0;
-  background: none;
-  border: 0;
-  color: inherit;
-  cursor: zoom-in;
-  line-height: 0;
-}
-
-.zoom img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.zoomIcon {
+/* The phone leans on the laptop's bottom-right corner. */
+.phone {
   position: absolute;
-  right: var(--space-3);
-  bottom: var(--space-3);
-  display: grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  background: color-mix(in srgb, var(--color-bg) 82%, transparent);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  color: var(--color-text);
-  opacity: 0;
-  backdrop-filter: blur(6px);
-  transition: opacity var(--duration-base) var(--ease);
-}
-
-.zoom:hover .zoomIcon,
-.zoom:focus-visible .zoomIcon {
-  opacity: 1;
-}
-
-/* A touch screen has no hover, so the hint stays visible there. */
-@media (hover: none) {
-  .zoomIcon {
-    opacity: 1;
-  }
+  right: 0;
+  bottom: 0;
+  width: 21%;
+  rotate: 4deg;
 }
 
 /* ---------- Facts ---------- */
 
 .facts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-  gap: var(--space-6);
-  padding-block: var(--space-6);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-8);
+  margin-block: var(--space-2);
+  padding-block: var(--space-4);
   border-block: 1px solid var(--color-border);
 }
 
@@ -213,19 +190,61 @@
   text-transform: uppercase;
 }
 
-.shots {
+/* The main pages: one frame size for every screen (cropped from the top), three to a row. */
+.pages {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-8) var(--space-6);
   align-items: start;
   padding: 0;
   list-style: none;
 }
 
-/* A phone-sized picture would be very tall at full width, so it stays narrow. */
-.portrait {
-  max-width: 18rem;
+.thumb {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+/* A phone is narrow, so it is centred in its cell instead of stretched. */
+.phoneItem {
+  max-width: 13rem;
   margin-inline: auto;
+}
+
+@media (min-width: 40rem) {
+  .pages {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64rem) {
+  .pages {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    perspective: 1400px;
+  }
+
+  /* The outer columns turn a little towards the middle, like the sheets of a board. */
+  .pages > li:nth-child(3n + 1) .figure {
+    transform: rotateY(6deg);
+  }
+
+  .pages > li:nth-child(3n) .figure {
+    transform: rotateY(-6deg);
+  }
+
+  .figure {
+    transition: transform var(--duration-base) var(--ease);
+  }
+
+  .pages > li:hover .figure {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .figure {
+    transition: none;
+  }
 }
 
 .figure {

@@ -1,0 +1,97 @@
+/*
+ * The hardware is the same in both themes: a dark bezel and a silver base look like a real
+ * device on a dark page and on a light one.
+ */
+.laptop {
+  --bezel: #14161a;
+  --bezel-edge: #2b2f35;
+
+  display: grid;
+  justify-items: center;
+  width: 100%;
+  filter: drop-shadow(0 1.25rem 1.5rem rgb(0 0 0 / 0.35));
+}
+
+.lid {
+  position: relative;
+  width: 88%;
+  padding: 0.5rem 0.5rem 0.625rem;
+  background: var(--bezel);
+  border: 1px solid var(--bezel-edge);
+  border-radius: 0.875rem 0.875rem 0.25rem 0.25rem;
+}
+
+/* The camera. */
+.lid::before {
+  content: '';
+  position: absolute;
+  top: 0.1875rem;
+  left: 50%;
+  width: 0.25rem;
+  height: 0.25rem;
+  background: #3a3f47;
+  border-radius: 50%;
+  translate: -50% 0;
+}
+
+.laptopScreen {
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: #000;
+  border-radius: 0.25rem;
+}
+
+.base {
+  position: relative;
+  width: 100%;
+  height: 0.75rem;
+  background: linear-gradient(#e4e6e9, #a3a8ae 70%, #8d9298);
+  border-radius: 0 0 1.25rem 1.25rem / 0 0 0.75rem 0.75rem;
+}
+
+/* The notch that lets a finger lift the lid. */
+.base::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 16%;
+  height: 0.3125rem;
+  background: linear-gradient(#b7bbc0, #cfd2d6);
+  border-radius: 0 0 0.5rem 0.5rem;
+  translate: -50% 0;
+}
+
+/* ---------- Phone ---------- */
+
+.phone {
+  position: relative;
+  width: 100%;
+  padding: 0.3125rem;
+  background: #14161a;
+  border: 1px solid #2b2f35;
+  border-radius: 1.5rem;
+  filter: drop-shadow(0 1rem 1.25rem rgb(0 0 0 / 0.4));
+}
+
+/* The speaker slot, drawn over the top of the screen. */
+.phone::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 0.625rem;
+  left: 50%;
+  width: 22%;
+  height: 0.25rem;
+  background: #14161a;
+  border-radius: var(--radius-full);
+  pointer-events: none;
+  translate: -50% 0;
+}
+
+.phoneScreen {
+  overflow: hidden;
+  aspect-ratio: 9 / 19.5;
+  background: #000;
+  border-radius: 1.25rem;
+}
