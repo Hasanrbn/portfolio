@@ -282,7 +282,7 @@ function projector(size) {
  * front of it: { back: { lines, dots }, front: { lines, dots } }. Lines are short segments with
  * their own width and opacity, so depth shows as brightness along each ring.
  */
-export function computeFrame(pose, size) {
+export function computeFrame(pose, size, segments = SEGMENTS) {
   const project = projector(size);
   const matrix = poseMatrix(pose);
   const frame = {
@@ -334,8 +334,8 @@ export function computeFrame(pose, size) {
     };
 
     let previous = pointAt(0);
-    for (let i = 1; i <= SEGMENTS; i += 1) {
-      const next = pointAt((i / SEGMENTS) * TAU);
+    for (let i = 1; i <= segments; i += 1) {
+      const next = pointAt((i / segments) * TAU);
       addLine(previous, next, ring.width);
       previous = next;
     }
@@ -345,13 +345,14 @@ export function computeFrame(pose, size) {
   }
 
   // The axis rod through both poles, fainter than the rings.
+  const axisSegments = Math.max(8, Math.round((AXIS_SEGMENTS * segments) / SEGMENTS));
   const axisAt = (t) => project(multiplyVector(matrix, [0, t * AXIS_REACH, 0]));
   // The near half of the rod would cut across the face, so it only shows beyond the picture.
   const behindPicture = (point) =>
     point.z >= 0 && Math.hypot(point.x - size / 2, point.y - size / 2) < size * PICTURE_REACH;
   let last = axisAt(-1);
-  for (let i = 1; i <= AXIS_SEGMENTS; i += 1) {
-    const next = axisAt(-1 + (2 * i) / AXIS_SEGMENTS);
+  for (let i = 1; i <= axisSegments; i += 1) {
+    const next = axisAt(-1 + (2 * i) / axisSegments);
     if (!behindPicture(last) && !behindPicture(next)) addLine(last, next, 1, 0.55, true);
     last = next;
   }
@@ -383,4 +384,62 @@ export function paintLayer(ctx, frame, layer, color) {
     ctx.fill();
   }
   ctx.globalAlpha = 1;
+}
+
+// --- Quality ----------------------------------------------------------------------------------
+
+/**
+ * How much the sphere asks of the device, from full detail down. Each step draws fewer pixels,
+ * fewer line segments, or fewer frames per second.
+ */
+export const QUALITY = [
+  { pixelRatio: 2, segments: SEGMENTS, frameMs: 0 },
+  { pixelRatio: 1, segments: 48, frameMs: 0 },
+  { pixelRatio: 1, segments: 36, frameMs: 32 },
+];
+
+const SLOW_FRAME = 0.026; // seconds: slower than about 38 frames per second
+const WINDOW = 45; // frames judged together
+const LONGEST_GAP = 0.25; // a longer pause is a hidden tab or a scroll jam, not the sphere
+
+/**
+ * Watches how long frames take and steps the quality down when the device cannot keep up. It only
+ * ever goes down, so it cannot flip back and forth.
+ */
+export function createGovernor(level = 0) {
+  let current = Math.min(Math.max(level, 0), QUALITY.length - 1);
+  let total = 0;
+  let count = 0;
+
+  return {
+    get level() {
+      return current;
+    },
+    get quality() {
+      return QUALITY[current];
+    },
+    /** Reports one frame's duration in seconds; returns true if the quality just dropped. */
+    observe(seconds) {
+      if (seconds <= 0 || seconds > LONGEST_GAP) return false;
+      total += seconds;
+      count += 1;
+      if (count < WINDOW) return false;
+      const average = total / count;
+      total = 0;
+      count = 0;
+      if (average > SLOW_FRAME && current < QUALITY.length - 1) {
+        current += 1;
+        return true;
+      }
+      return false;
+    },
+  };
+}
+
+/** Devices that say up front they are small start at a lower quality. */
+export function startingQuality(nav = typeof navigator === 'undefined' ? {} : navigator) {
+  if (nav.connection?.saveData) return 1;
+  if (nav.deviceMemory && nav.deviceMemory <= 2) return 1;
+  if (nav.hardwareConcurrency && nav.hardwareConcurrency <= 2) return 1;
+  return 0;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 
 /**
  * Makes an element fade and slide in the first time it is scrolled into view.
@@ -12,66 +12,93 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
  * rendered, so content is never hidden in the HTML itself (see styles/reveal.css for the look).
  *
  * `delay` (milliseconds) lets neighbours in a grid appear one after another.
+ *
+ * Many elements on the page use this hook at once, so the work is done in one batch: first every
+ * element's place on the page is measured, then the hidden look is applied to all of them. Doing
+ * it element by element makes the browser lay the whole page out again for each one (measure,
+ * change, measure, change), which is slow on a phone.
  */
+
+const jobs = [];
+let scheduled = false;
+
+function schedule(job) {
+  jobs.push(job);
+  if (scheduled) return;
+  scheduled = true;
+  // A microtask runs after the render that asked for it but before the browser paints, so an
+  // element that starts hidden is never seen visible for a frame first.
+  queueMicrotask(flush);
+}
+
+function flush() {
+  scheduled = false;
+  const batch = jobs.splice(0).filter((job) => !job.cancelled);
+
+  // Read first: one layout for all of them.
+  // "Below the first screen" is judged by the element's place on the page, not on the window.
+  // When a link takes the visitor to a new page, the browser is still scrolled down for a
+  // moment (the router scrolls to the top a little later), so a position measured against the
+  // window would call everything "already on screen" and no effect would ever play.
+  const places = batch.map((job) => job.element.getBoundingClientRect().top + window.scrollY);
+
+  // Then write.
+  batch.forEach((job, index) => {
+    if (places[index] < window.innerHeight) return;
+    job.hidden = true;
+    job.element.dataset.reveal = 'hidden';
+    job.element.style.setProperty('--reveal-delay', `${job.delay}ms`);
+    watch(job);
+  });
+}
+
+/**
+ * Waits for the scroll position to settle, then watches for the element arriving. The router
+ * scrolls to the top in an effect of its own, which runs in the same round of effects as this one
+ * and so after it. An observer that started at once would take its first look at the page while it
+ * is still scrolled down, find the element "in view" and reveal it before anyone could see it. A
+ * timer of 0 ms waits until that scroll is done.
+ */
+function watch(job) {
+  job.timer = setTimeout(() => {
+    job.observer = new IntersectionObserver(
+      (entries) => {
+        // An element that is already above the screen (the visitor jumped past it) is shown
+        // straight away, since nobody would see it appear.
+        const due = entries.some(
+          (entry) => entry.isIntersecting || entry.boundingClientRect.top < 0,
+        );
+        if (due) {
+          job.element.dataset.reveal = 'shown';
+          job.observer.disconnect();
+        }
+      },
+      // Waits until the element is a little way into the screen, not just touching its edge.
+      { rootMargin: '0px 0px -10% 0px' },
+    );
+    job.observer.observe(job.element);
+  }, 0);
+}
+
 export default function useReveal({ delay = 0 } = {}) {
   const ref = useRef(null);
 
-  // Step 1, before the browser paints, so an element that starts hidden is never seen visible
-  // for a frame first.
   useLayoutEffect(() => {
     const element = ref.current;
     if (!element || typeof IntersectionObserver === 'undefined') return undefined;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
 
-    // "Below the first screen" is judged by the element's place on the page, not on the window.
-    // When a link takes the visitor to a new page, the browser is still scrolled down for a
-    // moment (the router scrolls to the top a little later), so a position measured against the
-    // window would call everything "already on screen" and no effect would ever play.
-    // Measured before the hidden style is applied, which moves the element a little.
-    const placeOnPage = element.getBoundingClientRect().top + window.scrollY;
-    if (placeOnPage < window.innerHeight) return undefined;
-
-    element.dataset.reveal = 'hidden';
-    element.style.setProperty('--reveal-delay', `${delay}ms`);
+    const job = { element, delay, cancelled: false, hidden: false, timer: 0, observer: null };
+    schedule(job);
 
     return () => {
-      delete element.dataset.reveal;
-      element.style.removeProperty('--reveal-delay');
-    };
-  }, [delay]);
-
-  // Step 2: wait for the scroll position to settle, then watch for the element arriving. The
-  // router scrolls to the top in an effect of its own, which runs in this same round of effects
-  // and so after this one. An observer that started now would take its first look at the page
-  // while it is still scrolled down, find the element "in view" and reveal it before anyone
-  // could see it. A timer of 0 ms waits until that scroll is done.
-  useEffect(() => {
-    const element = ref.current;
-    if (!element || element.dataset.reveal !== 'hidden') return undefined;
-
-    let observer;
-    const timer = setTimeout(() => {
-      observer = new IntersectionObserver(
-        (entries) => {
-          // An element that is already above the screen (the visitor jumped past it) is shown
-          // straight away, since nobody would see it appear.
-          const due = entries.some(
-            (entry) => entry.isIntersecting || entry.boundingClientRect.top < 0,
-          );
-          if (due) {
-            element.dataset.reveal = 'shown';
-            observer.disconnect();
-          }
-        },
-        // Waits until the element is a little way into the screen, not just touching its edge.
-        { rootMargin: '0px 0px -10% 0px' },
-      );
-      observer.observe(element);
-    }, 0);
-
-    return () => {
-      clearTimeout(timer);
-      observer?.disconnect();
+      job.cancelled = true;
+      clearTimeout(job.timer);
+      job.observer?.disconnect();
+      if (job.hidden) {
+        delete element.dataset.reveal;
+        element.style.removeProperty('--reveal-delay');
+      }
     };
   }, [delay]);
 

@@ -13,6 +13,15 @@
   border-radius: var(--radius-full);
   /* Vertical swipes still scroll the page; a horizontal one can spin the sphere. */
   touch-action: pan-y;
+  /* Not for selecting or saving by dragging: the picture is part of the design. */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.picture img {
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 /* A pool of accent light behind the picture. */

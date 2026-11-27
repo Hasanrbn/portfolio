@@ -144,6 +144,16 @@ npm test
 
 Server tests use Vitest and Supertest. Client tests use Vitest and Testing Library: theme switching, form and UI component behaviour, heading order on the design page, and an automated WCAG AA contrast check of every colour pair in `client/src/styles/tokens.css`. Change colours there and run `npm test` to confirm they still pass.
 
+## Performance
+
+The page is light on purpose, and a few things keep it that way:
+
+- **Image and font budgets are tests.** `client/tests/assetBudget.test.js` fails when a picture in `client/public` is a PNG or GIF, is larger than 250 KB, or pushes the total over 1.4 MB, and when the script font grows past 20 KB. Compress or resize the picture instead of raising the budget (WebP, no wider than twice the size it is shown at).
+- **Pictures load late.** Project screenshots are `loading="lazy"` with their size set (no layout shift). The hero portrait's extra poses are fetched after the page has settled, or when the visitor first points at it, and not at all on a data saver.
+- **The script font is a subset.** `client/src/assets/fonts/caveat-600-latin.woff2` is Caveat at weight 600 with plain Latin letters and punctuation only (about 14 KB, against 75 KB for the full font). To change the characters, rebuild it from the full font with fontTools (`instancer` to weight 600, then `subset`).
+- **Animation adapts to the device.** The armillary sphere pauses when off-screen or in a hidden tab, draws once with reduced motion, and lowers its own detail (pixel ratio, line segments, then frame rate) if frames take too long; devices that report little memory, few cores or a data saver start lower. The header blur is replaced by a nearly solid bar on touch screens.
+- **Measure** with Lighthouse against `vite preview` of a production build, with and without CPU throttling. Local figures at the time of writing: desktop 100, mobile 91 to 92 (performance), 100 for accessibility, best practices and SEO.
+
 ## Deployment
 
 The site runs on free plans: the website and the contact API together on Vercel (`vercel.json`, `api/index.js`) and the messages in Neon PostgreSQL. The step-by-step guide, the limits of the free plans and how to read messages are in [docs/deployment.md](docs/deployment.md).

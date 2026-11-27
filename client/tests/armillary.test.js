@@ -1,15 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import {
+  QUALITY,
   RINGS,
   axisAngle,
   brush,
   computeFrame,
+  createGovernor,
   createPose,
   depthAlpha,
   multiplyVector,
   paintLayer,
   poleDirection,
   poseMatrix,
+  startingQuality,
   stepPose,
 } from '../src/utils/armillary.js';
 
@@ -194,5 +197,69 @@ describe('what is drawn', () => {
     expect(calls.filter(([name]) => name === 'stroke')).toHaveLength(frame.front.lines.length);
     expect(ctx.globalAlpha).toBe(1);
     expect(ctx.strokeStyle).toBe('rgb(200, 242, 107)');
+  });
+});
+
+describe('quality', () => {
+  const frames = (governor, count, seconds) => {
+    let dropped = false;
+    for (let i = 0; i < count; i += 1) dropped = governor.observe(seconds) || dropped;
+    return dropped;
+  };
+
+  it('draws fewer line segments when asked, and still closes every ring', () => {
+    const coarse = computeFrame(createPose(), 320, 36);
+    const fine = computeFrame(createPose(), 320, 72);
+    const count = (frame) => frame.back.lines.length + frame.front.lines.length;
+
+    expect(count(coarse)).toBeLessThan(count(fine));
+    expect(count(coarse)).toBeGreaterThan(RINGS.length * 36);
+  });
+
+  it('asks for less of the device at each step down', () => {
+    for (let i = 1; i < QUALITY.length; i += 1) {
+      const worse = QUALITY[i];
+      const better = QUALITY[i - 1];
+      expect(worse.pixelRatio).toBeLessThanOrEqual(better.pixelRatio);
+      expect(worse.segments).toBeLessThanOrEqual(better.segments);
+      expect(worse.frameMs).toBeGreaterThanOrEqual(better.frameMs);
+    }
+  });
+
+  it('keeps full quality while frames are quick', () => {
+    const governor = createGovernor();
+    expect(frames(governor, 300, 1 / 60)).toBe(false);
+    expect(governor.level).toBe(0);
+  });
+
+  it('steps down when frames are slow, and only to the lowest level', () => {
+    const governor = createGovernor();
+    expect(frames(governor, 45, 0.04)).toBe(true);
+    expect(governor.level).toBe(1);
+
+    frames(governor, 500, 0.06);
+    expect(governor.level).toBe(QUALITY.length - 1);
+    expect(governor.quality).toBe(QUALITY[QUALITY.length - 1]);
+  });
+
+  it('does not go back up once the device has proved slow', () => {
+    const governor = createGovernor();
+    frames(governor, 45, 0.04);
+    frames(governor, 500, 1 / 60);
+    expect(governor.level).toBe(1);
+  });
+
+  it('ignores long pauses, which are hidden tabs and not a slow sphere', () => {
+    const governor = createGovernor();
+    frames(governor, 200, 2);
+    expect(governor.level).toBe(0);
+  });
+
+  it('starts lower on devices that say they are small or on a data saver', () => {
+    expect(startingQuality({})).toBe(0);
+    expect(startingQuality({ deviceMemory: 8, hardwareConcurrency: 8 })).toBe(0);
+    expect(startingQuality({ deviceMemory: 2 })).toBe(1);
+    expect(startingQuality({ hardwareConcurrency: 2 })).toBe(1);
+    expect(startingQuality({ connection: { saveData: true } })).toBe(1);
   });
 });
