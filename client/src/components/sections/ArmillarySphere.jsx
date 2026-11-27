@@ -1,5 +1,13 @@
 import { useEffect, useRef } from 'react';
-import { brush, computeFrame, createPose, paintLayer, stepPose } from '../../utils/armillary.js';
+import {
+  brush,
+  computeFrame,
+  createGovernor,
+  createPose,
+  paintLayer,
+  startingQuality,
+  stepPose,
+} from '../../utils/armillary.js';
 import styles from './ArmillarySphere.module.css';
 
 /**
@@ -24,6 +32,7 @@ export default function ArmillarySphere({ children, className }) {
     if (!root || !backCtx || !frontCtx) return undefined;
 
     const pose = createPose();
+    const governor = createGovernor(startingQuality());
     const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
     let size = 0;
     let color = '';
@@ -38,7 +47,7 @@ export default function ArmillarySphere({ children, className }) {
 
     function draw() {
       if (size === 0) return;
-      const frame = computeFrame(pose, size);
+      const frame = computeFrame(pose, size, governor.quality.segments);
       paintLayer(backCtx, frame, 'back', color);
       paintLayer(frontCtx, frame, 'front', color);
     }
@@ -49,7 +58,7 @@ export default function ArmillarySphere({ children, className }) {
 
     function resize() {
       size = root.getBoundingClientRect().width;
-      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      const ratio = Math.min(window.devicePixelRatio || 1, governor.quality.pixelRatio);
       for (const [canvas, ctx] of [
         [backRef.current, backCtx],
         [frontRef.current, frontCtx],
@@ -62,9 +71,16 @@ export default function ArmillarySphere({ children, className }) {
     }
 
     function tick(now) {
-      stepPose(pose, (now - lastTime) / 1000, pointer);
+      const elapsed = now - lastTime;
+      // On a struggling device the sphere draws fewer frames rather than making the page stutter.
+      if (elapsed < governor.quality.frameMs - 2) {
+        frameId = requestAnimationFrame(tick);
+        return;
+      }
       lastTime = now;
-      draw();
+      stepPose(pose, elapsed / 1000, pointer);
+      if (governor.observe(elapsed / 1000)) resize();
+      else draw();
       frameId = requestAnimationFrame(tick);
     }
 
@@ -146,7 +162,7 @@ export default function ArmillarySphere({ children, className }) {
   const classes = [styles.sphere, className].filter(Boolean).join(' ');
 
   return (
-    <div ref={rootRef} className={classes}>
+    <div ref={rootRef} className={classes} onDragStart={(event) => event.preventDefault()}>
       <canvas ref={backRef} className={`${styles.layer} ${styles.back}`} aria-hidden="true" />
       <div className={styles.picture}>{children}</div>
       <canvas ref={frontRef} className={`${styles.layer} ${styles.front}`} aria-hidden="true" />

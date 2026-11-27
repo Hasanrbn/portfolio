@@ -168,3 +168,15 @@
     transform: scaleX(1);
   }
 }
+
+/*
+ * The blur behind the header has to be redrawn on every scroll frame, which is noticeable on
+ * phones and low-power devices. Touch screens, and anyone who asked for less transparency, get
+ * a nearly solid bar instead; it looks almost the same.
+ */
+@media (pointer: coarse), (prefers-reduced-transparency: reduce) {
+  .header {
+    background: color-mix(in srgb, var(--color-bg) 96%, transparent);
+    backdrop-filter: none;
+  }
+}

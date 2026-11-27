@@ -1,0 +1,13 @@
+/*
+ * The handwritten accent font (Caveat), cut down to what the site uses: weight 600 only, plain
+ * Latin letters, digits and common punctuation, no alternate letterforms. About 14 KB instead of
+ * the 75 KB of the full variable font. If the script accent ever needs other characters, regenerate
+ * the file from the full font (see README, "Performance").
+ */
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../assets/fonts/caveat-600-latin.woff2') format('woff2');
+}

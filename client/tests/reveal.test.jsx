@@ -47,8 +47,15 @@ function stubReducedMotion(reduce) {
   );
 }
 
-/** Lets the hook's 0 ms wait pass, after which its observer exists. */
-function settle() {
+/** Lets the hook's batch run: the hidden look is applied in a microtask, before the browser paints. */
+const flushBatch = () => act(async () => {});
+
+/**
+ * Lets the hook's batch run (it applies the hidden look in a microtask, before the browser would
+ * paint) and then its 0 ms wait pass, after which its observer exists.
+ */
+async function settle() {
+  await act(async () => {});
   act(() => {
     vi.advanceTimersByTime(0);
   });
@@ -70,10 +77,10 @@ afterEach(() => {
 });
 
 describe('useReveal', () => {
-  it('hides an element below the first screen until it is scrolled to', () => {
+  it('hides an element below the first screen until it is scrolled to', async () => {
     placeElementsAt(1500);
     render(<Box delay={160} />);
-    settle();
+    await settle();
     const box = screen.getByTestId('box');
 
     expect(box).toHaveAttribute('data-reveal', 'hidden');
@@ -89,17 +96,17 @@ describe('useReveal', () => {
     expect(observers[0].disconnect).toHaveBeenCalled();
   });
 
-  it('shows an element straight away when the visitor already scrolled past it', () => {
+  it('shows an element straight away when the visitor already scrolled past it', async () => {
     placeElementsAt(1500);
     render(<Box />);
-    settle();
+    await settle();
 
     observers[0].report({ isIntersecting: false, top: -300 });
 
     expect(screen.getByTestId('box')).toHaveAttribute('data-reveal', 'shown');
   });
 
-  it('leaves an element that is on screen at the start alone', () => {
+  it('leaves an element that is on screen at the start alone', async () => {
     placeElementsAt(120);
     render(<Box />);
 
@@ -107,17 +114,18 @@ describe('useReveal', () => {
     expect(observers).toHaveLength(0);
   });
 
-  it('still hides an element below the first screen right after a link opened the page', () => {
+  it('still hides an element below the first screen right after a link opened the page', async () => {
     // The browser is still scrolled down from the previous page, so this element looks like it
     // is on screen (100 px from the top of the window), but on the new page it sits at 1300 px.
     window.scrollY = 1200;
     placeElementsAt(100);
     render(<Box />);
+    await flushBatch();
 
     expect(screen.getByTestId('box')).toHaveAttribute('data-reveal', 'hidden');
   });
 
-  it('leaves an element in the first screen of the page alone even when scrolled past it', () => {
+  it('leaves an element in the first screen of the page alone even when scrolled past it', async () => {
     // A reload in the middle of a page: the element is 1500 px above the window, which is
     // 500 px from the top of the page.
     window.scrollY = 2000;
@@ -128,7 +136,7 @@ describe('useReveal', () => {
     expect(observers).toHaveLength(0);
   });
 
-  it('leaves everything visible when the visitor asked for reduced motion', () => {
+  it('leaves everything visible when the visitor asked for reduced motion', async () => {
     stubReducedMotion(true);
     placeElementsAt(1500);
     render(<Box />);
@@ -137,7 +145,7 @@ describe('useReveal', () => {
     expect(observers).toHaveLength(0);
   });
 
-  it('leaves everything visible when the browser has no IntersectionObserver', () => {
+  it('leaves everything visible when the browser has no IntersectionObserver', async () => {
     vi.stubGlobal('IntersectionObserver', undefined);
     placeElementsAt(1500);
     render(<Box />);
@@ -145,10 +153,10 @@ describe('useReveal', () => {
     expect(screen.getByTestId('box')).not.toHaveAttribute('data-reveal');
   });
 
-  it('stops watching when the element goes away', () => {
+  it('stops watching when the element goes away', async () => {
     placeElementsAt(1500);
     const { unmount } = render(<Box />);
-    settle();
+    await settle();
     const [observer] = observers;
 
     unmount();
@@ -156,36 +164,37 @@ describe('useReveal', () => {
     expect(observer.disconnect).toHaveBeenCalled();
   });
 
-  it('does not start watching until the scroll position has settled', () => {
+  it('does not start watching until the scroll position has settled', async () => {
     // The router scrolls a new page to the top in an effect that runs just after the element
     // renders. An observer that looked sooner would see the page still scrolled down.
     placeElementsAt(1500);
     render(<Box />);
+    await flushBatch();
 
     expect(screen.getByTestId('box')).toHaveAttribute('data-reveal', 'hidden');
     expect(observers).toHaveLength(0);
 
-    settle();
+    await settle();
 
     expect(observers).toHaveLength(1);
   });
 
-  it('never creates the observer when the element is gone before the scroll settles', () => {
+  it('never creates the observer when the element is gone before the scroll settles', async () => {
     placeElementsAt(1500);
     const { unmount } = render(<Box />);
 
     unmount();
-    settle();
+    await settle();
 
     expect(observers).toHaveLength(0);
   });
 });
 
 describe('text sections on the About page', () => {
-  it('ease in when they start below the first screen, and still hold their text', () => {
+  it('ease in when they start below the first screen, and still hold their text', async () => {
     placeElementsAt(1500);
     render(<TextSection title="Interests" paragraphs={['I like building things.']} />);
-    settle();
+    await settle();
 
     const section = screen.getByRole('region', { name: 'Interests' });
     expect(section).toHaveAttribute('data-reveal', 'hidden');
@@ -193,5 +202,28 @@ describe('text sections on the About page', () => {
 
     observers[0].report({ isIntersecting: true });
     expect(section).toHaveAttribute('data-reveal', 'shown');
+  });
+
+  it('measures every element before it changes any, so the page is laid out once, not once each', async () => {
+    const changedWhenMeasured = [];
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function measure() {
+      changedWhenMeasured.push(document.querySelectorAll('[data-reveal]').length);
+      return { top: 1500 };
+    });
+
+    render(
+      <>
+        <Box />
+        <Box />
+        <Box />
+      </>,
+    );
+    await flushBatch();
+
+    expect(changedWhenMeasured).toHaveLength(3);
+    expect(changedWhenMeasured).toEqual([0, 0, 0]);
+    screen.getAllByTestId('box').forEach((box) => {
+      expect(box).toHaveAttribute('data-reveal', 'hidden');
+    });
   });
 });
