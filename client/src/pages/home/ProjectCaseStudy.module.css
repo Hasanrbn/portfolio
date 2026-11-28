@@ -87,6 +87,7 @@
 .phone {
   flex: 0 0 19%;
   min-width: 0;
+  rotate: -6deg;
 }
 
 /* ---------- Facts ---------- */

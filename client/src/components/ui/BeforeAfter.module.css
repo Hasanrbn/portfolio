@@ -86,6 +86,7 @@
     width: clamp(3.5rem, 6vw, 5rem);
     height: auto;
     translate: -50% -60%;
+    rotate: 35deg;
   }
 }
 
