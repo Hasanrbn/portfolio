@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPull, poseForPull, pullFromDrag, stepPull } from '../../utils/portraitPull.js';
 import styles from './HeroPortrait.module.css';
+import DoodleArrow from '../../components/ui/DoodleArrow.jsx';
 
 const POSES = {
   peek: { src: '/images/profile/peek.webp', width: 614, height: 1200 },
@@ -149,15 +150,7 @@ export default function HeroPortrait({ name }) {
       {hinted && (
         <span className={styles.hint} aria-hidden="true">
           Pull me!
-          <svg className={styles.hintArrow} viewBox="0 0 64 48" fill="none" focusable="false">
-            <path
-              d="M4 6c14-2 30 4 36 18 3 7 2 14-2 18m0 0-9-2m9 2 1-10"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <DoodleArrow className={styles.hintArrow} />
         </span>
       )}
       <img

@@ -164,9 +164,9 @@
 
 .hintArrow {
   flex: none;
-  width: 2.25rem;
+  width: 2.75rem;
   height: auto;
-  margin-top: 0.7em;
+  margin-top: 0.5em;
 }
 
 .portrait[data-dragging='true'] .hint {

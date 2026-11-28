@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import projectsData from '@portfolio/shared/data/projects.json';
@@ -317,8 +317,8 @@ describe('image viewer', () => {
   });
 });
 
-describe('before and after slider', () => {
-  const withComparison = () =>
+describe('before and after board', () => {
+  const withComparison = (extra = {}) =>
     makeProjects([
       {
         title: 'Redesign',
@@ -329,44 +329,132 @@ describe('before and after slider', () => {
           afterLabel: 'v2',
           caption: 'Old and new.',
         },
+        ...extra,
       },
     ]);
 
-  it('shows both pictures with a slider that starts in the middle', async () => {
+  it('shows the old and the new version side by side, each with its label', async () => {
     getProjects.mockImplementation(async () => withComparison());
     renderProjects();
     const article = await within(section()).findByRole('article', { name: 'Redesign' });
 
-    expect(
-      within(article).getByRole('heading', { level: 4, name: 'Before & after' }),
-    ).toBeInTheDocument();
-    expect(within(article).getByRole('img', { name: 'The old design' })).toBeInTheDocument();
-    expect(within(article).getByRole('img', { name: 'The new design' })).toBeInTheDocument();
-    expect(within(article).getByText('Old and new.')).toBeInTheDocument();
-    const slider = within(article).getByRole('slider', { name: /v1 on the left, v2 on the right/ });
-    expect(slider).toHaveValue('50');
+    const board = within(article).getByRole('group', { name: 'Before & after' });
+    expect(within(board).getByRole('img', { name: 'The old design' })).toBeInTheDocument();
+    expect(within(board).getByRole('img', { name: 'The new design' })).toBeInTheDocument();
+    expect(within(board).getByText('v1')).toBeInTheDocument();
+    expect(within(board).getByText('v2')).toBeInTheDocument();
+    expect(within(board).getByText('Old and new.')).toBeInTheDocument();
   });
 
-  it('moves with the keyboard and describes where the divider is', async () => {
+  it('has nothing to drag: no slider, both pictures always in view', async () => {
     getProjects.mockImplementation(async () => withComparison());
     renderProjects();
-    const slider = await within(section()).findByRole('slider');
+    await within(section()).findByRole('article', { name: 'Redesign' });
 
-    // jsdom does not move a range input with the keyboard, so the change is sent directly.
-    fireEvent.change(slider, { target: { value: '0' } });
-    expect(slider).toHaveAttribute('aria-valuetext', 'Showing only v2');
-    fireEvent.change(slider, { target: { value: '100' } });
-    expect(slider).toHaveAttribute('aria-valuetext', 'Showing only v1');
-    fireEvent.change(slider, { target: { value: '99' } });
-    expect(slider).toHaveAttribute('aria-valuetext', 'Divider at 99 percent');
+    expect(within(section()).queryByRole('slider')).toBeNull();
+  });
+
+  it('opens each side in the viewer, after the cover and the screenshots', async () => {
+    getProjects.mockImplementation(async () =>
+      withComparison({
+        thumbnail: { url: '/cover.png', alt: 'Cover' },
+        screenshots: [{ url: '/page.png', alt: 'A page', width: 1200, height: 750 }],
+      }),
+    );
+    const user = userEvent.setup();
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Redesign' });
+
+    await user.click(within(article).getByRole('button', { name: 'Enlarge: The old design' }));
+    expect(screen.getByRole('dialog')).toHaveTextContent('3 / 4');
+    await user.click(
+      within(screen.getByRole('dialog')).getByRole('button', { name: 'Next image' }),
+    );
+    expect(
+      within(screen.getByRole('dialog')).getByRole('img', { name: 'The new design' }),
+    ).toBeInTheDocument();
   });
 
   it('is left out when a project has no comparison', async () => {
     getProjects.mockImplementation(async () => ONE());
     renderProjects();
-    await within(section()).findByRole('article', { name: 'Portfolio Website' });
+    const article = await within(section()).findByRole('article', { name: 'Portfolio Website' });
 
-    expect(within(section()).queryByRole('slider')).toBeNull();
+    expect(within(article).queryByRole('group', { name: 'Before & after' })).toBeNull();
+  });
+});
+
+describe('devices and main pages', () => {
+  const shot = (name, width = 1200, height = 750) => ({
+    url: `/${name}.png`,
+    alt: `The ${name} screen`,
+    caption: `Caption of ${name}`,
+    width,
+    height,
+  });
+
+  it('shows the cover on a laptop', async () => {
+    getProjects.mockImplementation(async () =>
+      makeProjects([{ title: 'Cover', thumbnail: shot('cover') }]),
+    );
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Cover' });
+
+    const laptop = article.querySelector('[data-device="laptop"]');
+    expect(laptop).not.toBeNull();
+    expect(within(laptop).getByRole('img', { name: 'The cover screen' })).toBeInTheDocument();
+  });
+
+  it('has no laptop when a project has no cover', async () => {
+    getProjects.mockImplementation(async () => makeProjects([{ title: 'Bare' }]));
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Bare' });
+
+    expect(article.querySelector('[data-device]')).toBeNull();
+  });
+
+  it('lists the screenshots as the main pages, with their captions', async () => {
+    getProjects.mockImplementation(async () =>
+      makeProjects([{ title: 'Pages', screenshots: [shot('login'), shot('dashboard')] }]),
+    );
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Pages' });
+
+    const pages = within(article).getByRole('group', { name: 'Main pages' });
+    expect(within(pages).getAllByRole('listitem')).toHaveLength(2);
+    expect(within(pages).getByText('Caption of dashboard')).toBeInTheDocument();
+    expect(within(article).queryByRole('group', { name: 'Screenshots' })).toBeNull();
+  });
+
+  it('puts a phone screenshot on a phone next to the laptop, not in the main pages', async () => {
+    getProjects.mockImplementation(async () =>
+      makeProjects([
+        {
+          title: 'Mobile',
+          thumbnail: shot('cover'),
+          screenshots: [shot('page'), shot('phone', 585, 1266)],
+        },
+      ]),
+    );
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Mobile' });
+
+    const phone = article.querySelector('[data-device="phone"]');
+    expect(within(phone).getByRole('img', { name: 'The phone screen' })).toBeInTheDocument();
+    const pages = within(article).getByRole('group', { name: 'Main pages' });
+    expect(within(pages).queryByRole('img', { name: 'The phone screen' })).toBeNull();
+    expect(within(pages).getByRole('img', { name: 'The page screen' })).toBeInTheDocument();
+  });
+
+  it('puts a phone screenshot in the main pages on a phone when there is no cover to join', async () => {
+    getProjects.mockImplementation(async () =>
+      makeProjects([{ title: 'Only phone', screenshots: [shot('phone', 585, 1266)] }]),
+    );
+    renderProjects();
+    const article = await within(section()).findByRole('article', { name: 'Only phone' });
+
+    const pages = within(article).getByRole('group', { name: 'Main pages' });
+    expect(pages.querySelector('[data-device="phone"]')).not.toBeNull();
   });
 });
 
