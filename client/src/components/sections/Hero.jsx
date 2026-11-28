@@ -2,6 +2,7 @@ import Badge from '../ui/Badge.jsx';
 import LinkButton from '../ui/LinkButton.jsx';
 import SocialLinks from './SocialLinks.jsx';
 import styles from './Hero.module.css';
+import DoodleArrow from '../ui/DoodleArrow.jsx';
 
 /**
  * Opening block of the home page and the page's only h1.
@@ -16,15 +17,7 @@ export default function Hero({ name, role, intro, availability, resume, socialLi
         {/* Decorative: the h1 below already says who this is. */}
         <p className={styles.greeting} aria-hidden="true">
           Hello, I’m
-          <svg className={styles.doodle} viewBox="0 0 64 48" fill="none" focusable="false">
-            <path
-              d="M4 6c14-2 30 4 36 18 3 7 2 14-2 18m0 0-9-2m9 2 1-10"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <DoodleArrow className={styles.doodle} />
         </p>
         <h1 className={styles.name}>{name}</h1>
         <p className={styles.role}>{role}</p>

@@ -83,8 +83,9 @@
     top: -0.25rem;
     left: 50%;
     display: block;
-    width: clamp(4rem, 8vw, 6.5rem);
-    translate: -50% -55%;
+    width: clamp(3.5rem, 6vw, 5rem);
+    height: auto;
+    translate: -50% -60%;
   }
 }
 

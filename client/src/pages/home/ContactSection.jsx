@@ -8,6 +8,7 @@ import LinkButton from '../../components/ui/LinkButton.jsx';
 import { getSocialLinks } from '../../utils/socialLinks.js';
 import { wakeServer } from '../../services/contactService.js';
 import styles from './ContactSection.module.css';
+import DoodleArrow from '../../components/ui/DoodleArrow.jsx';
 
 // Start waking the server a little before the section is reached.
 const WAKE_MARGIN = '600px 0px';
@@ -48,15 +49,7 @@ export default function ContactSection() {
         {/* Decorative: the heading below carries the message. */}
         <p className={styles.thanks} aria-hidden="true">
           Thanks for scrolling
-          <svg className={styles.doodle} viewBox="0 0 64 48" fill="none" focusable="false">
-            <path
-              d="M4 6c14-2 30 4 36 18 3 7 2 14-2 18m0 0-9-2m9 2 1-10"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <DoodleArrow className={styles.doodle} />
         </p>
         <h3 className={styles.together}>
           Let’s work <span className={styles.accent}>together</span>.

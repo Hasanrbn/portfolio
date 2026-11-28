@@ -24,9 +24,10 @@
 }
 
 .doodle {
-  width: 2.5rem;
+  flex: none;
+  width: 3rem;
   height: auto;
-  margin-top: 0.6em;
+  margin-top: 0.45em;
 }
 
 .name {

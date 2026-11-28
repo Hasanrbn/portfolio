@@ -61,7 +61,15 @@
 .cover {
   position: relative;
   isolation: isolate;
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-end;
   padding-bottom: var(--space-4);
+}
+
+.cover > :first-child {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 /* A pool of accent light behind the cover, like the one behind the hero. */
@@ -75,13 +83,10 @@
   pointer-events: none;
 }
 
-/* The phone leans on the laptop's bottom-right corner. */
+/* The phone stands beside the laptop and never over its screen, so nothing in the shot is hidden. */
 .phone {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 21%;
-  rotate: 4deg;
+  flex: 0 0 19%;
+  min-width: 0;
 }
 
 /* ---------- Facts ---------- */
